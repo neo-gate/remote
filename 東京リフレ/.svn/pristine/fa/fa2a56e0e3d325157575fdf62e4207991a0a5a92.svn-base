@@ -1,6 +1,0 @@
-<div style="padding:10px 0px 0px 0px;">
-<a href="{{$params.url_root}}couple.php"><img src="{{$params.url_root}}img/to_couple.jpg" alt="カップルメニュー" /></a>
-</div>
-<div style="padding:10px 0px 10px 0px;">
-<a href="{{$params.url_root}}business.php"><img src="{{$params.url_root}}img/to_business.jpg" alt="ビジネスメニュー" /></a>
-</div>
