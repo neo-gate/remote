@@ -1,1 +1,1 @@
-<?php echo "こんにちわ！Hello!";?>
+<?php echo "こんにちわ！Hello！さようなら。";?>
