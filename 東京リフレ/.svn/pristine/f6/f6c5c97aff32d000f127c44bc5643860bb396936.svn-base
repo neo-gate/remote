@@ -1,0 +1,16 @@
+<?php
+
+$document_root = $_SERVER['DOCUMENT_ROOT'];
+define("ROOT_PATH", $document_root."/");
+define("MAN_ROOT_PATH", ROOT_PATH."man/");
+define("MAN_INC", MAN_ROOT_PATH."include/");
+include(MAN_INC."define.php");
+
+$fixtures_id = $_POST["fixtures_id"];
+
+$html = get_select_frm_fixtures_class_search($fixtures_id);
+
+echo $html;
+exit();
+
+?>

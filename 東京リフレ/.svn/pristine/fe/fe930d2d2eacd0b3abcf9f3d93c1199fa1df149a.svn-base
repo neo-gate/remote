@@ -1,0 +1,3 @@
+﻿<p class="bottom_20"><img alt="セラピスト" src="img/therapist.jpg"></p>
+{{include file=$title_therapist_info_common}}
+{{include file="pc/content/title_goriyou.tpl"}}

@@ -1,0 +1,92 @@
+
+<div id="recruit_h2_block">
+	<h2>セラピスト求人案内</h2>
+	
+	<h3><font color="#993399">◇業務多忙につきセラピストを大募集しています！</font></h3>
+	
+	<div style="padding:10px 0px 0px 20px;">
+		<img src="{{$params.url_root}}img/worksmerit.jpg" alt="働くメリット" />
+	</div>
+	
+	<div class="recruit_therapist">
+		<img src="{{$params.url_root}}img/recruit_therapist.jpg" alt="セラピスト募集概要" />
+	</div>
+	
+	<div style="padding:20px 0px 0px 0px;">
+		<h3><font color="#993399">◇施術・接客イメージ動画</font></h3>
+		
+		<div style="padding:10px 0px 0px 40px;">
+			<iframe width="560" height="315" src="//www.youtube.com/embed/sQR-z5MIwMo" frameborder="0" allowfullscreen></iframe>
+		</div>
+	</div>
+	
+	<div style="padding:20px 0px 0px 0px;">
+		<p id="bosyuu_messe">
+			ご質問だけのご連絡も大歓迎ですので、お気軽に電話か応募フォームよりお問い合わせください。
+		</p>
+		<div class="bosyuu_button_block bottom_30">
+			<img src="{{$params.url_root}}img/PC_form.png" onclick="openwin2();" width="200" class="pc_form" />
+		</div>
+		<div class="bosyuu_button_block bottom_30">
+			<img src="{{$params.url_root}}img/PC_tel.png" width="200" />
+		</div>
+		<center><a href="mailto:job@tokyo-refle.com?subject=セラピスト募集お問合せ&amp;body=">とりあえず質問だけという方はこちらから</a></center>
+	</div>
+</div>
+
+<hr class="recruit_border" />
+
+<div id="recruit_image_1">
+	<p class="f_left">
+	<img src="img/img43.jpg" alt="三人の女性" width="200" />
+	</p>
+	<p class="f_left">
+	<img src="img/img41.jpg" alt="足裏マッサージ" width="200" />
+	</p>
+	<p class="f_left">
+	<img src="img/img40.jpg" alt="腰へのマッサージ" width="200" />
+	</p>
+	<br class="clear" />
+</div>
+
+<div id="recruit_qa">
+<h3>◇よくあるご質問</h3>
+
+<div class="qa_image">
+	<img src="{{$params.url_root}}img/qa.jpg" alt="Q&A" />
+</div>
+
+</div>
+
+<hr class="recruit_border" />
+
+<div id="recruit_message">
+	<h3>先輩セラピストからメッセージ</h3>
+	<div class="message_image">
+		<img src="{{$params.url_root}}img/recruit/message.jpg" alt="メッセージ" />
+	</div>
+</div>
+
+<hr class="recruit_border" />
+
+<div style="padding:0px 0px 0px 20px;">
+	<h3>応募ステップ</h3>
+	<div style="padding:10px 0px 0px 10px;">
+		<img src="{{$params.url_root}}img/oubo_step.jpg" alt="応募ステップ" />
+	</div>
+</div>
+
+<p class="bosyuu_messe_2">
+ご質問だけのご連絡も大歓迎ですので、お気軽に電話か応募フォームよりお問い合わせください。
+</p>
+<div class="bosyuu_button_block bottom_30">
+	<img src="{{$params.url_root}}img/PC_form.png" onclick="openwin2();" width="200" class="pc_form" />
+</div>
+<div class="bosyuu_button_block bottom_30">
+	<img src="{{$params.url_root}}img/PC_tel.png" width="200" />
+</div>
+
+<div style="padding:0px 0px 100px 0px;">
+<center><a href="mailto:job@tokyo-refle.com?subject=セラピスト募集お問合せ&amp;body=">とりあえず質問だけという方はこちらから</a></center>
+</div>
+

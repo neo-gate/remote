@@ -1,0 +1,158 @@
+<?php
+
+	// 各ページ共通の処理
+	require_once("include/common.php");
+	
+	$error = "";
+	
+	if( isset($_POST["send_voice"])==true ){
+		
+		$voice_name = $_POST["voice_name"];
+		$voice_age = $_POST["voice_age"];
+		$voice_gender = $_POST["voice_gender"];
+		$voice_satisfaction = $_POST["voice_satisfaction"];
+		$voice_content = $_POST["voice_content"];
+		
+		$voice_name_len = mb_strlen($voice_name);
+		$voice_content_len = mb_strlen($voice_content);
+		
+		if( $voice_name_len>48 ){
+			
+			$error .= "<li>お名前は48文字までです</li>";
+			
+		}
+		
+		if( $voice_age=="-1" ){
+			
+			$error .= "<li>年代が未選択です</li>";
+			
+		}
+		
+		if( $voice_gender=="-1" ){
+				
+			$error .= "<li>性別が未選択です</li>";
+				
+		}
+		
+		if( $voice_satisfaction=="-1" ){
+				
+			$error .= "<li>満足度が未選択です</li>";
+				
+		}
+		
+		if( $voice_content=="" ){
+			
+			$error .= "<li>内容が未入力です</li>";
+			
+		}else if( $voice_content_len>2000 ){
+			
+			$error .= "<li>内容は2000文字までです</li>";
+			
+		}else{
+			
+			if( !preg_match("/[ぁ-ん]+/u", $voice_content) ){
+				
+				$error .= "<li>ひらがなが含まれていません</li>";
+				
+			}
+			
+		}
+		
+		if( $error != "" ){
+			
+			$error = '<ul class="error_voice">'.$error.'</ul>';
+			
+		}else{
+			
+			$shop_type = "refle";
+			
+			//お客様の声、登録
+			$result = regist_voice_common($voice_name,$voice_age,$voice_gender,$voice_satisfaction,$voice_content,$shop_type);
+			
+			if( $result==true ){
+				
+				header("Location: voice_complete.php");
+				exit();
+				
+			}else{
+				
+				$error = '<ul class="error"><li>お客様の声の登録に失敗しました。</li></ul>';
+				
+			}
+			
+		}
+		
+	}
+	
+	$selected_paging_num = 1;
+	$paging_max_num = 0;
+	
+	if( $access_type == "sp" ){
+		
+		$display_num = 10;
+		
+	}else{
+		
+		$display_num = 10;
+		
+	}
+	
+	if(isset($_GET["selected_paging_num"])==true){
+	
+		$selected_paging_num = $_GET["selected_paging_num"];
+	
+	}
+	
+	$voice_list = array();
+	
+	$shop_type = "refle";
+	
+	//お客様の声データ取得
+	$voice_list = get_voice_list_front_common($selected_paging_num,$display_num,$shop_type);
+	
+	/*
+	echo "<pre>";
+	print_r($voice_list);
+	echo "</pre>";
+	exit();
+	*/
+	
+	$paging_max_num = get_paging_max_num_voice_front($display_num,$shop_type);
+	
+	$pankuzu = "　＞　お客様の声";
+	
+	$params['pankuzu'] = $pankuzu;
+	
+	$params['error'] = $error;
+	$params['voice_name'] = $voice_name;
+	$params['voice_age'] = $voice_age;
+	$params['voice_gender'] = $voice_gender;
+	$params['voice_satisfaction'] = $voice_satisfaction;
+	$params['voice_content'] = $voice_content;
+	
+	$params['voice_list'] = $voice_list;
+	
+	$params['paging_max_num'] = $paging_max_num;
+	$params['selected_paging_num'] = $selected_paging_num;
+	
+	$smarty->assign( 'params', $params );
+	
+	if($access_type=="pc"){
+	
+		$smarty->assign( 'content_tpl', 'pc/voice.tpl' );
+		$smarty->display( 'pc/template.tpl' );
+	
+	}else if($access_type=="sp"){
+	
+		$smarty->assign( 'content_tpl', 'sp/voice.tpl' );
+		$smarty->display( 'sp/template.tpl' );
+	
+	}else if($access_type=="m"){
+	
+		$smarty->assign( 'content_tpl', 'm/voice.tpl' );
+		$smarty->display( 'm/template.tpl' );
+	
+	}
+	
+
+?>

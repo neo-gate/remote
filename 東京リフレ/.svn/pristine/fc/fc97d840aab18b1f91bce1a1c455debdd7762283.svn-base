@@ -1,0 +1,106 @@
+<?php
+header("Content-type: text/html; charset=UTF-8");
+
+include("include/common.php");
+include("include/auth.php");
+
+$error = "";
+
+if(isset($_POST["send"])==true){
+	
+	$hotel_id = $_POST["hotel_id"];
+	$hotel_detail = $_POST["hotel_detail"];
+	
+	//横浜ホテルのdetailを更新
+	$result = update_yokohama_hotel_detail($hotel_id,$hotel_detail);
+	
+	if( $result == true ){
+		
+		$error = '<span style="color:blue;">更新が成功しました。</span>';
+		
+	}
+	
+	//idから横浜ホテルデータを取得
+	$hotel_data = get_yokohama_hotel_data_by_id($hotel_id);
+	
+}else if(isset($_GET["id"])==true){
+	
+	$hotel_id = $_GET["id"];
+	
+	//idから横浜ホテルデータを取得
+	$hotel_data = get_yokohama_hotel_data_by_id($hotel_id);
+	
+}
+
+//横浜ホテルのidとnameを取得
+$menu_data = get_yokohama_hotel_id_name();
+
+$menu_data_num = count($menu_data);
+
+/*
+echo "<pre>";
+print_r($menu_data);
+echo "</pre>";
+exit();
+*/
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>管理ページ・ホテルページ追記(横浜)</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+
+	<div style="width:1024px;margin:0px auto 0px auto;">
+	
+		<div>
+			<div style="float:left;"><a href="index.php">トップ</a> &gt; ホテルページ追記(横浜)</div>
+			<div style="float:right;"><a href="logout.php">ログアウト</a></div>
+			<br style="clear:both" />
+		</div>
+		
+		<div style="line-height:160%;padding:10px 0px 0px 0px;">
+<?php
+for($i=0;$i<$menu_data_num;$i++){
+	
+	echo '<div class="hotel_add_menu"><a href="hotel_block_add.php?id='.$menu_data[$i]["id"].'">'.$menu_data[$i]["name"].'</a></div>';
+	
+}
+?>
+<br class="clear" />
+		</div>
+		
+		<?php if( $hotel_data["name"] != "" ){ ?>
+		<form action="" method="post">
+			<input type="hidden" name="hotel_id" value="<?php echo $hotel_data["id"];?>" />
+			<div style="padding:10px 0px 0px 0px;"><?php echo $hotel_data["name"];?></div>
+			<?php
+				if($error != ""){
+					
+					echo '<div style="padding:10px 0px 0px 0px;">';
+					echo $error;
+					echo '</div>';
+					
+				}
+			?>
+			<div style="padding:10px 0px 0px 0px;">
+				<textarea name="hotel_detail" style="width:700px;height:400px;"><?php echo $hotel_data["detail"];?></textarea>
+			</div>
+			<div style="padding:20px 0px 100px 0px;">
+				<input type="submit" name="send" value="更新する" style="padding:5px 10px 5px 10px;" />
+			</div>
+		
+		</form>
+		<?php } ?>
+		
+	</div>
+	
+</body>
+</html>

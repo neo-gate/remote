@@ -1,0 +1,33 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>{{$params.page_name}}</title>
+<script type="text/javascript" src="/js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="/js/jquery.exscrollevent.js"></script>
+<script type="text/javascript" src="/man/reservation_state_list_new.js?{{$params.css_time}}"></script>
+<link href="/man/style.css?{{$params.css_time}}" rel="stylesheet" type="text/css" />
+<link href="/css/man/style.css?{{$params.css_time}}" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+
+	<div style="width:1160px;margin:0px auto 0px auto;">
+
+		<div>
+			<div style="float:left;"><a href="index.php">トップ</a> &gt; {{$params.page_name}}</div>
+			<div style="float:right;">
+				<a href="logout.php" style="font-size:12px;">ログアウト</a>
+			</div>
+			<br class="clear" />
+		</div>
+
+		<div>
+			{{include file=$content_tpl params=$params}}
+		</div>
+
+	</div>
+
+</body>
+</html>

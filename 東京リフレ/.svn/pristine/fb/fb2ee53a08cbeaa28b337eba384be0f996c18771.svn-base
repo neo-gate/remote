@@ -1,0 +1,11 @@
+<div class="reserv_block">
+	<div class="left">
+		<a href="tel:03-5206-5134"><img src="{{$params.url_root}}img/m/tel_reserv.jpg" alt="電話予約" width="80" /></a>
+	</div>
+	<div class="right">
+		<a href="mailto:order@tokyo-refle.com?subject=MailToTokyoRefle&amp;body=">
+			<img src="{{$params.url_root}}img/m/mail_reserv.jpg" alt="メール予約" width="80" />
+		</a>
+	</div>
+	<br style="clear:both" />
+</div>

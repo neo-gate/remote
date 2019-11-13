@@ -1,0 +1,31 @@
+<?php
+
+$document_root = $_SERVER['DOCUMENT_ROOT'];
+define("ROOT_PATH", $document_root."/");
+define("MAN_ROOT_PATH", ROOT_PATH."man/");
+define("MAN_INC", MAN_ROOT_PATH."include/");
+include(MAN_INC."define.php");
+
+/*
+include("../include/define.php");
+include("../include/functions.php");
+*/
+
+$reservation_id = $_POST["reservation_id"];
+$type = $_POST["type"];
+
+$result = okuri_mukae_driver_delete($reservation_id,$type);
+
+if( $result == true ){
+	
+	echo "success";
+	exit();
+	
+}else{
+	
+	echo "failure";
+	exit();
+	
+}
+
+?>

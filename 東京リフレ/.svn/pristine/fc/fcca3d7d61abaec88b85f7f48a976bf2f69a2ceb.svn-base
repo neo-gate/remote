@@ -1,0 +1,6 @@
+
+{{include file=$title_therapist_info_common}}
+
+<div style="margin:0px 0px 0px 0px;">
+{{include file="sp/content/reservation.tpl"}}
+</div>

@@ -1,0 +1,101 @@
+<?php
+include("include/common.php");
+include("include/auth.php");
+
+if(site_SERVER_name == "stg") {
+	if(NowDb == "clone") {
+		$Db_now = "<font color=\"white\">Read replica " . DB_HOST . "</font>";
+	} else {
+		$w_todayTime = PHP_getNowTime();
+		$Db_now = "<font color=\"yellow\">書き込み可能DBサーバー ( " . UpdateDb . " ) " . DB_HOST . "</font>";
+		$Db_now .= "&nbsp;&nbsp;<font color=\"white\">( " . date("Y/m/d H:i", $w_todayTime) . "現在 )</font>";
+	}
+	$Db_now .= "&nbsp;&nbsp;&nbsp;&nbsp;<font style='font-size:11pt;'><a href=\"chg_db.php\">[ DB切替 ]</a></font>";
+}
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>管理ページ・トップ</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body style="margin:0;">
+<?php if($Db_now) { ?>
+	<table bgcolor="#888888" width="100%">
+	<tr>
+		<td align="center"><?php echo $Db_now; ?></td>
+	</tr>
+	</table>
+	<?php
+	//echo NowDb . "#####";
+	if(NowDb == "gen") {
+		echo "<br /><br /><br /><br /><div align='center'>最新書き込み可能DBサーバーを作成中ですので、操作出来ません！</div>";
+		exit;
+	}
+	?>
+<?php } ?>
+<div style="width:800px;margin:0px auto 100px auto;">
+	<div>トップ</div>
+	<div style="float:left;width:400px;">
+		<div>
+			<div class="index_menu_title">【　予約管理　】</div>
+			<a href="rs_sts_board.php" class="index_menu menu">予約状況ボード</a>
+			<a href="hotel_search.php" class="index_menu menu">ホテル検索</a>
+			<a href="reservation_state_list_new.php?area=tokyo" class="index_menu menu">予約状況一覧</a>
+		</div>
+
+		<div style="padding:30px 0px 0px 0px;">
+			<div class="index_menu_title">【　スタッフ管理　】</div>
+			<a href="stf_calendar.php" class="index_menu menu">スタッフカレンダー</a>
+			<a href="therapist_list_new.php?area=tokyo" class="index_menu menu">セラピスト一覧</a>
+			<a href="staff_list_new.php?area=tokyo&type=honbu" class="index_menu menu">スタッフ一覧</a>
+			<a href="therapist_page.php?area=all" class="index_menu menu">セラピストページ</a>
+			<a href="page_edit.php" class="index_menu menu">ページ編集</a>
+			<a href="staff_message_board/index.php" class="index_menu menu">スタッフ伝言板</a>
+			<a href="/man/therapist_report.php" class="index_menu menu">セラピスト成績表</a>
+			<a href="/man/fixtures/index.php" class="index_menu menu">備品状況</a>
+		</div>
+	</div>
+
+	<div style="float:left;width:400px;">
+		<div>
+			<div class="index_menu_title">【　売上管理　】</div>
+			<a href="sale.php" class="index_menu menu">売上・ポイント</a>
+			<a href="shop_report_pre.php" class="index_menu menu">店舗別レポート</a>
+			<a href="furikomi_list.php" class="index_menu menu">振込依頼書</a>
+		</div>
+
+		<div style="padding:30px 0px 0px 0px;">
+			<div class="index_menu_title">【　顧客管理　】</div>
+			<a href="all_customer_list.php" class="index_menu menu">顧客一覧</a>
+			<a href="voice_list.php" class="index_menu menu">お客様の声</a>
+			<a href="mail_customer_list.php" class="index_menu menu">メール会員一覧</a>
+			<a href="mail_to_shop_customer_list.php" class="index_menu menu">店舗一斉メール送信</a>
+		</div>
+
+		<div style="padding:30px 0px 0px 0px;">
+			<div class="index_menu_title">【　データ抽出　】</div>
+			<a href="dashboard_support.php" class="index_menu_2 menu">ダッシュボード補助データ</a>
+		</div>
+
+		<?php if(site_SERVER_name == "stg" && NowDb == "copy") { ?>
+		<div style="padding:30px 0px 0px 0px;">
+			<div class="index_menu_title">【　Testデータ作成　】</div>
+			<a href="gentstcti.php" class="index_menu_2 menu"><font color="yellow">CTI testデータ作成</font></a>
+		</div>
+		<?php } ?>
+
+	</div>
+
+	<br class="clear" />
+
+	<!--<a href="hotel_list.php" class="index_menu menu">ホテルリスト</a>-->
+
+</div>
+
+</body>
+</html>

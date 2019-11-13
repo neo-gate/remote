@@ -1,0 +1,2460 @@
+
+*{
+	font-size:12px;
+	color:#3c3c3c;
+	word-break: break-all;
+}
+
+body,h1,h2,h3,h4,p{
+	margin:0px;
+	padding:0px;
+	font-weight:normal;
+}
+
+body{
+	
+	margin:0px auto 0px auto;
+	
+}
+
+#wrapper{
+	
+	width:320px;
+	margin:0px auto 0px auto;
+	
+}
+
+ul,li{
+	
+	margin:0px;
+	padding:0px;
+	
+}
+
+.error li{
+	color:red;
+}
+
+strong{
+	font-weight:normal;
+}
+
+ul li{
+	list-style-type: none;
+}
+
+img {
+    border-style:none;
+    vertical-align: bottom;
+}
+
+a {
+	text-decoration: none;
+	color:#ac7b28;
+}
+
+.clear{
+	
+	clear:both;
+	
+}
+
+#site_logo{
+	padding:22px 0px 0px 10px;
+	text-align:left;
+	float:left;
+}
+
+#site_logo_right{
+	padding:10px 0px 0px 0px;
+	float:right;
+	position:relative;
+}
+
+#site_logo_right .left1{
+	
+	float:left;
+	padding:0px 10px 0px 0px;
+	
+}
+
+#site_logo_right .left2{
+	
+	float:left;
+	padding:0px 10px 0px 0px;
+	
+}
+
+#site_logo_right_member{
+	
+	border:solid 1px #000;
+	margin:10px 10px 0px 10px;
+	padding:10px 10px 0px 10px;
+	display:block;
+	color:#000;
+	height:30px;
+}
+
+#site_logo_right_menu{
+	
+	
+	
+}
+
+#site_logo_right_menu:hover{
+	cursor: pointer;
+}
+
+#site_logo_right_menu_list{
+	
+	/*background-color:#4f1868;*/
+	background-color:#aaa;
+	position:absolute;
+	right:10px;
+	width:280px;
+	z-index:1000;
+	display:none;
+	
+}
+
+#site_logo_right_menu_list .menu{
+	
+	margin:10px;
+	padding:10px;
+	background-color:#fff;
+	display:block;
+	
+	color:#e46c0a;
+	font-weight:bold;
+	
+}
+
+#site_logo_right_menu_close{
+	
+	margin:10px;
+	padding:10px;
+	background-color:#fff;
+	text-align:right;
+	
+}
+
+#site_logo_right_menu_close:hover{
+	
+	cursor: pointer;
+	
+}
+
+#footer{
+	text-align:center;
+	padding:5px 0px 10px 0px;
+}
+
+.price_new{
+	color:#aa2864;
+	font-weight:bold;
+}
+
+.title_bar{
+	background-image: url(../../img/sp/title_bar.png);
+	background-repeat: no-repeat;
+	/*height: 24px;*/
+	padding:2px 0px 2px 0px;
+}
+
+.title_bar .left{
+	float:left;
+	color:#e6e6e6;
+	font-size:18px;
+	font-weight:bold;
+	padding:0px 0px 0px 110px;
+}
+
+.title_bar .left2{
+	float:left;
+	color:#e6e6e6;
+	font-size:18px;
+	font-weight:bold;
+	padding:0px 0px 0px 80px;
+}
+
+.title_bar .left3{
+	float:left;
+	color:#e6e6e6;
+	font-size:18px;
+	font-weight:bold;
+	padding:0px 0px 0px 110px;
+}
+
+.title_bar .right{
+	float:right;
+	color:#e6e6e6;
+	padding:2px 10px 2px 0px;
+}
+
+/*--------トップ動画用-------------------*/
+
+#parent_imgContainer {
+	position: relative;
+	height:115px;
+	width:210px;
+	margin:0px 0px 0px 0px;
+}
+
+#imgContainer img {
+	display: none;
+	position: absolute;
+	left:0px;
+	top:0px;
+}
+
+#loading {
+	position: absolute;
+	left: 35%;
+	top: 5%;
+}
+
+/*---------------------------------------*/
+
+#top_info{
+	
+	padding:10px 10px 10px 10px;
+	
+	background:#d6ecf2;
+	
+	margin:0px 10px 0px 10px;
+	
+}
+
+#top_info .left{
+	float:left;
+	width:115px;
+	padding:5px 0px 0px 0px;
+}
+
+#top_info .left a{
+	font-size:16px;
+	font-weight:bold;
+	text-decoration: none;
+}
+
+#top_info .center{
+	float:left;
+	width:90px;
+	font-size:10px;
+	line-height:160%;
+}
+
+#top_info .right{
+	float:left;
+	width:75px;
+	padding:5px 0px 0px 0px;
+}
+
+/*---------------------------------------*/
+
+.reserv_block{
+	padding:10px 10px 0px 10px;
+}
+
+.reserv_block .left{
+	float:left;
+}
+
+.reserv_block .center{
+	float:left;
+	padding-left:6px;
+}
+
+.reserv_block .right{
+	float:left;
+	padding-left:6px;
+}
+
+/*---------------------------------------*/
+
+.reserv_block_recruit{
+	padding:10px 0px 0px 0px;
+}
+
+.reserv_block_recruit .left{
+	float:left;
+}
+
+.reserv_block_recruit .center{
+	float:left;
+	padding-left:6px;
+}
+
+.reserv_block_recruit .right{
+	float:left;
+	padding-left:6px;
+}
+
+/*---------------------------------------*/
+
+#info_concept{
+	margin:10px 0px 0px 0px;
+}
+
+#info_concept .content{
+	padding:10px 10px 0px 10px;
+}
+
+#info_concept .content .image{
+	float:left;
+	width:90px;
+}
+
+#info_concept .content .exp{
+	float:left;
+	width:190px;
+	line-height:160%;
+	padding:0px 0px 0px 20px;
+}
+
+#info_concept .content .image .im{
+	padding-top:5px;
+}
+
+#info_concept .content .exp .pa{
+	padding-top:10px;
+}
+
+/*---------------------------------------*/
+
+#info_menu_price{
+	margin:10px 0px 0px 0px;
+}
+
+#info_menu_price .content{
+	margin:10px 0px 0px 0px;
+}
+
+#info_menu_price .content .exp{
+	padding:20px 20px 0px 20px;
+	line-height:160%;
+}
+
+#info_menu_price .content .image{
+	padding:5px 10px 0px 10px;
+}
+
+#info_menu_price .content .image .p1{
+	float:left;
+}
+
+#info_menu_price .content .image .p2{
+	float:left;
+	padding-left:6px;
+}
+
+#info_menu_price .content .image .p3{
+	float:left;
+	padding-left:6px;
+}
+
+/*---------------------------------------*/
+
+#info_guidance{
+	margin:10px 0px 0px 0px;
+}
+
+#info_guidance .content{
+	margin:10px 10px 0px 10px;
+}
+
+#info_guidance .content .p1{
+	
+}
+
+#info_guidance .content .p1 .left{
+	float:left;
+	width:90px;
+}
+
+#info_guidance .content .p1 .right{
+	float:left;
+	width:190px;
+	padding:5px 0px 0px 20px;
+}
+
+
+#info_guidance .content .p2{
+	padding:10px 0px 10px 130px;
+}
+
+#info_guidance .content .p3{
+	border-top:dotted 1px #a6a6a6;
+	margin:10px 0px 0px 0px;
+	padding:5px 0px 0px 0px;
+	line-height:160%;
+}
+
+#info_guidance .content .p4{
+	padding:10px 0px 10px 0px;
+}
+
+#info_guidance .content .p4 .left{
+	float:left;
+	padding:0px 0px 0px 100px;
+}
+
+#info_guidance .content .p4 .right{
+	float:left;
+	color:#a6a6a6;
+	font-weight:bold;
+	padding:2px 0px 0px 10px;
+	font-size:16px;
+}
+
+#info_guidance .content .p4 .right a{
+	color:#a6a6a6;
+	font-weight:bold;
+	font-size:16px;
+	text-decoration: none;
+}
+
+/*---------------------------------------*/
+
+#bottom_menu{
+	padding:10px 0px 0px 0px;
+}
+
+#bottom_menu .pa{
+	
+	background-color:#b7dee8;
+	margin:10px 0px 0px 0px;
+	height:36px;
+	border-radius:5px;
+	display:block;
+	text-decoration: none;
+	
+	border:solid 3px #4bacc6;
+	
+}
+
+#bottom_menu .pa .left{
+	
+	float:left;
+	padding:7px 0px 0px 10px;
+	
+}
+
+#bottom_menu .pa .right{
+	
+	float:left;
+	padding:8px 0px 0px 10px;
+	font-weight:bold;
+	color:#e46c0a;
+	
+}
+
+/*---------------------------------------*/
+
+.inc_block{
+	margin:10px 0px 0px 0px;
+}
+
+.inc_block .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+.inc_block .title_bar2{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:12px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+	background-image: url(../../img/sp/title_bar.png);
+	background-repeat: no-repeat;
+	/*height: 41px;*/
+}
+
+.inc_block .content{
+	padding:10px 10px 0px 10px;
+}
+
+.inc_block .content .image{
+	float:left;
+	width:90px;
+}
+
+.inc_block .content .exp{
+	float:left;
+	width:190px;
+	line-height:160%;
+	padding:0px 0px 0px 20px;
+	
+}
+
+.inc_block .content .image .im{
+	padding-top:5px;
+}
+
+.inc_block .content .exp p{
+	
+}
+
+.inc_block .content .exp .pb{
+	font-weight:bold;
+	font-size:14px;
+}
+
+.inc_block .content .exp .pa{
+	padding-top:10px;
+}
+
+.inc_block .content .exp .pa2{
+	color:#a6a6a6;
+}
+
+/*---------------------------------------*/
+
+#info_menu_price2{
+	margin:10px 0px 0px 0px;
+}
+
+#info_menu_price2 .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+#info_menu_price2 .content{
+	margin:10px 0px 0px 0px;
+}
+
+#info_menu_price2 .content .exp{
+	color:#aaa;
+	font-weight:bold;
+	padding:10px 0px 0px 10px;
+}
+
+#info_menu_price2 .content .image{
+	padding:5px 10px 0px 10px;
+}
+
+#info_menu_price2 .content .image .p1{
+	float:left;
+}
+
+#info_menu_price2 .content .image .p2{
+	float:left;
+	padding-left:6px;
+}
+
+#info_menu_price2 .content .image .p3{
+	float:left;
+	padding-left:6px;
+}
+
+/*---------------------------------------*/
+
+.to_guidance{
+	padding:10px 0px 10px 0px;
+}
+
+.to_guidance .left{
+	float:left;
+	padding:0px 0px 0px 100px;
+}
+
+.to_guidance .right{
+	float:left;
+	color:#a6a6a6;
+	font-weight:bold;
+	padding:2px 0px 0px 10px;
+	font-size:16px;
+}
+
+.to_guidance .right a{
+	color:#a6a6a6;
+	font-weight:bold;
+	font-size:16px;
+	text-decoration: none;
+}
+
+/*---------------------------------------*/
+
+#area1_block{
+	margin:10px 0px 0px 0px;
+}
+
+#area1_block .exp{
+	margin:5px 10px 0px 10px;
+	line-height:160%;
+	
+}
+
+#area1_block .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+#area1_block .content{
+	padding:0px 10px 0px 10px;
+}
+
+#area1_block .content .left{
+	width:140px;
+	float:left;
+}
+
+#area1_block .content .right{
+	width:140px;
+	float:left;
+	padding-left:20px;
+}
+
+#area1_block .hotel{
+	padding:0px 10px 0px 10px;
+}
+
+#area1_block .hotel .left{
+	float:left;
+	width:70px;
+}
+
+#area1_block .hotel .right{
+	float:left;
+	width:220px;
+	padding-left:10px;
+	
+	
+}
+
+#area1_block .hotel .right .to_hotel{
+	padding:20px 0px 0px 0px;
+	
+}
+
+#area1_block .hotel .right .to_hotel .left{
+	float:left;
+	padding:0px 0px 0px 0px;
+	width:20px;
+	
+}
+
+#area1_block .hotel .right .to_hotel .right{
+	float:left;
+	padding:0px 0px 0px 5px;
+	width:195px;
+	
+	
+}
+
+#area1_block .hotel .right .to_hotel .right a{
+	color:#a6a6a6;
+	font-weight:bold;
+	font-size:12px;
+	text-decoration: none;
+}
+
+/*---------------------------------------*/
+
+#area2_block{
+	margin:10px 0px 0px 0px;
+}
+
+#area2_block .exp{
+	margin:5px 10px 0px 10px;
+	line-height:160%;
+	
+}
+
+#area2_block .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+#area2_block .content{
+	padding:0px 10px 0px 10px;
+}
+
+#area2_block .content .left{
+	width:140px;
+	float:left;
+}
+
+#area2_block .content .right{
+	width:140px;
+	float:left;
+	padding-left:20px;
+}
+
+#area2_block .hotel{
+	padding:0px 10px 0px 10px;
+}
+
+#area2_block .hotel .left{
+	float:left;
+	padding:0px 0px 0px 0px;
+	width:20px;
+	
+}
+
+#area2_block .hotel .right{
+	float:left;
+	padding:0px 0px 0px 5px;
+	width:195px;
+	
+	
+}
+
+#area2_block .hotel .right a{
+	color:#a6a6a6;
+	font-weight:bold;
+	font-size:12px;
+	text-decoration: none;
+}
+
+/*---------------------------------------*/
+
+#therapist_info{
+	
+}
+
+#therapist_info .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+	margin:20px 0px 0px 0px;
+}
+
+#therapist_info .content{
+	padding:10px 10px 0px 10px;
+}
+
+#therapist_info .content .image{
+	float:left;
+	width:130px;
+}
+
+#therapist_info .content .exp{
+	float:left;
+	width:150px;
+	line-height:160%;
+	padding:0px 0px 0px 20px;
+	
+}
+
+#therapist_info .content .exp p{
+	
+}
+
+#therapist_info .content .exp .pa{
+	padding-top:10px;
+}
+
+#therapist_info .list{
+	padding:5px 0px 0px 0px;
+}
+
+#therapist_info .list .therapist{
+	padding:10px 0px 0px 0px;
+}
+
+#therapist_info .list .therapist .left{
+	float:left;
+	width:90px;
+}
+
+#therapist_info .list .therapist .right{
+	float:left;
+	padding-left:10px;
+	width:200px;
+}
+
+#therapist_info .list .therapist .right .name{
+	color:#31859c;
+}
+
+#therapist_info .list .therapist .right .exp{
+	padding:10px 5px 0px 0px;
+	line-height:140%;
+}
+
+/*---------------------------------------*/
+
+.guidance{
+	margin:10px 0px 0px 0px;
+}
+
+.guidance .dod{
+	border-bottom:dotted 1px #aaa;
+	height:10px;
+	margin:0px 20px 0px 20px;
+}
+
+.guidance .yazirushi{
+	padding:5px 0px 10px 130px;
+}
+
+.guidance .bun{
+	padding:10px 20px 0px 20px;
+	line-height:160%;
+}
+
+.guidance .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+.guidance .content{
+	padding:10px 10px 0px 10px;
+}
+
+.guidance .content .image{
+	float:left;
+	width:90px;
+}
+
+.guidance .content .image2{
+	float:left;
+	width:70px;
+}
+
+.guidance .content .exp{
+	float:left;
+	width:190px;
+	line-height:160%;
+	padding:0px 0px 0px 20px;
+	
+}
+
+.guidance .content .exp2{
+	float:left;
+	width:210px;
+	line-height:160%;
+	padding:0px 0px 0px 20px;
+	
+}
+
+.guidance .content .image .im{
+	padding-top:5px;
+}
+
+.guidance .content .exp .p1{
+	
+}
+
+.guidance .content .exp .p2{
+	padding-top:10px;
+}
+
+.guidance .content .exp .p2a{
+	padding-top:10px;
+	font-size:10px;
+}
+
+.guidance .content .exp .p3{
+	padding-top:10px;
+}
+
+.guidance .content .exp .p4{
+	padding:10px 0px 0px 40px;
+}
+
+/*---------------------------------------*/
+
+#voice1{
+	margin:10px 0px 0px 0px;
+}
+
+#voice1 .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+#voice1 .content{
+	padding:0px 10px 0px 10px;
+	line-height:160%;
+}
+
+#voice1 .content .p1{
+	padding:10px 0px 0px 0px;
+}
+
+#voice1 .content .p2{
+	padding:10px 0px 0px 0px;
+}
+
+#voice1 .content .p3{
+	text-align:center;
+	padding:20px 0px 20px 0px;
+}
+
+#voice1 .content .p3 a{
+	
+}
+
+/*---------------------------------------*/
+
+#voice2{
+	margin:10px 0px 0px 0px;
+}
+
+#voice2 .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+#voice2 .content{
+	padding:0px 10px 0px 10px;
+	line-height:160%;
+}
+
+#voice2 .content .block{
+	padding:10px 0px 0px 5px;
+}
+
+#voice2 .content .block .question{
+	color:#31859c;
+}
+
+#voice2 .content .block .answer{
+	padding-left:20px;
+	line-height:140%;
+}
+
+/*
+各種テーブル
+-------------------------------------------------------------------*/
+
+table {
+	border-collapse: collapse;
+}
+table td {
+	border-collapse: collapse;
+}
+#mail_content{
+	padding:0px 0px 0px 2px;
+}
+
+#mail_content ul li{
+	color:red;
+}
+
+#mail_content table {
+	width: 300px;
+	margin-right: auto;
+	margin-left: auto;
+}
+#mail_content table td {
+	padding: 5px;
+	border: 1px solid #EAE8DF;
+	font-size: 13px;
+}
+
+#mail_content table td.td_head {
+	
+	background-color: #FAF8F3;
+	text-align: right;
+	padding: 0px 5px 0px 0px;
+	color: #333333;
+	border-top-width: 1px;
+	border-right-width: 4px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-top-color: #D5D5D5;
+	border-right-color: #B0B0B0;
+	border-bottom-color: #D5D5D5;
+	border-left-color: #D5D5D5;
+	font-size: 10px;
+	background-image: url(../../img/td_head.gif);
+	background-repeat: repeat-x;
+	width:80px;
+	
+}
+
+#mail_content table td.td_odd {
+	background-color: #FFFFFF;
+	text-align: left;
+	padding: 8px;
+	border: 1px solid #D5D5D5;
+	font-size: 12px;
+	background-image: url(../../img/td_odd.gif);
+	background-repeat: repeat-x;
+	line-height: 20px;
+}
+
+.small_f{
+	font-size:10px;
+}
+
+.chui{
+	color:red;
+}
+
+/*---------------------------------------*/
+
+#mail{
+	margin:10px 0px 0px 0px;
+}
+
+#mail .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+}
+
+/*---------------------------------------*/
+
+#mail_2 .title_bar{
+	text-align:center;
+	color:#e6e6e6;
+	font-size:16px;
+	font-weight:bold;
+	padding:2px 0px 2px 0px;
+	margin:20px 0px 0px 0px;
+}
+
+/*---------------------------------------*/
+
+.menu4_h2{
+	font-size: 16px;
+	font-weight:bold;
+	color: #FFFFFF;
+	background-image: url(../../img/title_short.jpg);
+	height:30px;
+	background-repeat: no-repeat;
+	padding:1px 0px 0px 0px;
+	text-align:center;
+}
+
+/*---------------------------------------*/
+
+.title_therapist_info_content{
+	
+	border:solid 1px #8064a2;
+	
+	width:310px;
+	
+	margin:10px 0px 30px 4px;
+	
+	padding:5px 0px 10px 0px;
+	
+	position:relative;
+	
+}
+
+.title_therapist_info_content > .top_area{
+	
+	/*border-bottom:solid 1px #4a7ebb;*/
+	
+}
+
+.title_therapist_info_content .name_img{
+	float:left;
+	width:105px;
+	padding:5px 0px 10px 10px;
+	
+}
+
+.title_therapist_info_content .name_img .therapist_name{
+	font-size:12px;
+	height:20px;
+	padding:5px 0px 0px 0px;
+	color:#31859c;
+}
+
+.title_therapist_info_content .name_img .img{
+	padding:0px 0px 0px 10px;
+}
+
+.title_therapist_info_content .name_img > .info{
+	padding:5px 0px 0px 0px;
+	font-size:12px;
+}
+
+/*------------*/
+
+.title_therapist_info_content > .top_area > .tokui{
+	float:left;
+	width:185px;
+	padding:10px 0px 10px 10px;
+	
+}
+
+.title_therapist_info_content > .top_area > .tokui > .one > .content_sp{
+	
+	padding:0px 0px 0px 5px;
+	
+}
+
+.title_therapist_info_content > .top_area > .tokui > .one > .content_sp > .left{
+	width:88px;
+	float:left;
+	padding:5px 0px 0px 0px;
+	
+}
+
+.title_therapist_info_content > .top_area > .tokui > .one > .title_1{
+	border-bottom:solid 1px #000;
+	margin:0px 10px 5px 0px;
+	font-size:12px;
+}
+
+.title_therapist_info_content > .top_area > .tokui > .one > .title_2{
+	border-bottom:solid 1px #000;
+	margin:0px 10px 5px 0px;
+	font-size:12px;
+}
+
+/*------------*/
+
+.title_therapist_info_content .exp{
+	padding:10px 10px 10px 10px;
+	line-height:150%;
+}
+
+/*---------------------------------------*/
+
+#vip_tel_button{
+	
+	background-color:#4f81bd;
+	width:100px;
+	height:20px;
+	color:#fff;
+	border:solid 2px #385d8a;
+	text-align:center;
+	padding-top:5px;
+	margin:10px auto 0px auto;
+	cursor: pointer;
+	
+}
+
+/*----以下、VIP用セラピストカレンダ用----*/
+
+.ichiretsu_title{
+	
+	float:left;
+	width:60px;
+	background-color:#4f81bd;
+	color:#fff;
+	position:absolute;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	left:0px;
+	
+}
+
+.ichiretsu_title_new{
+	
+	width:64px;
+	background-color:#4f81bd;
+	color:#fff;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.table_title{
+	
+	float:left;
+	width:50px;
+	background-color:#4f81bd;
+	color:#fff;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.table_title_first{
+	
+	float:left;
+	width:50px;
+	background-color:#4f81bd;
+	color:#fff;
+	padding-left:70px;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+
+}
+
+.ichiretsu1{
+	
+	float:left;
+	width:60px;
+	background-color:#e9edf4;
+	position:absolute;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	left:0px;
+	
+}
+
+.ichiretsu2{
+	
+	float:left;
+	width:60px;
+	background-color:#d0d8e8;
+	position:absolute;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	left:0px;
+	
+}
+
+.ichiretsu1_new{
+	
+	width:64px;
+	background-color:#e9edf4;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.ichiretsu2_new{
+	
+	width:64px;
+	background-color:#d0d8e8;
+	padding-top:10px;
+	padding-bottom:10px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+
+
+.batsu_first1{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	padding-left:70px;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.batsu_first2{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	padding-left:70px;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.batsu1{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.batsu2{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.maru_first1{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	padding-left:70px;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.maru_first2{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	padding-left:70px;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.maru1{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.maru2{
+	
+	float:left;
+	width:50px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.kuuran_first1{
+	
+	float:left;
+	width:50px;
+	background-color:#e9edf4;
+	padding-left:70px;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.kuuran_first2{
+	
+	float:left;
+	width:50px;
+	background-color:#d0d8e8;
+	padding-left:70px;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.kuuran1{
+	
+	float:left;
+	width:50px;
+	background-color:#e9edf4;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.kuuran2{
+	
+	float:left;
+	width:50px;
+	background-color:#d0d8e8;
+	padding-top:10px;
+	padding-bottom:10px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:30px;
+	
+}
+
+.gyou{
+	width:1250px;
+}
+
+.gyou_new{
+	width:1180px;
+}
+
+#calendar_display{
+	
+	padding:20px 0px 30px 0px;
+	width:320px;
+	overflow-x:scroll;
+	
+}
+
+#calendar_display_disp{
+	
+	position:relative;
+	
+}
+
+#calendar_display_new{
+	
+	padding:20px 0px 0px 0px;
+	
+}
+
+#calendar_display_left{
+	
+	float:left;
+	width:70px;
+	
+}
+
+#calendar_display_right{
+	
+	float:left;
+	width:250px;
+	overflow-x:scroll;
+	
+	padding:0px 0px 30px 0px;
+	
+}
+
+/*----以上、VIP用セラピストカレンダ用----*/
+
+/*-------------------------------*/
+
+.koutsuu1{
+	height:100px;
+}
+
+.koutsuu2{
+	height:55px;
+}
+
+.koutsuu3{
+	height:75px;
+}
+
+.koutsuu_title{
+	width:120px;
+}
+
+.koutsuu_content{
+	width:180px;
+}
+
+.koutsuu_title_1{
+	float:left;
+	background-color:#ab3c36;
+	border:solid 3px #ccc;
+	color:#fff;
+}
+
+.koutsuu_title_2{
+	float:left;
+	background-color:#a0864b;
+	border-left:solid 3px #ccc;
+	border-right:solid 3px #ccc;
+	border-bottom:solid 3px #ccc;
+	color:#fff;
+}
+
+.koutsuu_title_3{
+	float:left;
+	background-color:#eed59f;
+	border-left:solid 3px #ccc;
+	border-right:solid 3px #ccc;
+	border-bottom:solid 3px #ccc;
+}
+
+.koutsuu_content_1{
+	float:left;
+	border-top:solid 3px #ccc;
+	border-right:solid 3px #ccc;
+	border-bottom:solid 3px #ccc;
+}
+
+.koutsuu_content_2{
+	float:left;
+	border-right:solid 3px #ccc;
+	border-bottom:solid 3px #ccc;
+}
+
+.koutsuu_content_3{
+	float:left;
+	border-right:solid 3px #ccc;
+	border-bottom:solid 3px #ccc;
+}
+
+.koutsuu_hi{
+	padding:5px 0px 0px 5px;
+	font-size:12px;
+	
+}
+
+.koutsuu_time{
+	padding:5px 0px 0px 5px;
+	font-size:12px;
+	
+}
+
+.nizyuusanku{
+	padding:0px 0px 0px 15px;
+	line-height:200%;
+	font-size:12px;
+}
+
+.nizyuusanku a{
+	color:#5b5b5b;
+}
+
+.nizyuusanku a:hover{
+	color:#5b5b5b;
+	text-decoration: underline;
+}
+
+/*-------------------------------*/
+
+.idou_place_name{
+	font-weight:bold;
+	border-bottom:solid 3px #b69764;
+	padding:5px 0px 5px 10px;
+	margin-bottom:10px;
+	font-size:14px;
+}
+
+.idou_cost_title{
+	
+	width:110px;
+	background-color:#E8FFD0;
+	padding:5px;
+}
+
+.idou_cost_content{
+	
+	width:110px;
+	padding:5px;
+}
+
+.idou_time_title{
+	
+	width:110px;
+	background-color:#E8FFD0;
+	padding:5px;
+}
+
+.idou_time_content{
+	
+	width:110px;
+	padding:5px;
+}
+
+#idou_exp{
+	padding:10px;
+}
+
+#idou_content{
+	margin:0px auto 0px auto;
+	width:320px;
+}
+
+.idou_strong{
+	font-weight:bold;
+	font-size:14px;
+}
+
+/*---------------------------------------*/
+
+.hotel_name_disp{
+	background-color:#f0f6da;
+}
+
+.hotel_info_title{
+	
+	background-color:#f7f2e4;
+	
+}
+
+.hotel_tbl_pad{
+	
+	padding:3px;
+	
+}
+
+/*---------------------------------------*/
+
+.td_head_hotel{
+	
+	background-color:#E8FFD0;
+	padding:5px;
+	width:70px;
+}
+
+.td_odd_hotel{
+	
+	padding:5px;
+	
+}
+
+/*---------------------------------------*/
+
+#title_gokansou_content{
+	
+	margin:0px 10px 0px 10px;
+	width:300px;
+	
+}
+
+#title_gokansou_content_content{
+	padding:10px 10px 0px 10px;
+}
+
+.voice_man{
+	color:#0000ff;
+}
+
+.voice_woman{
+	color:#ff0000;
+}
+
+#title_gokansou_content > .list{
+	
+	
+	
+}
+
+#title_gokansou_content > .list > .voice > .name{
+	
+	padding:20px 0px 5px 5px;
+	
+}
+
+#title_gokansou_content > .list > .voice > .top{
+	
+	background-image: url(../../img/sp/201503/fuki_top.jpg);
+	background-repeat: no-repeat;
+	height:16px;
+	
+}
+
+#title_gokansou_content > .list > .voice > .naka{
+	
+	background-image: url(../../img/sp/201503/fuki_naka.jpg);
+	background-repeat: repeat-y;
+	padding:8px 15px 8px 15px;
+	line-height:140%;
+	
+}
+
+#title_gokansou_content > .list > .voice > .bottom{
+	
+	background-image: url(../../img/sp/201503/fuki_bottom.jpg);
+	background-repeat: no-repeat;
+	height:6px;
+	
+}
+
+/*--------------------------------------*/
+
+.selected_paging_num_box a{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#ddd;
+}
+
+.selected_paging_num_box a:hover{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#999;
+}
+
+.paging_num_box a{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+}
+
+.paging_num_box a:hover{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#999;
+}
+
+.paging_num_forward a{
+	display:block;
+	float:left;
+	margin-left:0px;
+	font-size:12px;
+	padding:5px 0px 5px 0px;
+	text-decoration:underline;
+}
+
+.paging_num_next a{
+	display:block;
+	float:left;
+	margin-left:10px;
+	font-size:12px;
+	padding:5px 0px 5px 0px;
+	text-decoration:underline;
+}
+
+.paging_num_dod {
+	display:block;
+	float:left;
+	font-size:10px;
+	font-weight:bold;
+	margin-left:10px;
+}
+
+/*------------------------------*/
+
+#voice_contribution{
+	
+	margin:20px 0px 0px 10px;
+	
+}
+
+#voice_contribution > .message{
+	
+	color:#7E5A0B;
+	font-size:14px;
+	margin:0px 0px 0px 0px;
+	
+}
+
+#voice_contribution > .frm_content{
+	
+	margin:10px 0px 0px 0px;
+	
+}
+
+#voice_contribution .gyou_voice{
+	
+	margin:10px 0px 0px 0px;
+	
+}
+
+#voice_contribution .gyou_voice .left1{
+	
+	float:left;
+	width:80px;
+	font-size:14px;
+	
+}
+
+#voice_contribution .hissu{
+	
+	color:#7E5A0B;
+	
+}
+
+#voice_contribution .gyou_voice .left2{
+	
+	float:left;
+	
+}
+
+#voice_contribution .gyou_voice .left2 .text{
+	
+	padding:2px 0px 2px 0px;
+	width:270px;
+	
+}
+
+#voice_contribution .gyou_voice .left2 .textarea{
+	
+	width:270px;
+	height:100px;
+	
+}
+
+#voice_contribution .gyou_voice .left2 .star{
+	
+	color:orange;
+	
+}
+
+#voice_contribution_btn{
+	
+	margin:20px 0px 0px 0px;
+	text-align:center;
+	
+}
+
+#voice_contribution_btn > .btn{
+	
+	padding:5px 20px 5px 20px;
+	
+}
+
+.voice_list_star{
+	
+	color:orange;
+	
+}
+
+.voice_list_content{
+	
+	padding:5px 0px 0px 0px;
+	
+}
+
+/*------------------------------*/
+
+.error_voice{
+	
+	text-align:center;
+	padding-top:10px;
+	
+}
+
+.error_voice > li{
+	
+	color:red;
+	
+}
+
+/*------------------------------*/
+
+#error_page_message{
+	margin:30px 0px 0px 0px;
+}
+
+#error_page_message > .dan1{
+	text-align:center;
+	font-size:14px;
+}
+
+#error_page_message > .dan2{
+	font-size:12px;
+	padding:20px 10px 20px 10px;
+}
+
+/*--------------------------------------*/
+
+#top_image_therapist_btn{
+	
+	display:block;
+	width:100px;
+	border:solid 1px #000;
+	margin:10px 10px 0px 8px;
+	text-align:center;
+	height:22px;
+	padding:5px 0px 0px 0px;
+	
+}
+
+#top_image_menu_btn{
+	
+	display:block;
+	width:100px;
+	border:solid 1px #000;
+	margin:10px 10px 0px 8px;
+	text-align:center;
+	height:22px;
+	padding:5px 0px 0px 0px;
+	
+}
+
+/*------------------------------*/
+
+.toppage_menu_title{
+	
+	border-bottom:solid 1px #000;
+	font-size:14px;
+	padding:0px 0px 3px 0px;
+}
+
+.toppage_menu_block{
+	
+	padding:10px 0px 10px 0px;
+	margin:0px 10px 0px 10px;
+	
+}
+
+.toppage_menu_image{
+	
+	padding-left:10px;
+	
+}
+
+.toppage_menu_exp{
+	
+	font-size:12px;
+	color:#666;
+	padding:10px 30px 0px 30px;
+	
+}
+
+/*--------------------------------------*/
+
+.therapist_page_day_list{
+	
+	text-decoration: underline;
+	cursor:pointer;
+	
+}
+
+.therapist_page_indicator{
+	
+	text-align:center;
+	padding:30px 0px 30px 0px;
+	
+}
+
+#therapist_page_day_disp{
+	
+	padding:10px 10px 10px 10px;
+	
+}
+
+/*--------------------------------------*/
+
+.attendance_btn_block{
+	
+	padding:5px 0px 0px 10px;
+	
+}
+
+.therapist_attendance_yotei_disp{
+	
+	float:left;
+	position:absolute;
+	z-index:1000;
+	top:20px;
+	left:105px;
+	background-color:#fff;
+	
+}
+
+.therapist_attendance_yotei_disp{
+	
+	display:none;
+	
+}
+
+/*--------------------------------------*/
+
+#error_booking_form > li{
+	
+	color:red;
+	
+}
+
+#success_booking_form > li{
+	
+	color:blue;
+	
+}
+
+/*--------------------------------------*/
+
+#recruit_block_1{
+	padding:10px 10px 0px 10px;
+}
+
+#recruit_block_1 .content_1{
+	color:#cc6600;
+	padding:20px 0px 10px 20px;
+}
+
+#recruit_block_1 .content_2{
+	text-align:center;
+	padding:20px 0px 0px 0px;
+}
+
+.recruit_border{
+	
+	margin:15px 0px 15px 0px;
+	
+}
+
+#recruit_block_2{
+	padding:0px 10px 20px 10px;
+}
+
+#recruit_block_2 h3{
+	font-size:14px;
+	font-weight:normal;
+	color:#7E5A0B;
+}
+
+#recruit_block_2 .img{
+	padding:10px 0px 0px 0px;
+}
+
+#recruit_block_3{
+	padding:0px 10px 20px 10px;
+}
+
+#recruit_block_3 h3{
+	font-size:14px;
+	font-weight:normal;
+	color:#7E5A0B;
+}
+
+#recruit_block_3 .img{
+	padding:10px 0px 0px 0px;
+}
+
+#recruit_block_3 .content{
+	text-align:center;
+	padding:20px 0px 0px 0px;
+}
+
+#recruit_block_4{
+	padding:0px 10px 30px 10px;
+}
+
+#recruit_block_4 .img{
+	padding:10px 0px 0px 0px;
+}
+
+#recruit_block_4 .content_1{
+	line-height:140%;
+	padding:10px 0px 0px 0px;
+}
+
+#recruit_block_4 .content_2{
+	text-align:center;
+	padding:20px 0px 0px 0px;
+}
+
+#recruit_block_5{
+	padding:0px 10px 20px 10px;
+}
+
+#recruit_block_5 .img{
+	padding:10px 0px 0px 0px;
+}
+
+#recruit_block_5 .content_1{
+	line-height:140%;
+	padding:10px 0px 0px 0px;
+}
+
+#recruit_block_5 .content_2{
+	text-align:center;
+	padding:20px 0px 0px 0px;
+}
+
+/*--------------------------------------*/
+
+#top_info_top{
+	
+	text-align:center;
+	padding:10px 0px 0px 0px;
+	font-size:14px;
+	color:#e46c0a;
+	
+}
+
+/*--------------------------------------*/
+
+#top_wait_time{
+	
+	color:blue;
+	padding:0px 0px 0px 0px;
+	
+}
+
+/*--------------------------------------*/
+
+#recruit_driver_oubo_btn{
+	cursor: pointer;
+}
+
+/*--------------------------------------*/
+
+#holiday_content_header{
+	
+	color:blue;
+	font-size:12px;
+	padding:0px 10px 10px 10px;
+	
+}
+
+#holiday_content_info{
+	
+	color:blue;
+	font-size:12px;
+	padding:0px 0px 0px 10px;
+	
+}
+
+/*--------------------------------------*/
+
+#info_guidance_2{
+	margin:10px 0px 0px 0px;
+}
+
+#info_guidance_2 .content{
+	
+}
+
+#info_guidance_2 .content .box{
+	
+}
+
+#info_guidance_2 .content .box .top{
+	margin:15px 0px 0px 10px;
+}
+
+#info_guidance_2 .content .box .top .left{
+	float:left;
+	
+	width:10px;
+}
+
+#info_guidance_2 .content .box .top .right{
+	float:left;
+	margin:0px 0px 0px 10px;
+	border-bottom:solid 1px #000;
+	
+	width:270px;
+	
+}
+
+#info_guidance_2 .content .box .bottom{
+	margin:10px 0px 0px 0px;
+}
+
+#info_guidance_2 .content .box .bottom .left{
+	float:left;
+	width:120px;
+	margin:0px 0px 0px 10px;
+}
+
+#info_guidance_2 .content .box .bottom .right{
+	float:left;
+	width:146px;
+	border-radius:0px 10px 0px 0px;
+	border:solid 2px #c0504d;
+	padding:10px 10px 10px 10px;
+	line-height:140%;
+}
+
+/*---------------------------------------*/
+
+.therapist_page_uketsuke_state{
+	
+	margin:10px 0px 20px 5px;
+	
+}
+
+.therapist_page_uketsuke_state > .info{
+	
+	color:#e46c0a;
+	
+}
+
+.therapist_page_uketsuke_state > .top{
+	
+	margin:5px 0px 0px 0px;
+	
+}
+
+.therapist_page_uketsuke_state > .bottom{
+	
+	
+	
+}
+
+.therapist_page_uketsuke_state > .top >.pa{
+	
+	float:left;
+	width:24px;
+	background:#eee;
+	border-top:solid 1px #cecece;
+	border-bottom:solid 1px #cecece;
+	border-left:solid 1px #cecece;
+	font-size:10px;
+	text-align:center;
+	
+	color:#565656;
+	
+}
+
+.therapist_page_uketsuke_state > .top >.pa2{
+	
+	float:left;
+	width:23px;
+	background:#eee;
+	border-top:solid 1px #cecece;
+	border-bottom:solid 1px #cecece;
+	border-left:solid 1px #cecece;
+	border-right:solid 1px #cecece;
+	font-size:10px;
+	text-align:center;
+	
+	color:#565656;
+	
+}
+
+.therapist_page_uketsuke_state > .bottom > .pa{
+	
+	float:left;
+	width:24px;
+	text-align:center;
+	border-bottom:solid 1px #cecece;
+	border-left:solid 1px #cecece;
+	
+	color:#565656;
+	
+}
+
+.therapist_page_uketsuke_state > .bottom > .pa2{
+	
+	float:left;
+	width:23px;
+	text-align:center;
+	border-bottom:solid 1px #cecece;
+	border-left:solid 1px #cecece;
+	border-right:solid 1px #cecece;
+	
+	color:#565656;
+	
+}
+
+/*---------------------------------------*/
+
+#vip_login{
+	
+	margin:10px auto 0px auto;
+	font-size:14px;
+	width:300px;
+	
+}
+
+#vip_login > .message{
+	
+	line-height:160%;
+	
+}
+
+#vip_login > .message > .info{
+	
+	color:#eb6101;
+	font-size:12px;
+	padding:10px 10px 0px 10px;
+	
+}
+
+#vip_login > .error{
+	
+	color:red;
+	margin:10px 0px 0px 0px;
+	text-align:center;
+	
+}
+
+#vip_login > .content_1{
+	
+	padding:20px 0px 0px 0px;
+	
+}
+
+#vip_login > .content_1 > .content_1{
+	
+	
+	
+}
+
+#vip_login > .content_1 > .content_1 > .left_1{
+	
+	float:left;
+	width:70px;
+	padding:8px 10px 0px 0px;
+	text-align:right;
+	
+}
+
+#vip_login > .content_1 > .content_1 > .left_2{
+	
+	float:left;
+	
+}
+
+#vip_login > .content_1 > .content_2{
+	
+	margin:20px 0px 0px 0px;
+	
+}
+
+#vip_login > .content_1 > .content_2 > .left_1{
+	
+	float:left;
+	width:70px;
+	padding:8px 10px 0px 0px;
+	text-align:right;
+	
+}
+
+#vip_login > .content_1 > .content_2 > .left_2{
+	
+	float:left;
+	
+}
+
+#vip_login > .content_1 > .content_3{
+	
+	margin:20px 0px 0px 120px;
+	
+}
+
+#vip_login > .content_2{
+	
+	padding:30px 0px 0px 0px;
+	
+}
+
+#vip_login > .content_2 > .content_1{
+	
+	font-size:12px;
+	
+}
+
+#vip_login > .content_2 > .content_2{
+	
+	color:#558ed5;
+	line-height:140%;
+	padding:0px 0px 0px 5px;
+	
+}
+
+#vip_login > .content_2 > .content_2 > ul > li{
+	
+	color:#558ed5;
+	font-size:12px;
+	margin:10px 0px 0px 0px;
+}
+
+#vip_login > .content_3{
+	
+	padding:20px 0px 20px 0px;
+	text-align:center;
+	
+}
+
+#vip_login > .content_3 > a{
+	
+	font-size:12px;
+	
+}
+
+/*--------------------------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

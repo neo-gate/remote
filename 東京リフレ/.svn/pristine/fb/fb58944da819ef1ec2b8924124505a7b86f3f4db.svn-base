@@ -1,0 +1,180 @@
+<?php
+
+include("../../../include/common.php");
+
+require_once("common.php");
+
+include(ROOT_PATH."include/vip/auth_ssl_common.php");
+
+include(COMMON_INC."auth_ssl_common.php");
+
+
+
+$page_type = "password";
+
+
+
+if( isset($_POST["send_regist"]) == true ){
+	
+	$pw = $_POST["pw"];
+	$pw_confirm = $_POST["pw_confirm"];
+	
+	if( $pw == "" ){
+		
+		$error = '<span style="color:red;">パスワードが未入力です</span>';
+		
+	}else{
+		
+		if( $pw != $pw_confirm ){
+		
+			$error = '<span style="color:red;">確認と一致していません</span>';
+		
+		}else{
+			
+			$result = check_hankaku_value_common($pw);
+				
+			if( $result == false ){
+				
+				$error = '<span style="color:red;">パスワードは半角英数字です</span>';
+				
+			}else{
+				
+				$num = mb_strlen( $pw );
+				
+				if( ($num > 20) || ($num < 4) ){
+					
+					$error = '<span style="color:red;">パスワードは4～20文字です</span>';
+					
+				}
+				
+			}
+		
+		}
+		
+		if( $error == "" ){
+			
+			//パスワード登録
+			update_customer_password_common($pw,$customer_id);
+			
+			//$error = '<span style="color:blue;">パスワードを設定しました</span>';
+			
+			header("Location: password_set_complete.php");
+			exit();
+			
+		}
+		
+	}
+	
+}else if( isset($_POST["send_update"]) == true ){
+	
+	$pw_now = $_POST["pw_now"];
+	$pw_new = $_POST["pw_new"];
+	
+	if( $pw_now == "" ){
+	
+		$error = '<span style="color:red;">現在のパスワードが未入力です</span>';
+	
+	}else{
+	
+		if( $pw_new == "" ){
+	
+			$error = '<span style="color:red;">新しいパスワードが未入力です</span>';
+	
+		}else{
+				
+			$result = check_hankaku_value_common($pw_new);
+	
+			if( $result == false ){
+					
+				$error = '<span style="color:red;">パスワードは半角英数字です</span>';
+					
+			}else{
+					
+				$num = mb_strlen( $pw_new );
+					
+				if( ($num > 20) || ($num < 4) ){
+
+					$error = '<span style="color:red;">パスワードは4～20文字です</span>';
+
+				}else{
+					
+					$result = check_match_customer_password_common($pw_now,$customer_id);
+					
+					if( $result == false ){
+							
+						$error = '<span style="color:red;">現在のパスワードが一致しません</span>';
+							
+					}
+					
+				}
+					
+			}
+	
+		}
+	
+		if( $error == "" ){
+				
+			update_customer_password_common($pw_new,$customer_id);
+				
+			header("Location: password_set_complete.php?type=update");
+			exit();
+				
+		}
+	
+	}
+	
+}
+
+$tmp = get_customer_password_by_id_common($customer_id);
+
+$action_type = "";
+
+if( $tmp == "" ){
+	
+	$action_type = "regist";
+	
+}else{
+	
+	$action_type = "update";
+	
+}
+
+
+
+$pankuzu = "　＞　パスワード設定";
+
+$page_title = "パスワード設定";
+$params['page_title'] = $page_title;
+
+
+
+/*
+echo "<pre>";
+print_r($data);
+echo "</pre>";
+exit();
+*/
+
+
+//----Smarty
+$params['css_time'] = date("ymdHi");		//CSS等のキャッシュ回避用
+$params['pankuzu'] = $pankuzu;
+$params['action_type'] = $action_type;
+$params['page_type'] = $page_type;
+$params['error'] = $error;
+
+$smarty->assign( 'params', $params );
+
+if($access_type=="sp"){
+
+	$smarty->assign( 'content_tpl', 'sp/ssl/common/vip/password_set.tpl' );
+	$smarty->display( 'sp/ssl/common/template_vip.tpl' );
+
+}else{
+
+	$smarty->assign( 'content_tpl', 'pc/ssl/common/vip/password_set.tpl' );
+	$smarty->display( 'pc/ssl/common/template_vip_2.tpl' );
+
+}
+
+?>

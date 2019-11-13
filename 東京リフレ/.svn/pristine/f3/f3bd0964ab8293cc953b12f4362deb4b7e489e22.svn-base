@@ -1,0 +1,525 @@
+
+<?php
+
+include("include/common.php");
+include("include/auth.php");
+
+session_start();
+
+
+$transport_cost = 0;
+
+if(isset($_POST["edit_send"])==true){
+
+	$therapist_id = $_POST["therapist_id"];
+	$area = $_POST["area"];
+	$_SESSION["therapist_id"] = $therapist_id;
+	$_SESSION["therapist_type"] = $_POST["therapist_type"];		//insert by aida at 20180324
+	$_SESSION["area"] = $area;
+
+	$data = get_therapist_info_by_therapist_id_new($therapist_id);
+
+	$name_real = $data["name"];
+	$name_furi = $data["name_furi"];
+	$tel = $data["tel"];
+	$mail = $data["mail"];
+	$name_site = $data["name_site"];
+	$furi_site = $data["furi_site"];
+	$name_aroma = $data["name_aroma"];
+	$furi_aroma = $data["furi_aroma"];
+	$therapist_type = $data["therapist_type"];		//insert by aida at 20180324
+	$introducer_id = $data["introducer_id"];
+	$introducer = select_therapist_name_by_id($introducer_id);
+	$campaign_code = $data["campaign_code"];
+	$jitaku_taiki_flg = $data["jitaku_taiki_flg"];
+	$wait_select = $data["wait_select"];
+	$therapist_meeting_place = $data["therapist_meeting_place"];
+	$rank = $data["rank"];
+	$point_ref = $data['point_ref'];
+	$point_fix = $data["point_fix"];
+	$point_fix_year = $data["point_fix_year"];
+	$point_fix_month = $data["point_fix_month"];
+	$point_fix_day = $data["point_fix_day"];
+	$guarantee_rule = $data["guarantee_rule"];
+	$chief_allowance = $data["chief_allowance"];
+	$chief_allowance_year = $data["chief_allowance_year"];
+	$chief_allowance_month = $data["chief_allowance_month"];
+	$chief_allowance_day = $data["chief_allowance_day"];
+	$for_kobetsu_url = $data["for_kobetsu_url"];
+	$address = $data["address"];
+	$bank_info = $data["bank_info"];
+	$memo = $data["memo"];
+	$bihin = $data["bihin"];
+	$furikomi_type = $data["furikomi_type"];
+	$total_point = $data["total_point"];
+	$name_man = $data["name_man"];
+	$password_man = $data["password_man"];
+	$login_auth_type = $data["login_auth_type"];
+	$transfer_commission = $data["transfer_commission"];
+	$payment_span = $data["payment_span"];
+	$tax_flg = $data["tax_flg"];
+	//$aroma_flg = $data["aroma_flg"];		//delete by aida at 20180324
+
+	$data_tmp = get_point_fix_year_month_day($point_fix,$point_fix_start_time);
+
+	$point_fix_year = $data_tmp["year"];
+	$point_fix_month = $data_tmp["month"];
+	$point_fix_day = $data_tmp["day"];
+/*
+	if( $therapist_type == "2" ){	//delete by aida at 20180324
+
+		$aroma_flg = "1";
+
+	}else{
+
+		$aroma_flg = "0";
+
+	}
+*/
+	if( $chief_allowance_start_time == "0" ){
+
+		$chief_allowance_year = "-1";
+		$chief_allowance_month = "-1";
+		$chief_allowance_day = "-1";
+
+	}else{
+
+		$data = get_day_by_timestamp_common($chief_allowance_start_time);
+
+		$chief_allowance_year = $data["year"];
+		$chief_allowance_month = $data["month"];
+		$chief_allowance_day = $data["day"];
+
+	}
+
+	$kenmu = explode(",",$kenmu_string);
+	//$area_name = get_area_name_by_area($area);
+	$area_name = $obj_Shop->getShopGroupName($area);	//店舗グループ名取得
+	//if(($area_name!="東京リラク")&&($area_name!="BIGAO")){
+	//	$area_name = $area_name."リフレ";
+	//}
+	$_SESSION["area_name"] = $area_name;
+
+}else if( isset($_POST["send_edit_input"])==true ){
+
+	$therapist_id = $_POST["therapist_id"];
+	$name_real = $_POST["name_real"];
+	$name_furi = $_POST["name_furi"];
+	$tel = $_POST["tel"];
+	$mail = $_POST["mail"];
+	$name_site = $_POST["name_site"];
+	$furi_site = $_POST["furi_site"];
+	$name_aroma = $_POST["name_aroma"];
+	$furi_aroma = $_POST["furi_aroma"];
+	$therapist_type = $_POST["therapist_type"];		//insert by aida at 20180324
+	$introducer = $_POST["introducer"];
+	$introducer_id = select_therapist_id_by_name($introducer);
+	$campaign_code = $_POST["campaign_code"];
+	$jitaku_taiki_flg = $_POST["jitaku_taiki_flg"];
+	$wait_select = $_POST["wait_select"];
+	$therapist_meeting_place = $_POST["therapist_meeting_place"];
+	$rank = $_POST["rank"];
+	$point_ref = $_POST['point_ref'];
+	$point_fix = $_POST["point_fix"];
+	$point_fix_year = $_POST["point_fix_year"];
+	$point_fix_month = $_POST["point_fix_month"];
+	$point_fix_day = $_POST["point_fix_day"];
+	$guarantee_rule = $_POST["guarantee_rule"];
+	$chief_allowance = $_POST["chief_allowance"];
+	$chief_allowance_year = $_POST["chief_allowance_year"];
+	$chief_allowance_month = $_POST["chief_allowance_month"];
+	$chief_allowance_day = $_POST["chief_allowance_day"];
+	$for_kobetsu_url = $_POST["for_kobetsu_url"];
+	$address = $_POST["address"];
+	$bank_info = $_POST["bank_info"];
+	$memo = $_POST["memo"];
+	$bihin = $_POST["bihin"];
+	$furikomi_type = $_POST["furikomi_type"];
+	$total_point = $_POST["total_point"];
+	$name_man = $_POST["name_man"];
+	$password_man = $_POST["password_man"];
+	$login_auth_type = $_POST["login_auth_type"];
+	$transfer_commission = $_POST["transfer_commission"];
+	$payment_span = $_POST["payment_span"];
+	$tax_flg = $_POST["tax_flg"];
+	//$aroma_flg = $_POST["aroma_flg"];		//delete by aida at 20180324
+
+	$area = $_SESSION["area"];
+	$area_name = $_SESSION["area_name"];
+
+	$error = "";
+
+	$result = check_hankaku_num_value_common($total_point);
+
+	if( $result == false ){
+
+		$error .= "<li>"."過去累計ポイントは半角数字のみです"."</li>";
+
+	}
+
+	$result = check_hankaku_num_value_common($transport_cost);
+
+	if( $result == false ){
+
+		$error .= "<li>"."固定支給交通費は半角数字のみです"."</li>";
+
+	}
+
+	if($name_real==""){
+		$error .= "<li>"."名前(本名)が未入力です"."</li>";
+	}
+
+	if($name_site==""){
+		$error .= "<li>"."名前(".$area_name.")が未入力です"."</li>";
+	}
+
+	if($area=="tokyo"){
+
+		if($name_aroma==""){
+			$error .= "<li>"."名前(東京アロマ)が未入力です"."</li>";
+		}
+		/*
+		if($name_tgr==""){
+			$error .= "<li>"."名前(東京ガールズリフレ)が未入力です"."</li>";
+		}
+
+		if($name_lymph==""){
+			$error .= "<li>"."名前(リンパマッサージ東京)が未入力です"."</li>";
+		}
+		*/
+	}
+
+	if($rank==""){
+		$error .= "<li>"."ランクが未選択です"."</li>";
+	}
+
+	if($for_kobetsu_url==""){
+
+		//$error .= "<li>"."個別URL用文字が未入力です"."</li>";
+
+	}
+
+	$for_kobetsu_url_len = strlen($for_kobetsu_url);
+
+	if( $for_kobetsu_url_len > 32 ){
+
+		$error .= "<li>"."個別URL用文字は32文字までです"."</li>";
+
+	}
+
+	if( $name_man != "" ){
+
+		$name_man_tmp = get_name_man_from_therapist_new($therapist_id);
+
+		if( ( $name_man_tmp == "" ) || ($name_man_tmp != $name_man) ){
+
+			$result = check_exist_name_man($name_man);
+
+			if( $result == true ){
+
+				$error .= "<li>"."登録済みのログインIDです"."</li>";
+
+			}
+
+		}
+
+	}
+
+	$num = mb_strlen($wait_txt,"UTF-8");
+	if( $num > 30 ){
+		$error .= "<li>待機場所は30文字までです</li>";
+	}
+	
+	if($error != ""){
+
+		$error = "<ul style='color:red;'>".$error."</ul>";
+
+	}else{
+
+		$_SESSION["therapist_id"] = $therapist_id;
+		$_SESSION["name_real"] = $name_real;
+		$_SESSION["name_furi"] = $name_furi;
+		$_SESSION["tel"] = $tel;
+		$_SESSION["mail"] = $mail;
+		$_SESSION["name_site"] = $name_site;
+		$_SESSION["furi_site"] = $furi_site;
+		$_SESSION["name_aroma"] = $name_aroma;
+		$_SESSION["furi_aroma"] = $furi_aroma;
+		$_SESSION["therapist_type"] = $therapist_type;
+		$_SESSION["introducer"] = $introducer;
+		$_SESSION["introducer_id"] = $introducer_id;
+		$_SESSION["campaign_code"] = $campaign_code;
+		$_SESSION["jitaku_taiki_flg"] = $jitaku_taiki_flg;
+		$_SESSION["wait_select"] = $wait_select;
+		$_SESSION["therapist_meeting_place"] = $therapist_meeting_place;
+		$_SESSION["rank"] = $rank;
+		$_SESSION["point_ref"] = $point_ref;
+		$_SESSION["point_fix"] = $point_fix;
+		$_SESSION["point_fix_year"] = $point_fix_year;
+		$_SESSION["point_fix_month"] = $point_fix_month;
+		$_SESSION["point_fix_day"] = $point_fix_day;
+		$_SESSION["guarantee_rule"] = $guarantee_rule;
+		$_SESSION["chief_allowance"] = $chief_allowance;
+		$_SESSION["chief_allowance_year"] = $chief_allowance_year;
+		$_SESSION["chief_allowance_month"] = $chief_allowance_month;
+		$_SESSION["chief_allowance_day"] = $chief_allowance_day;
+		$_SESSION["for_kobetsu_url"] = $for_kobetsu_url;
+		$_SESSION["address"] = $address;
+		$_SESSION["bank_info"] = $bank_info;
+		$_SESSION["memo"] = $memo;
+		$_SESSION["bihin"] = $bihin;
+		$_SESSION["furikomi_type"] = $furikomi_type;
+		$_SESSION["total_point"] = $total_point;
+		$_SESSION["name_man"] = $name_man;
+		$_SESSION["password_man"] = $password_man;
+		$_SESSION["login_auth_type"] = $login_auth_type;
+		$_SESSION["transfer_commission"] = $transfer_commission;
+		$_SESSION["payment_span"] = $payment_span;
+		$_SESSION["tax_flg"] = $tax_flg;
+
+		header('Location: therapist_edit_confirm_new.php');
+		exit();
+
+	}
+
+}else if( (isset($_POST["send_meeting_delete"])==true) || (isset($_POST["send_meeting_add"])==true) ){
+
+	/*
+	echo "<pre>";
+	print_r($_POST);
+	echo "</pre>";
+	exit();
+	*/
+
+	$therapist_id = $_POST["therapist_id"];
+	$name_real = $_POST["name_real"];
+	$name_furi = $_POST["name_furi"];
+	$tel = $_POST["tel"];
+	$mail = $_POST["mail"];
+	$name_site = $_POST["name_site"];
+	$furi_site = $_POST["furi_site"];
+	$name_aroma = $_POST["name_aroma"];
+	$furi_aroma = $_POST["furi_aroma"];
+	$therapist_type = $_POST["therapist_type"];		//insert by aida at 20180324
+	$introducer = $_POST["introducer"];
+	$introducer_id = select_therapist_id_by_name($introducer);
+	$campaign_code = $_POST["campaign_code"];
+	$jitaku_taiki_flg = $_POST["jitaku_taiki_flg"];
+	$wait_select = $_POST["wait_select"];
+	$therapist_meeting_place = $_POST["therapist_meeting_place"];
+	$rank = $_POST["rank"];
+	$point_ref = $_POST['point_ref'];
+	$point_fix = $_POST["point_fix"];
+	$point_fix_year = $_POST["point_fix_year"];
+	$point_fix_month = $_POST["point_fix_month"];
+	$point_fix_day = $_POST["point_fix_day"];
+	$guarantee_rule = $_POST["guarantee_rule"];
+	$chief_allowance = $_POST["chief_allowance"];
+	$chief_allowance_year = $_POST["chief_allowance_year"];
+	$chief_allowance_month = $_POST["chief_allowance_month"];
+	$chief_allowance_day = $_POST["chief_allowance_day"];
+	$for_kobetsu_url = $_POST["for_kobetsu_url"];
+	$address = $_POST["address"];
+	$bank_info = $_POST["bank_info"];
+	$memo = $_POST["memo"];
+	$bihin = $_POST["bihin"];
+	$furikomi_type = $_POST["furikomi_type"];
+	$total_point = $_POST["total_point"];
+	$name_man = $_POST["name_man"];
+	$password_man = $_POST["password_man"];
+	$login_auth_type = $_POST["login_auth_type"];
+	$transfer_commission = $_POST["transfer_commission"];
+	$payment_span = $_POST["payment_span"];
+	$tax_flg = $_POST["tax_flg"];
+	//$aroma_flg = $_POST["aroma_flg"];		//delete by aida at 20180324
+
+	$area = $_SESSION["area"];
+	$area_name = $_SESSION["area_name"];
+
+	if( isset($_POST["send_meeting_delete"]) == true ){
+
+		$therapist_meeting_place_id = $_POST["therapist_meeting_place_id"];
+		delete_therapist_meeting_place($therapist_meeting_place_id);
+
+	}
+
+	if( isset($_POST["send_meeting_add"]) == true ){
+
+		$therapist_meeting_place = $_POST["therapist_meeting_place"];
+		//$therapist_id
+		add_therapist_meeting_place($therapist_id,$therapist_meeting_place);
+
+	}
+
+}else if(isset($_POST["back"])==true){
+
+	$area = $_SESSION["area"];
+	header("Location: therapist_list_new.php?area=".$area);
+	exit();
+
+}else if(isset($_GET["back"])==true){
+
+	$therapist_id = $_SESSION["therapist_id"];
+	$name_real = $_SESSION["name_real"];
+	$name_furi = $_SESSION["name_furi"];
+	$tel = $_SESSION["tel"];
+	$mail = $_SESSION["mail"];
+	$name_site = $_SESSION["name_site"];
+	$furi_site = $_SESSION["furi_site"];
+	$name_aroma = $_SESSION["name_aroma"];
+	$furi_aroma = $_SESSION["furi_aroma"];
+	$therapist_type = $_SESSION["therapist_type"];		//insert by aida at 20180324
+	$introducer = $_SESSION["introducer"];
+	$introducer_id = select_therapist_id_by_name($introducer);
+	$campaign_code = $_SESSION["campaign_code"];
+	$jitaku_taiki_flg = $_SESSION["jitaku_taiki_flg"];
+	$wait_select = $_SESSION["wait_select"];
+	$therapist_meeting_place = $_SESSION["therapist_meeting_place"];
+	$rank = $_SESSION["rank"];
+	$point_ref = $_SESSION['point_ref'];
+	$point_fix = $_SESSION["point_fix"];
+	$point_fix_year = $_SESSION["point_fix_year"];
+	$point_fix_month = $_SESSION["point_fix_month"];
+	$point_fix_day = $_SESSION["point_fix_day"];
+	$guarantee_rule = $_SESSION["guarantee_rule"];
+	//echo $guarantee_rule;exit;
+	$chief_allowance = $_SESSION["chief_allowance"];
+	$chief_allowance_year = $_SESSION["chief_allowance_year"];
+	$chief_allowance_month = $_SESSION["chief_allowance_month"];
+	$chief_allowance_day = $_SESSION["chief_allowance_day"];
+	$for_kobetsu_url = $_SESSION["for_kobetsu_url"];
+	$address = $_SESSION["address"];
+	$bank_info = $_SESSION["bank_info"];
+	$memo = $_SESSION["memo"];
+	$bihin = $_SESSION["bihin"];
+	$furikomi_type = $_SESSION["furikomi_type"];
+	$total_point = $_SESSION["total_point"];
+	$name_man = $_SESSION["name_man"];
+	$password_man = $_SESSION["password_man"];
+	$login_auth_type = $_SESSION["login_auth_type"];
+	$transfer_commission = $_SESSION["transfer_commission"];
+	$payment_span = $_SESSION["payment_span"];
+	$tax_flg = $_SESSION["tax_flg"];
+
+}else{
+
+	$area = $_SESSION["area"];
+	header('Location: therapist_list_new.php?area='.$area);
+	exit();
+
+}
+
+$point_ref_select = get_point_ref_select($point_ref,$area);
+$guarantee_rule_select = get_guarantee_rule_select($guarantee_rule,$area);
+$chief_allowance_select = get_chief_allowance_select($chief_allowance,$area);
+//横浜の兼務チェックボックス
+if( $area == "yokohama" || $area == "yokohama2"){
+	$check_area = "tokyo";
+	$result_kenmu = therapist_regist_input_kenmu_check($kenmu,$check_area);
+	if( $result_kenmu == "true" ){
+		$yokohama_kenmu_disp = '<input type="checkbox" name="kenmu[]" value="tokyo" checked id="kenmu_tokyo_check">東京　';
+	}else{
+		$yokohama_kenmu_disp = '<input type="checkbox" name="kenmu[]" value="tokyo" id="kenmu_tokyo_check">東京　';
+	}
+}
+
+$type = "therapist";
+$login_type_select = get_login_type_select_2($type,$login_auth_type);
+$chief_allowance_select_frm = get_chief_allowance_select_frm($chief_allowance_year,$chief_allowance_month,$chief_allowance_day);
+$point_fix_select_frm = get_point_fix_select_frm($point_fix_year,$point_fix_month,$point_fix_day);
+$team_id_select_frm = get_team_id_select_frm($team_id);
+$select_frm_wait_select = get_select_frm_wait_select($wait_select);
+$select_transfer_commission = get_select_transfer_commission($transfer_commission);
+$therapist_meeting_place_html = get_therapist_meeting_place_html_for_therapist_edit_input_new($therapist_id);
+/*
+echo "<pre>";
+print_r($_POST);
+echo "</pre>";
+echo "<pre>";
+print_r($_SESSION);
+echo "</pre>";
+*/
+if( $area == "tokyo" ){
+	$check_area = "yokohama";
+	$result = therapist_regist_input_kenmu_check($kenmu,$check_area);
+	$w_kenmu_checked = "";
+	if( $result == "true" ) $w_kenmu_checked = " checked";
+}
+
+$jitaku_taiki_flg_cheked = "";
+if( $jitaku_taiki_flg == "1" ) $jitaku_taiki_flg_cheked = " checked";
+$kensyuu_flg_cheked = "";
+if( $kensyuu_flg == "1" ) $kensyuu_flg_cheked = " checked";
+$jisou_flg_cheked = "";
+if( $jisou_flg == "1" ) $jisou_flg_cheked = " checked";
+$furikomi_type_selected = array("", "", "", "", "");
+$furikomi_type_selected[$furikomi_type] = " selected";
+$rankCk = array("", "", "", "", "", "", "");
+
+if($rank == 19) {
+	$rankCk[6] = " checked";
+} elseif($rank >= 1 && $rank <= 5) {
+	$rankCk[$rank] = " checked";
+} else {
+	$rankCk[0] = " checked";
+}
+
+$therapist_type_ck = array("", "", "", "");
+if(!$therapist_type) $therapist_type = 0;
+$therapist_type_ck[$therapist_type] = " checked";
+//----Smarty
+$pm['css_time'] = date("ymdHi");
+$pm['area'] = $area;
+$pm['area_name'] = $area_name;
+$pm['result_kenmu'] = $result_kenmu;
+$pm['therapist_id'] = $therapist_id;
+$pm['therapist_type'] = $therapist_type;
+$pm['name_real'] = $name_real;
+$pm['name_furi'] = $name_furi;
+$pm['tel'] = $tel;
+$pm['mail'] = $mail;
+$pm['introducer'] = $introducer;
+$pm['introducer_id'] = $introducer_id;
+$pm['campaign_code'] = $campaign_code;
+$pm['name_site'] = $name_site;
+$pm['name_aroma'] = $name_aroma;
+$pm['furi_site'] = $furi_site;
+$pm['furi_aroma'] = $furi_aroma;
+$pm['kenmu_checked'] = $kenmu_checked;
+$pm['yokohama_kenmu_disp'] = $yokohama_kenmu_disp;
+$pm['select_frm_wait_select'] = $select_frm_wait_select;
+$pm['therapist_meeting_place_html'] = $therapist_meeting_place_html;
+$pm['wait_txt'] = $wait_txt;
+$pm['share_rate'] = $share_rate;
+$pm['point_ref_select'] = $point_ref_select;
+$pm['point_fix'] = $point_fix;
+$pm['point_fix_select_frm'] = $point_fix_select_frm;
+$pm['guarantee_rule_select'] = $guarantee_rule_select;
+$pm['chief_allowance_select'] = $chief_allowance_select;
+$pm['for_kobetsu_url'] = $for_kobetsu_url;
+$pm['address'] = $address;
+$pm['bank_info'] = $bank_info;
+$pm['memo'] = $memo;
+$pm['bihin'] = $bihin;
+$pm['total_point'] = $total_point;
+$pm['transport_cost'] = $transport_cost;
+$pm['name_man'] = $name_man;
+$pm['password_man'] = $password_man;
+$pm['login_type_select'] = $login_type_select;
+$pm['select_transfer_commission'] = $select_transfer_commission;
+$pm['payment_span'] = $payment_span;
+$pm['tax_flg'] = $tax_flg;
+$pm['team_id_select_frm'] = $team_id_select_frm;
+$pm['rankCk'] = $rankCk;
+$pm['kenmu_checked'] = $w_kenmu_checked;
+$pm['jitaku_taiki_flg_cheked'] = $jitaku_taiki_flg_cheked;
+$pm['kensyuu_flg_cheked'] = $kensyuu_flg_cheked;
+$pm['jisou_flg_cheked'] = $jisou_flg_cheked;
+$pm['furikomi_type_selected'] = $furikomi_type_selected;
+$pm['therapist_type_ck'] = $therapist_type_ck;
+
+$smarty->assign( 'pm', $pm );
+
+$smarty->display( 'man/therapist_edit_input_new.tpl' );
+exit;
+?>

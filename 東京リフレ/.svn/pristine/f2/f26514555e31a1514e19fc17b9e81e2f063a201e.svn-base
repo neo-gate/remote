@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dth HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dth">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>{{$pm.area_name}}スタッフ出勤カレンダー</title>
+<script type="text/javascript" src="/js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="/js/jquery.exscrollevent.js"></script>
+<script type="text/javascript" src="js/main_new_ex.js?{{$pm.css_time}}"></script>
+<link href="style_ex.css?{{$pm.css_time}}" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<br />
+
+<div style="width:1160px;margin:0px auto 0px auto;">
+	{{if $pm.all_page_flg == true}}
+		<div>
+			<div style="float:left; font-size:11pt;"><a href="index.php">トップ</a> &gt; <a href="stf_calendar.php">スタッフ出勤カレンダー</a> &gt; {{$pm.area_name}}</div>
+			<div style="float:right;">
+				<a href="shift_url_list.php?type=t&area={{$pm.area}}" style="font-size:12px;">セラピストページＵＲＬリスト</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="shift_url_list.php?type=d&area={{$pm.area}}" style="font-size:12px;">ドライバーページＵＲＬリスト</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="shift_url_list.php?type=tr&area={{$pm.area}}" style="font-size:12px;">セラピスト成績表</a>&nbsp;&nbsp;&nbsp;&nbsp;
+				<a href="logout.php" style="font-size:12px;">ログアウト</a>
+			</div>
+			<br class="clear" />
+		</div>
+		<div style="padding:10px 0px 0px 0px; font-size:11pt;">
+			{{section name=a loop=$ARRAY_Area}}
+				<a href="{{$smarty.server.SCRIPT_NAME}}?area={{$ARRAY_Area[a].area}}{{$pm.addYmd}}">{{$ARRAY_Area[a].area_name}}</a>&nbsp;&nbsp;
+			{{/section}}
+			<a href="{{$smarty.server.SCRIPT_NAME}}?area=kensyuu{{$pm.addYmd}}">研修</a>&nbsp;&nbsp;
+			<a href="{{$smarty.server.SCRIPT_NAME}}?area=team{{$pm.addYmd}}">チーム別</a>&nbsp;&nbsp;
+			<a href="{{$smarty.server.SCRIPT_NAME}}?area=wait{{$pm.addYmd}}">待機場所別</a>
+		</div>
+
+		<div style="padding:10px 0px 10px 10px;">
+			<a href="stf_attend_edit.php?type=t&area={{$pm.area}}{{$pm.addYmd}}" id="attendance_regist_refle">セラピスト出勤登録({{$pm.area_name}})</a>
+			<a href="stf_attend_edit.php?type=d&area={{$pm.area}}{{$pm.addYmd}}" id="attendance_regist_refle">ドライバー出勤登録({{$pm.area_name}})</a>
+			{{if $pm.area == "tokyo"}}
+				<a href="stf_attend_edit.php?type=h&area={{$pm.area}}{{$pm.addYmd}}" id="attendance_regist_refle">本部メンバー出勤登録</a>
+			{{/if}}
+			{{section name=a start=1 loop=$areaNums}}
+				<a href="stf_attend_edit.php?type=t&area={{$AR_AreaGp[a].area}}{{$pm.addYmd}}" id="attendance_regist_refle">ｾﾗﾋﾟｽﾄ出勤登録({{$AR_AreaGp[a].short_name}})</a>
+			{{/section}}
+			<br class="clear" />
+		</div>
+
+	{{else}}
+		{{$pm.menu}}
+	{{/if}}
+
+	{{if $pm.all_page_flg == true}}
+	<div>
+		<div style="float:left; font-size:11pt;"><a href="{{$smarty.server.SCRIPT_NAME}}?{{$pm.prevYmd}}">＜-- １ヶ月前</a></div>
+		<div style="float:left;width:330px;margin-left:400px;margin-right:60px; font-size:10pt;">({{$day_array_2[0].Y_m_d}}～{{$day_array_2[61].Y_m_d}})</div>
+		<div style="float:left;width:60px;background-color:#e6eae6;">&nbsp;</div>
+		<div style="float:left;padding-left:5px; font-size:11pt;">出勤調整</div>
+		<div style="float:left;margin-left:30px; font-size:11pt;"><a href="{{$smarty.server.SCRIPT_NAME}}{{$pm.nextYmd}}">{{$pm.nextDispStr}}</a></div>
+		<br class="clear" />
+	</div>
+	{{/if}}
+
+	<div id="error" style="height:10px;"><br /></div>
+
+</div>
+
+<div style="width:1160px;margin:0px auto 0px auto;overflow:hidden">
+	<div id="therapist_calendar_wrapper_wrapper">
+		<div id="therapist_calendar_wrapper">
+			<!-- ヘッダ部日付表示欄 -->
+			<div style="width:4000px;">
+				<div id="therapist_calendar_wrapper_top">
+					<div id="therapist_calendar_wrapper_top_title">&nbsp;</div>
+					<div id="therapist_calendar_wrapper_top_gyou_day">
+					{{section name=i start=0 loop=$day_array_2_num}}
+						{{if $pm.all_page_flg == true}}
+							{{if $day_flg[i] == true}}
+								<div class="day staff_calendar_day" id="{{$day_id[i]}}" style="font-weight:bold;">{{$day_array_2[i].month}}/{{$day_array_2[i].day}}<br />{{$day_array_2[i].dspWeekName}}</div>
+							{{else}}
+								<div class="day staff_calendar_day" id="{{$day_id[i]}}">{{$day_array_2[i].month}}/{{$day_array_2[i].day}}<br />{{$day_array_2[i].dspWeekName}}</div>
+							{{/if}}
+						{{else}}
+							{{if $day_flg[i] == true}}
+								<div class="day" id="{{$day_id[i]}}" style="font-weight:bold;">{{$day_array_2[i].month}}/{{$day_array_2[i].day}}<br />{{$day_array_2[i].dspWeekName}}</div>
+							{{else}}
+								<div class="day" id="{{$day_id[i]}}">{{$day_array_2[i].month}}/{{$day_array_2[i].day}}<br />{{$day_array_2[i].dspWeekName}}</div>
+							{{/if}}
+						{{/if}}
+					{{/section}}
+					<div class="clear"</div>
+					</div>
+				</div>
+			</div>
+
+			<div id="therapist_calendar_all">
+				<!-- 1列目名称表示部 -->
+				<div>
+					<div id="therapist_calendar_therapist_name">
+					{{if $pm.area == "tokyo"}}
+						<div class="name" style="background:yellow;">本部</div>
+						{{section name=i start=0 loop=$honbu_data_num}}
+							<div class="name">{{$honbu_data[i].name}}</div>
+						{{/section}}
+						<!--<div class="name">&nbsp;</div>-->
+					{{/if}}
+					<div class="name" style="background:yellow;">ドライバー</div>
+					{{section name=i start=0 loop=$driver_data_num}}
+						<div class="name">{{$driver_data[i].name}}</div>
+					{{/section}}
+					<!--<div class="name">&nbsp;</div>-->
+
+					<!-- セラピスト部(中間)合計欄 --><!-- background:#ffe699; background:#e2efda; -->
+					{{section name=x loop=$AR_AreaGp}}
+						{{if $smarty.section.x.index == 0}}
+							<div class="name" style="background:yellow;">セラピスト</div>
+						{{else}}
+							<div class="name" style="background:#{{$AR_AreaGp[x].bgcolr}};">{{$AR_AreaGp[x].short_name}}</div>
+						{{/if}}
+					{{/section}}
+
+					{{section name=x loop=$AR_AreaGp}}
+						{{if $smarty.section.x.index > 0}}
+							<div class="name" style="background:yellow;">{{$AR_AreaGp[x].short_name}}</div>
+						{{/if}}
+						{{section name=i start=0 loop=$therapist_data_num[x]}}
+							<div class="{{$therapist_data[x][i].rankClass}}">{{$therapist_data[x][i].html}}&nbsp;({{$therapist_data[x][i].name_site}})</div>
+						{{/section}}
+					{{/section}}
+				</div>
+
+				<!-- 2列目以降の明細表示部 -->
+				<div id="therapist_calendar_content">
+					<div id="therapist_calendar_content_yotei">
+					{{if $pm.area == "tokyo"}}
+						<!-- 本部 -->
+						<div class="clearfix">
+						{{section name=i start=0 loop=62}}
+							<div class="one_5">{{$ArSumStaff.honbu[i]}}</div>
+						{{/section}}
+						</div>
+
+						{{section name=i start=0 loop=$honbu_data_num}}
+						<div class="clearfix">
+							{{section name=j start=0 loop=62}}
+								{{if $honbu_data[i].dData[j].match_flag == true}}
+									{{if $pm.all_page_flg == true}}
+										<a href="stf_attend_edit.php?type=h&area=tokyo&id={{$honbu_data[i].dData[j].attendance_id}}{{$pm.addYmd}}" class="{{$honbu_data[i].dData[j].class}}">{{$honbu_data[i].dData[j].html}}</a>
+									{{else}}
+										<div class="{{$honbu_data[i].dData[j].class}}">{{$honbu_data[i].dData[j].html}}</div>
+									{{/if}}
+								{{else}}
+									<!--<div class="one_2"><a href="stf_attend_edit.php?type=h&staff_id={{$honbu_data[i].id}}&year={{$day_array_2[j].year}}&month={{$day_array_2[j].month}}&day={{$day_array_2[j].day}}{{$pm.addYmd}}" class="one_2"></a></div>-->
+									<div class="one_2">&nbsp;</div>
+								{{/if}}
+							{{/section}}
+						</div>
+						{{/section}}
+
+						<!-- 空き行 -->
+						<!--
+						{{section name=i start=0 loop=62}}
+							<div class="one_3">&nbsp;</div>
+						{{/section}}
+						<br class="clear" />
+						-->
+					{{/if}}
+
+					<!-- ドライバー -->
+					<div class="clearfix">
+					{{section name=i start=0 loop=62}}
+						<div class="one_5">{{$ArSumStaff.driver[i]}}</div>
+					{{/section}}
+					</div>
+
+					{{section name=i start=0 loop=$driver_data_num}}
+					<div class="clearfix">
+						{{section name=j start=0 loop=62}}
+							{{if $driver_data[i].dData[j].match_flag == true}}
+								{{if $pm.all_page_flg == true}}
+									<a href="stf_attend_edit.php?type=d&area={{$pm.area}}&id={{$driver_data[i].dData[j].attendance_id}}{{$pm.addYmd}}" class="{{$driver_data[i].dData[j].class}}">{{$driver_data[i].dData[j].html}}</a>
+								{{else}}
+									<div class="{{$driver_data[i].dData[j].class}}">{{$driver_data[i].dData[j].html}}</div>
+								{{/if}}
+							{{else}}
+								<!--<a href="stf_attend_edit.php?type=d&area={{$pm.area}}&staff_id={{$driver_data[i].id}}&year={{$day_array_2[j].year}}&month={{$day_array_2[j].month}}&day={{$day_array_2[j].day}}{{$pm.addYmd}}" class="one_2"></a>-->
+								<div class="one_2">&nbsp;</div>
+							{{/if}}
+						{{/section}}
+					</div>
+					{{/section}}
+
+					<!-- 空き行 -->
+					<!--
+					{{section name=i start=0 loop=62}}
+						<div class="one_3">&nbsp;</div>
+					{{/section}}
+					<br class="clear" />
+					-->
+
+					<!-- セラピスト部(中間)合計欄 --><!-- one_5 one_7 one_8 -->
+					{{section name=x loop=$AR_AreaGp}}
+					<div class="clearfix">
+						{{section name=i start=0 loop=62}}
+							{{if $smarty.section.x.index == 0}}
+								<div class="one_5">{{$ArSumAttendance[x][i].nums}}</div>
+							{{else}}
+								<div class="one_5" style="background:#{{$AR_AreaGp[x].bgcolr}};">{{$ArSumAttendance[x][i].nums}}</div>
+							{{/if}}
+						{{/section}}
+					</div>
+					{{/section}}
+
+					<!-- セラピスト -->
+					{{section name=x loop=$AR_AreaGp}}
+
+						{{if $smarty.section.x.index > 0}}
+						<div class="clearfix">
+							{{section name=i start=0 loop=62}}<!-- one_7 one_8 -->
+								<div class="one_7" style="background:#{{$AR_AreaGp[x].bgcolr}};">{{$ArSumAttendance[x][i].nums}}</div>
+							{{/section}}
+						</div>
+						{{/if}}
+
+						{{section name=i start=0 loop=$therapist_data_num[x]}}
+						<div class="clearfix">
+							{{section name=j start=0 loop=62}}
+								{{if $pm.all_page_flg == true || $pm.login_staff_login_auth_type == '2'}}
+									{{if $therapist_data[x][i].dData[j].match_flag == true}}
+										<a href="stf_attend_edit.php?type=t&area={{$therapist_data[x][i].area}}&id={{$therapist_data[x][i].dData[j].attendance_id}}{{$pm.addYmd}}" class="{{$therapist_data[x][i].dData[j].class}}">{{$therapist_data[x][i].dData[j].html}}</a>
+									{{else}}
+										<a href="stf_attend_edit.php?type=t&area={{$therapist_data[x][i].area}}&staff_id={{$therapist_data[x][i].id}}&year={{$day_array_2[j].year}}&month={{$day_array_2[j].month}}&day={{$day_array_2[j].day}}{{$pm.addYmd}}" class="{{$therapist_data[x][i].dData[j].class}}"></a>
+									{{/if}}
+								{{else}}
+									{{if $therapist_data[0][i].dData[j].match_flag == true}}
+										<div class="{{$therapist_data[x][i].dData[j].class}}">{{$therapist_data[x][i].dData[j].html}}</div>
+									{{else}}
+										<div class="{{$therapist_data[x][i].dData[j].class}}"></div>
+									{{/if}}
+								{{/if}}
+							{{/section}}
+						</div>
+						{{/section}}
+					{{/section}}
+					</div>
+				</div>
+				<br class="clear" />
+
+			</div>
+			<div style="height:30px;">&nbsp;</div>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<?php
+
+$document_root = $_SERVER['DOCUMENT_ROOT'];
+define("ROOT_PATH", $document_root."/");
+define("MAN_ROOT_PATH", ROOT_PATH."man/");
+define("MAN_INC", MAN_ROOT_PATH."include/");
+include(MAN_INC."define.php");
+
+/*
+include("../include/define.php");
+include("../include/functions.php");
+*/
+
+$checks = $_POST["checks"];
+$attendance_id = $_POST["attendance_id"];
+$area = $_POST["area"];
+
+
+
+$checks_num = count($checks);
+
+for($i=0;$i<$checks_num;$i++){
+	
+	$data = explode("_", $checks[$i]);
+	
+	$year = $data[0];
+	$month = $data[1];
+	$day = $data[2];
+	$week = $data[3];
+	
+	//出勤データのコピー
+	$result = copy_attendance_data_therapist_new($attendance_id,$year,$month,$day,$week,$area);
+	
+	if($result==false){
+	
+		echo '<span style="color:red;">コピーが失敗しました。</span>';
+		exit();
+	
+	}
+	
+}
+
+echo '<span style="color:blue;">コピーが成功しました。</span>';
+exit();
+
+?>

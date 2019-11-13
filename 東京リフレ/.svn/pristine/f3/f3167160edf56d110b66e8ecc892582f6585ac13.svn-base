@@ -1,0 +1,143 @@
+<?php
+
+include("include/common.php");
+include(COMMON_INC . "remuneration.inc");	//報酬関係
+//==================================================================================
+
+
+$area = $_GET["area"];
+$therapist_id = $_GET["id"];
+$ch = $_GET["ch"];
+
+if( ($area == "") || ($therapist_id == "") || ($ch == "") ){
+	
+	echo "error!";
+	exit();
+	
+}
+
+if( (isset($_GET["year"])==true) && (isset($_GET["month"])==true) && (isset($_GET["day"])==true) ){
+
+	$year = $_GET["year"];
+	$month = $_GET["month"];
+	$day = $_GET["day"];
+
+}else{
+	
+	echo "error!";
+	exit();
+	
+}
+
+
+
+
+$attendance_data = get_attendance_data_work_common($therapist_id,$year,$month,$day);
+
+$attendance_id = $attendance_data["id"];
+$pay_day = $attendance_data["pay_day"];
+
+$month_disp = $month;
+$day_disp = add_zero_when_under_ten_common($day);
+$week_name = get_week_name_by_time_common($year, $month, $day);
+
+$price_shijutsu = get_price_shijutsu_day_common($year,$month,$day,$therapist_id);
+$price_shijutsu_wo_tax = ceil($price_shijutsu/TAX_RATE);
+
+if( $price_shijutsu === false ){
+
+	$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_price_shijutsu_day_common)";
+	header("Location: ".WWW_URL."error.php");
+	exit();
+
+}
+
+$share_rate = get_share_rate_by_attendance_id_common($attendance_id);
+
+$max_share_rate_flg = false;
+	
+if( $share_rate == "-1" ){
+	
+	$share_rate = "---";
+	
+}else{
+
+	$therapist_data = get_therapist_data_by_id_common($therapist_id);
+	$point_ref = $therapist_data["point_ref"];
+	$max_share_rate = get_max_share_rate_by_area_common($area,$point_ref);
+	
+	if( $share_rate == $max_share_rate ){
+		
+		$max_share_rate_flg = true;
+		
+	}
+
+}
+
+$remuneration_data = get_therapist_remuneration_by_attendance_id_common($attendance_id);
+
+$remuneration = $remuneration_data["remuneration"];
+
+$incentive_shimei = $remuneration_data["incentive_shimei"];
+$incentive_repeater = $remuneration_data["incentive_repeater"];
+$incentive = $incentive_shimei + $incentive_repeater;
+
+if( $max_share_rate_flg == false ){
+
+	$kakutoku_point = get_kakutoku_point_by_attendance_id_common($attendance_id);
+
+}
+
+$sale_data = get_sale_history_data_for_operation_detail($year,$month,$day,$therapist_id);
+
+$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+$top_url = get_top_url($area,$therapist_id,$ch);
+$params['top_url'] = $top_url;
+
+$repeater_data = get_repeater_by_attendance_id_for_operation_detail($attendance_id);
+
+
+
+/*
+echo "<pre>";
+print_r($sale_data);
+echo "</pre>";
+exit();
+*/
+
+$page_title = "施術明細";
+
+$params['ch'] = $ch;
+$params['area'] = $area;
+$params['therapist_id'] = $therapist_id;
+$params['therapist_name'] = $therapist_name;
+$params['page_title'] = $page_title;
+$params['price_shijutsu'] = $price_shijutsu;
+$params['price_shijutsu_wo_tax'] = $price_shijutsu_wo_tax;
+$params['share_rate'] = $share_rate;
+$params['remuneration'] = $remuneration;
+$params['incentive_shimei'] = $incentive_shimei;
+$params['incentive_repeater'] = $incentive_repeater;
+$params['incentive'] = $incentive;
+$params['kakutoku_point'] = $kakutoku_point;
+$params['month_disp'] = $month_disp;
+$params['day_disp'] = $day_disp;
+$params['week_name'] = $week_name;
+$params['sale_data'] = $sale_data;
+$params['pay_day'] = $pay_day;
+$params['repeater_data'] = $repeater_data;
+$params['max_share_rate_flg'] = $max_share_rate_flg;
+
+
+
+$smarty->assign( 'params', $params );
+if($area == "tokyo_bigao"){
+	$smarty->assign( 'content_tpl', 'sp/operation_detail_bigao.tpl' );
+}
+else{
+	$smarty->assign( 'content_tpl', 'sp/operation_detail.tpl' );
+}
+$smarty->display( 'sp/template.tpl' );
+
+?>

@@ -1,0 +1,89 @@
+
+{{include file="pc/ssl/include/vip_menu.tpl"}}
+
+<form action="" method="post" id="edit_frm">
+
+<div id="password_set">
+
+<div class="page_title">
+パスワード設定
+</div>
+
+{{if $params.action_type == "update"}}
+
+<div class="wrapper">
+<div class="content_1">
+パスワードの変更をご希望の場合は、現在のパスワードをご入力の上、新しいパスワードを設定ください。
+</div>
+{{if $params.error != ""}}
+<div class="error">{{$params.error}}</div>
+{{/if}}
+<div class="content_2">
+<div class="left_1_2">
+現在のパスワード
+</div>
+<div class="left_2">
+<input type="password" name="pw_now" value="" class="input_password" />
+</div>
+<br class="clear" />
+</div>
+<div class="content_3" style="margin-top:30px;">
+<div class="left_1_2">
+新しいパスワード
+</div>
+<div class="left_2">
+<div class="one_2">
+<input type="password" name="pw_new" value="" class="input_password" />
+</div>
+</div>
+<br class="clear" />
+</div>
+<div class="content_4">
+<img src="{{$params.url_root}}img/ssl/vip/password/btn.gif" alt="設定" width="160" class="image_btn" onclick="click_submit('send_update');" />
+</div>
+</div>
+
+{{else}}
+
+<div class="wrapper">
+<div class="content_1">
+マイページ閲覧にパスワードを設定する場合は、以下にパスワードをご登録ください。
+</div>
+{{if $params.error != ""}}
+<div class="error">{{$params.error}}</div>
+{{/if}}
+<div class="content_2">
+<div class="left_1">
+パスワード
+</div>
+<div class="left_2">
+<input type="password" name="pw" value="" class="input_password" />
+</div>
+<br class="clear" />
+</div>
+<div class="content_3">
+<div class="left_1">
+確認用
+</div>
+<div class="left_2">
+<div class="one_1">
+確認のためもう一度ご入力ください
+</div>
+<div class="one_2">
+<input type="password" name="pw_confirm" value="" class="input_password" />
+</div>
+</div>
+<br class="clear" />
+</div>
+<div class="content_4">
+<img src="{{$params.url_root}}img/ssl/vip/password/btn.gif" alt="設定" width="160" class="image_btn" onclick="click_submit('send_regist');" />
+</div>
+</div>
+
+{{/if}}
+
+</div>
+
+</form>
+
+

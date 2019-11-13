@@ -1,0 +1,128 @@
+<?php
+include("include/common.php");
+include("include/auth.php");
+// ブラウザからHTMLページを要求された場合
+$customer_id = $_GET['customer_id'];
+
+if($customer_id !== ""){
+  $data = customer_info($customer_id,$page,$therapist_name,$fromDate,$toDate);
+  $data_cnt = count($data);
+  $customer_name = substr($data[0]['customer_name'],0,6);
+  /*
+  echo "<pre>";
+  echo $data_cnt;
+  print_r($data);
+  echo "</pre>";
+  */
+}
+
+function customer_info($customer_id,$page,$therapist_name,$fromDate,$toDate){
+
+  $like = '%リフレ';
+
+  $ws_SQL = "select A.year,A.month,A.day,A.shop_name,A.customer_name,A.course,A.extension,A.shimei_flg,";
+  $ws_SQL .= "C.name,C.name_site,D.skill,D.service,E.content as hearing,F.content as thanks_mail,G.content as impressions";
+  $ws_SQL .= " from reservation_for_board as A";
+  $ws_SQL .= " left join attendance_new as B on A.attendance_id=B.id";
+  $ws_SQL .= " left join therapist_new as C on B.therapist_id=C.id";
+  $ws_SQL .= " left join customer_evaluation as D on D.reservation_for_board_id=A.id";
+  $ws_SQL .= " left join therapist_hearing as E on E.reservation_for_board_id=A.id";
+  $ws_SQL .= " left join therapist_thanks as F on F.reservation_for_board_id=A.id";
+  $ws_SQL .= " left join customer_voice as G on G.reservation_for_board_id=A.id";
+  $ws_SQL .= " where A.customer_id='%s' and shop_name like '%s'";
+  $ws_SQL .= " order by A.year desc, A.month desc, A.day desc";
+
+  $sql = sprintf($ws_SQL, $customer_id, $like);
+  //echo $sql;
+  $res = mysql_query($sql, DbCon);
+	if($res == false){
+		echo "error!(customer_info)";
+		exit();
+	}
+
+	$i=0;
+	$data = array();
+
+	while($row = mysql_fetch_assoc($res)){
+		$data[$i++] = $row;
+	}
+
+	return $data;
+  exit;
+}
+
+?>
+<!doctype html>
+<html lang="ja">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>顧客名：<?php echo $customer_name;?>様のページ</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.18/css/dataTables.bootstrap4.min.css"/>
+  </head>
+  <body>
+    <div class="container-fluid mt-3"><p class="h3">顧客名：<?php echo $customer_name;?>様</p></div>
+    <div class="container-fluid mb-2">
+      <div class="table-responsive">
+        <table id="table1" class="table-bordered table-sm">
+          <thead>
+            <tr class="text-nowrap">
+              <form action="" method="post">
+                <th scope="col">店舗名</th>
+                <th scope="col">担当者(本名)</th>
+                <th scope="col">セラピスト名</th>
+                <th scope="col">施術日</th>
+                <th scope="col">指名</th>
+                <th scope="col">コース</th>
+                <th scope="col">延長</th>
+                <th scope="col">技術</th>
+                <th scope="col">接客</th>
+                <th scope="col">ヒアリング</th>
+                <th scope="col">お礼メール</th>
+                <th scope="col">感想</th>
+              </form>
+            </tr>
+          </thead>
+          <tbody>
+          <?php for ($i = 0 ; $i < $data_cnt; $i++) {?>
+            <tr>
+              <th scope="row" class="text-nowrap"><?php echo $data[$i]['shop_name'];?></th>
+              <td class="text-nowrap"><?php echo $data[$i]['name'];?></td>
+              <td class="text-nowrap"><?php echo $data[$i]['name_site'];?></td>
+              <td class="text-nowrap"><?php echo $data[$i]['year'];?>/<?php echo $data[$i]['month'];?>/<?php echo $data[$i]['day'];?></td>
+              <td class="text-nowrap"><?php if($data[$i]['shimei_flg'] == 1){echo '〇';}else{echo '✖';} ?></td>
+              <td class="text-nowrap"><?php echo $data[$i]['course'];?></td>
+              <td class="text-nowrap"><?php echo $data[$i]['extension'];?></td>
+              <td class="text-nowrap"><?php echo $data[$i]['skill'];?></td>
+              <td class="text-nowrap"><?php echo $data[$i]['service'];?></td>
+              <td><?php echo $data[$i]['hearing'];?></td>
+              <td><?php echo $data[$i]['thanks_mail'];?></td>
+              <td><?php echo $data[$i]['impressions'];?></td>
+            </tr>
+          <?php }?>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.18/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+      $(function(){
+          // datatableの設定を変更
+          $("#table1").DataTable({
+              "language": {
+                  "url": "//cdn.datatables.net/plug-ins/1.10.19/i18n/Japanese.json"
+              }
+          });
+      });
+    </script>
+  </body>
+</html>

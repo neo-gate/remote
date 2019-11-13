@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>管理ページ・{{$pm.staff_type_name}}出勤{{$pm.mode_name}}完了({{$pm.area_name_ex}})</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main_ex.js?{{$pm.css_time}}"></script>
+</head>
+
+<body>
+
+<br />
+
+<div style="width:800px;margin:0px auto 0px auto;">
+
+	{{if $pm.all_page_flg == true}}
+		<div style="font-size:11pt;">
+			<a href="index.php">トップ</a> &gt
+			<a href="{{$pm.retUrl}}">スタッフ出勤カレンダー({{$pm.area_name_base}})</a> &gt; 
+			{{$pm.staff_type_name}}出勤編集入力({{$pm.area_name_ex}})
+			 &gt; {{$pm.staff_type_name}}出勤{{$pm.mode_name}}完了
+		</div>
+	{{else}}
+		<div style="padding:20px 0px 0px 0px;">
+			<a href="stf_calendar.php?area={{$pm.retUrl}}">スタッフ出勤カレンダー({{$pm.area_name_base}})</a>
+		</div>
+	{{/if}}
+
+	<div style="padding:40px 0px 0px 240px;">
+		<div style="font-weight:bold;">{{$pm.mode_name}}しました。</div>
+		<div>
+			<table>
+			<tr>
+				<td colspan="2"><div style="padding:5px;">{{$data.month}}/{{$data.day}}({{$data.week_name}})</div></td>
+			</tr>
+			<tr>
+				<td><div style="padding:5px;">{{$pm.staff_type_name}}</div></td>
+				<td><div style="padding:5px;">{{$pm.staff_name}}</div></td>
+			</tr>
+			{{if $data.area == "kensyuu"}}
+				<tr>
+					<td><div style="padding:5px;">開始時間(研修)</div></td>
+					<td><div style="padding:5px;">{{$pm.start_dspHi}}</div></td>
+				</tr>
+				<tr>
+					<td><div style="padding:5px;">終了時間(研修)</div></td>
+					<td><div style="padding:5px;">{{$pm.end_dspHi}}</div></td>
+				</tr>
+				<tr>
+					<td><div style="padding:5px;">研修後出勤</div></td>
+					<td><div style="padding:5px;">{{$pm.work_flg_name}}</div></td>
+				</tr>
+				{{if $data.work_flg == 1}}
+					<tr>
+						<td><div style="padding:5px;">出勤時間</div></td>
+						<td><div style="padding:5px;">{{$pm.start_time_work_dspHi}}</div></td>
+					</tr>
+					<tr>
+						<td><div style="padding:5px;">退勤時間</div></td>
+						<td><div style="padding:5px;">{{$pm.end_time_work_dspHi}}</div></td>
+					</tr>
+				{{/if}}
+			{{else}}
+				<tr>
+					<td><div style="padding:5px;">出勤時間</div></td>
+					<td><div style="padding:5px;">{{$pm.start_dspHi}}</div></td>
+				</tr>
+				<tr>
+					<td><div style="padding:5px;">退勤時間</div></td>
+					<td><div style="padding:5px;">{{$pm.end_dspHi}}</div></td>
+				</tr>
+				<tr>
+					<td><div style="padding:5px;">当欠</div></td>
+					<td><div style="padding:5px;">{{$pm.today_absence_name}}</div></td>
+				</tr>
+				{{if $data.type == "t"}}
+					<tr>
+						<td><div style="padding:5px;">出勤調整対象</div></td>
+						<td><div style="padding:5px;">{{$pm.attendance_adjustment_name}}</div></td>
+					</tr>
+					<tr>
+						<td><div style="padding:5px;">承認チェック</div></td>
+						<td><div style="padding:5px;">{{$pm.dspSyounin}}</div></td>
+					</tr>
+					<tr>
+						<td><div style="padding:5px;">コメント</div></td>
+						<td><div style="padding:5px;">{{$data.comment}}</div></td>
+					</tr>
+					<tr>
+						<td><div style="padding:5px;">公開設定</div></td>
+						<td><div style="padding:5px;">{{$pm.publish_flg_name}}</div></td>
+					</tr>
+				{{elseif $data.type == "d"}}
+					{{if ($data.area == "tokyo") || ($data.area == "yokohama") }}
+					<tr>
+						<td><div style="padding:5px;">担当エリア</div></td>
+						<td><div style="padding:5px;">{{$pm.att_area_name}}</div>
+						</td>
+					</tr>
+					{{/if}}
+					{{if $data.mode == "U"}}
+						<tr>
+							<td><div style="padding:5px;">出勤調整対象</div></td>
+							<td><div style="padding:5px;">{{$pm.attendance_adjustment_name}}</div></td>
+						</tr>
+						<tr>
+							<td><div style="padding:5px;">状況ボード表示</div></td>
+							<td><div style="padding:5px;">{{$pm.not_board_display_flg}}</div></td>
+						</tr>
+					{{/if}}
+				{{/if}}
+			{{/if}}
+			{{if $data.mode == "I" && $data.get_staff_id == false}}
+				<tr>
+					<td colspan="2">
+						<div style="padding:20px 0px 0px 0px;">
+							<div id="copy_result"></div>
+							<div>
+								<form action="" method="post" id="copy_frm">
+								<input type="hidden" name="type" value="{{$data.type}}" />
+								<input type="hidden" name="area" value="{{$data.area}}" />
+								<input type="hidden" name="attendance_id" value="{{$data.attendance_id}}" />
+								<input type="hidden" name="staff_id" value="{{$data.staff_id}}" />
+								<div id="copy_day_list" style="padding:0px 0px 0px 0px;">
+								<div><input type="button" name="send" value="この情報をコピーする" style="padding:5px 10px 5px 10px;" onclick="attend_copy();" /></div>
+								{{section name=i start=0 loop=$month_data_num}}
+									<div style="padding:15px 0px 0px 0px;"><input type="checkbox" name="copy[]" value="{{$month_data[i].tagId}}"{{$month_data[i].disabled}} />
+									{{if $month_data[i].disabled}}
+										<font color='#888888'>{{$month_data[i].dspMd}}{{$month_data[i].reg_time}}</font>
+									{{else}}
+										{{$month_data[i].dspMd}}
+									{{/if}}
+									</div>
+								{{/section}}
+								</div>
+								</form>
+							</div>
+						</div>
+					</td>
+				</tr>
+			{{/if}}
+			</table>
+		</div>
+		
+	</div>
+</div>
+
+</body>
+</html>

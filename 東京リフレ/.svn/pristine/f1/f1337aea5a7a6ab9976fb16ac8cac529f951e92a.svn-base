@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<title>{{$params.page_title}}</title>
+		<meta name="Keywords" content="{{$params.page_keywords}}" />
+		<meta name="Description" content="{{$params.page_description}}" />
+		
+		<link href="{{$smarty.const.WWW_URL_SSL}}css/sp/style_calendar.css" rel="stylesheet" type="text/css" />
+		
+		
+{{if $params.clip_calendar_flg == true}}
+<link href="{{$smarty.const.WWW_URL_SSL}}css/sp/style_vip_clip_calendar.css" rel="stylesheet" type="text/css" />
+{{else}}
+<link href="{{$smarty.const.WWW_URL_SSL}}css/sp/therapist_calendar_ssl.css" rel="stylesheet" type="text/css" />
+{{/if}}
+		
+		<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/jquery.exscrollevent.js"></script>
+		
+{{if $params.clip_calendar_flg == true}}
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/sp/vip_clip_calendar.js"></script>
+{{else}}
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/sp/vip_therapist_calendar_ssl.js"></script>
+{{/if}}
+		
+		<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/analytics.js"></script>
+		
+	</head>
+	<body>
+	
+	<a name="top"></a>
+	
+	<div id="wrapper">
+	
+<div>
+	<div id="site_logo">
+		<a href="{{$params.url_root}}">
+			<img src="{{$params.url_root}}img/logo.gif" alt="出張マッサージ東京リフレ" width="100" />
+		</a>
+	</div>
+	<div id="site_logo_right">
+		<div class="left1">
+			&nbsp;
+		</div>
+		<div class="left2">
+			<div>
+				<img src="{{$params.url_root}}img/sp/site_logo_right_menu.png" alt="メニューボタン" width="30" id="site_logo_right_menu" />
+			</div>
+			<div id="site_logo_right_menu_list">
+				<div id="site_logo_right_menu_close">
+					×　メニューを閉じる
+				</div>
+				<a href="{{$params.url_root}}" class="menu">
+					東京リフレTOPページ
+				</a>
+				<a href="{{$params.url_root}}concept.php" class="menu">
+					コンセプト
+				</a>
+				<a href="{{$params.url_root}}menu.php" class="menu">
+					メニュー・料金/出張エリア
+				</a>
+				<a href="{{$params.url_root}}therapist.php" class="menu">
+					セラピスト紹介
+				</a>
+				<a href="{{$params.url_root}}guidance.php" class="menu">
+					ご利用方法
+				</a>
+				<a href="{{$params.url_root}}voice.php" class="menu">
+					お客様の声/よくある質問
+				</a>
+				<a href="{{$params.url_root}}vip/" class="menu">
+					会員様専用ページ
+				</a>
+				<a href="{{$params.url_root}}recruit.php" class="menu">
+					セラピスト募集
+				</a>
+			</div>
+		</div>
+		<br class="clear" />
+	</div>
+	<br class="clear" />
+</div>
+		
+		<div id="content_tpl">
+		<div>{{include file=$content_tpl params=$params}}</div>
+		<div id="to_page_top">
+		<a href="#top">
+		<img src="{{$params.url_root}}img/ssl/vip/to_page_top.gif" alt="ページトップへ" width="100" />
+		</a>
+		</div>
+		</div>
+		
+		{{include file="sp/content/top_info.tpl"}}
+		
+		{{include file="sp/content/reserv_block.tpl"}}
+		
+		<hr style="margin-top:30px;" />
+		<div id="footer">出張マッサージ東京リフレ</div>
+		
+<div>
+{{include file="adwords/conversion_tel_ssl.tpl"}}
+</div>
+
+	</div>
+
+	</body>
+</html>

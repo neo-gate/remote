@@ -1,0 +1,6 @@
+﻿<div class="reserv_block" style="width:96px; margin:0 auto;">
+	<div class="left">
+		<a href="tel:0352065134" onclick="ga('send','event','vip_page','tel_click');"><img src="{{$params.url_root}}img/sp/tel_reserv.png" alt="電話予約" width="96" /></a>
+	</div>
+	<br style="clear:both" />
+</div>

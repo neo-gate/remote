@@ -1,0 +1,65 @@
+﻿<!doctype html>
+<html>
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T9S7L2Z');</script>
+<!-- End Google Tag Manager -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=0.5,minimum-scale=0.5, maximum-scale=0.5,user-scalable=no">
+<meta name="viewport" content="width=640px, user-scalable=no, target-densitydpi=device-dpi">
+<title>セラピスト募集|東京リフレ</title>
+<link rel="icon" href="http://www.tokyo-refle.com/favicon.ico" type="image/x-icon">
+<link href="{{$params.url_root}}css/css/sp/style.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="{{$params.url_root}}js/analytics.js"></script>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T9S7L2Z"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<img src="img/img/sp/recruit_lp_sp_01.jpg" width="640" height="995" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_02.jpg" width="640" height="1383" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_03.jpg" width="640" height="684" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_04.jpg" width="640" height="1537" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_05.jpg" width="640" height="1168" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_06.jpg" width="640" height="1803" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_07.jpg" width="640" height="2733" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_08.jpg" width="640" height="1725" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_09.jpg" width="640" height="1237" alt=""/>
+<img src="img/img/sp/recruit_lp_sp_10.jpg" width="640" height="950" alt=""/>
+<div style="height:180px;"></div>
+<div id="header-fixed">
+                     <div id="header-bk">
+                            <div id="header"></div>
+                     </div>
+              </div>
+              <div id="body-bk">
+                     <div id="body"></div>
+              </div>
+              <div id="footer-fixed">
+                     <div id="footer-bk">
+                            <div id="footer">
+                            <img src="img/img/sp/recruit_lp_sp_11.jpg" width="640" height="24" alt="" style="float:left;"/>
+                            <img src="img/img/sp/recruit_lp_sp_12.jpg" width="20" height="95" alt="" style="float:left;"/>
+
+<a onclick="goog_report_conversion ('tel:0352065134')" href= "tel:0352065134">
+<img src="img/img/sp/recruit_lp_sp_13.jpg" width="290" height="95" alt="" style="float:left;"/>
+</a>
+
+                            <img src="img/img/sp/recruit_lp_sp_14.jpg" width="20" height="95" alt="" style="float:left;"/>
+
+<a href="http://www.tokyo-refle.com/application/sp/contact.php">
+<img src="img/img/sp/recruit_lp_sp_15.jpg" width="290" height="95" alt="" style="float:left;"/>
+</a>
+
+                            <img src="img/img/sp/recruit_lp_sp_16.jpg" width="20" height="95" alt="" style="float:left;"/>
+                            <img src="img/img/sp/recruit_lp_sp_17.jpg" width="640" height="54" alt="" style="float:left;"/>
+                            </div>
+                     </div>
+              </div>
+</body>
+</html>

@@ -1,0 +1,1483 @@
+<?php
+/* =================================================================================
+		Script Name	rs_sts_board_edit.php(予約状況ボード編集)
+		Author		aida
+		Create Date	2017/11/16	Created based on resaervation_status_board_edit.php resaervation_status_board_edit_complete.php resaervation_status_board_delete_complete.php
+		Update Date	----/--/--
+		IN/OUT		受信：GET	送信:無し
+		Back Script	***********
+		Prev Script	***********
+		Description	予約状況ボード編集
+================================================================================= */
+//----初期処理
+include("include/common.php");
+include("include/auth.php");
+//include(COMMON_INC . "const.php");
+//==================================================================================
+define("URL_BACK_PAGE", "rs_sts_board.php");
+//==================================================================================
+
+$w_ArThisDay = PHP_getThisDay(0);		//本日取得 in ^common/include/const.php
+
+$course_array_num = count($ARRAY_Course);
+$extension_array_num = count($ARRAY_Extension);
+
+//$time_array_board = get_time_array_board_2();
+	//include(COMMON_INC."time_array.php");
+//print_r($time_array_board);
+
+$card_state_extension = "-1";
+
+$card_state_extension_disp_flg = false;
+//$card_state_extension_disp_flg = true;
+
+if(isset($_POST["send"]) == true || isset($_POST["send_delete"]) == true || isset($_POST["send_delete_driver"])==true || isset($_POST["send_select_driver"])==true){
+
+	$reservation_no = $_POST["reservation_no"];
+	$reservation_id = $_POST["reservation_id"];
+	$attendance_id = $_POST["attendance_id"];
+	$year = $_POST["year"];
+	$month = $_POST["month"];
+	$day = $_POST["day"];
+	$shop_name = $_POST["shop_name"];
+	$customer_name = $_POST["customer_name"];
+	$area_name = $_POST["area_name"];
+	$therapist_name = $_POST["therapist_name"];
+	$therapist_id = $_POST["therapist_id"];
+	$start_time = $_POST["start_time"];
+	$end_time = $_POST["end_time"];
+	$start_hour_old = $_POST["start_hour_old"];
+	$start_minute_old = $_POST["start_minute_old"];
+	$end_hour_old = $_POST["end_hour_old"];
+	$end_minute_old = $_POST["end_minute_old"];
+	$shop_area = $_POST["shop_area"];
+	$place_name = $_POST["place_name"];
+	$course = $_POST["course"];
+	$course_add = $_POST["course_add"];
+	$course_var = $_POST["course_var"];
+	$course_new = $_POST["course_new"];
+	$extension_old = $_POST["extension_old"];
+	$extension_new = $_POST["extension_new"];
+	$card_flg = $_POST["card_flg"];
+	$card_confirm_flg = $_POST["card_confirm_flg"];
+	$complete_flg = $_POST["complete_flg"];
+	$start_flg = $_POST["start_flg"];
+	$card_state_extension = $_POST["card_state_extension"];
+	$shimei_flg = $_POST["shimei_flg"];
+	$shimei_flg_old = $_POST["shimei_flg_old"];
+
+	//=========
+	$card_price_free = $_POST["card_price_free"];
+	$card_commission_free = $_POST["card_commission_free"];
+	$card_commission_type = $_POST["card_commission_type"];
+	
+	$price = $_POST["price"];
+	
+	$attendance_id_tmp = $_POST["attendance_id_tmp"];
+	$attendance_tmp_flg = $_POST["attendance_tmp_flg"];
+
+	//==========================
+	$transportation = $_POST["transportation"];
+	$discount = $_POST["discount"];
+	$new_flg = $_POST["new_flg"];
+	$repeat_flg = $_POST["repeat_flg"];
+	$otherwise = $_POST["otherwise"];
+
+	$okuri_driver_id = $_POST["okuri_driver_id"];
+	$okuri_driver_name = $_POST["okuri_driver_name"];
+	$okuri_kenmu = $_POST["okuri_kenmu"];
+	$mukae_driver_id = $_POST["mukae_driver_id"];
+	$mukae_driver_name = $_POST["mukae_driver_name"];
+	$mukae_kenmu = $_POST["mukae_kenmu"];
+
+	$orders_route = $_POST["orders_route"];
+
+	if( $card_flg != "1" ){
+		$card_flg = 0;
+	}
+	if( $card_confirm_flg != "1" ){
+		$card_confirm_flg = 0;
+	}
+	$start_hour = $time_array_board[$start_time]["hour"];
+	$start_minute = $time_array_board[$start_time]["minute"];
+	$end_time_data = get_board_end_time_2($start_hour,$start_minute,$course_new,$course_add,$extension_new);		//in ^man/include/functions.php
+	$end_hour = $end_time_data["hour"];
+	$end_minute = $end_time_data["minute"];
+	
+	$w_ArCourceDisp = PHP_getArCourseDisp($course_var);		//in local
+	$course_disp = $w_ArCourceDisp["disp"];
+}
+
+if(isset($_POST["send"])==true){
+
+	if(empty($shimei_flg)){
+	    $shimei_flg = "0";
+	}
+	$shimei_change_flg = false;
+	if($shimei_flg != $shimei_flg_old){
+	    $shimei_change_flg = true;
+	}
+	
+	$error = "";
+	
+	if( $price < $card_price_free ){
+		$error .= "<li>決済金額が料金総額を超えています</li>";
+	}
+	
+	if($attendance_id_tmp != $attendance_id){
+		if( $attendance_id_tmp != "" ){
+			
+			$data = get_attendance_time_common($attendance_id_tmp);		//出勤データ抽出 in ^common/include/functions.php
+			
+			$start_time_2 = $data["start_time"];
+			$end_time_2 = $data["end_time"];
+			
+			$start_time_3 = get_time_array_value_common($start_hour,$start_minute);		//開始時刻の位置取得 in ^common/include/functions.php
+			$end_time_3 = get_time_array_value_common($end_hour,$end_minute);			//終了時刻の位置取得 in ^common/include/functions.php
+			
+			if( $start_time_2 > $start_time_3 ){
+				$error .= "<li>選択したセラピストは出勤前です(開始時間～終了時間)</li>";
+			}else if( $end_time_2 < $start_time_3 ){
+				$error .= "<li>選択したセラピストは出勤終了しています(開始時間～終了時間)</li>";
+			}else{
+				$result = check_reservation_data_exist_3_common($attendance_id_tmp,$start_time_3,$end_time_3);		//予約済かチェック in ^common/include/functions.php
+				
+				if( $result == true ){
+					$error .= "<li>選択したセラピストは予約が入っています(開始時間～終了時間)</li>";
+				}
+			}
+			//----出勤データIDからセラピストIDを取得(NEW)(NEW)
+			$therapist_id = get_therapist_id_by_attendance_id_new_new($attendance_id_tmp,$shop_area);				//in ^man/include/functions.php
+		}
+		else{
+		    $therapist_id = "-1";
+		}
+	}
+
+	
+	if($error != ""){
+		$error = "<ul style='color:red;'>".$error."</ul>";
+	}else{
+		if($course_new == $course_var){
+			$course_new = "";
+			$course_change_flg = false;
+		}
+		else{
+			$course_old = $course_var;
+			$course_var = $course_new;
+			$course_change_flg = true;
+		}
+		$extension_change_flg = true;
+		
+		//切り替えまでの暫定的記述
+		//$card_price_free = 0;
+		//$card_commission_free = 0;
+		//$card_commission_type = 1;
+		
+		PHP_update_reservation_data_4(
+$reservation_id,$start_hour,$start_minute,$end_hour,$end_minute,$attendance_id,
+$start_hour_old,$start_minute_old,$end_hour_old,$end_minute_old,$shop_area,$place_name,$therapist_id,
+$year,$month,$day,$card_flg,$card_confirm_flg,$course,$complete_flg,$start_flg,$extension,
+$shop_name,$course_old,$course_new,$extension_old,$extension_new,$course_change_flg,$extension_change_flg,$course_var,
+$card_state_extension,$card_price_free,$card_commission_free,$card_commission_type,$attendance_id_tmp,$attendance_tmp_flg,$shimei_flg,$shimei_change_flg);
+		
+		$pm = PHP_setSmartyParameta(URL_BACK_PAGE, "編集", $shop_area, $area_name, $all_page_flg, $year, $month, $day, $w_ArThisDay);	//処理結果用Smartyパラメータセット
+		$smarty->assign( 'pm', $pm );
+		$smarty->display( 'man/rs_sts_board_edit_done.tpl' );
+		exit();
+	
+	}
+	
+}else if(isset($_POST["send_delete"])==true) {
+		
+	delete_reservation_data_board(
+$reservation_id,$attendance_id,$start_hour_old,$start_minute_old,$end_hour_old,$end_minute_old,$shop_area,
+$therapist_id,$year,$month,$day);				//in ^man/include/functions.php
+	
+	$pm = PHP_setSmartyParameta(URL_BACK_PAGE, "削除", $shop_area, $area_name, $all_page_flg, $year, $month, $day, $w_ArThisDay);	//処理結果用Smartyパラメータセット
+	$smarty->assign( 'pm', $pm );
+	$smarty->display( 'man/rs_sts_board_edit_done.tpl' );
+	exit();
+	
+} else if(isset($_POST["send_delete_driver"]) == true) {
+	$driver_delete_select = $_POST["driver_delete_select"];
+	
+	$driver_delete_select_type = $driver_delete_select;
+	
+	$result = okuri_mukae_driver_delete($reservation_id,$driver_delete_select_type);		//in ^man/include/functions.php
+	
+	if( $result == true ){
+		$pm = PHP_setSmartyParameta(URL_BACK_PAGE, "ドライバー解除", $shop_area, $area_name, $all_page_flg, $year, $month, $day, $w_ArThisDay);	//処理結果用Smartyパラメータセット
+		$smarty->assign( 'pm', $pm );
+		$smarty->display( 'man/rs_sts_board_edit_done.tpl' );
+		exit();
+	}else{
+		$error = "<ul style='color:red;'><li>ドライバー解除に失敗しました</li></ul>";
+	}
+	
+} else if(isset($_POST["send_select_driver"]) == true){
+		
+	$driver_type = $_POST["driver_type"];
+	$driver_set_select = $_POST["driver_set_select"];
+	$driver_id = $driver_set_select;
+	
+	if( $driver_type == "-1" ) $error .= "<li>"."送り・迎えが未選択です"."</li>";
+	
+	if( $driver_set_select == "" ) $error .= "<li>"."ドライバーが未選択です"."</li>";
+	
+	if($error != ""){
+		$error = "<ul style='color:red;'>".$error."</ul>";
+	}else{
+		//$result = okuri_mukae_driver_set($reservation_id,$driver_id,$driver_type,$shop_area);		//in ^man/include/functions.php
+		$result = TMP_okuri_mukae_driver_set($reservation_id,$driver_id,$driver_type,$shop_area);		//in local TEST用
+		
+		if( $result == true ){
+			$pm = PHP_setSmartyParameta(URL_BACK_PAGE, "ドライバーセット", $shop_area, $area_name, $all_page_flg, $year, $month, $day, $w_ArThisDay);	//処理結果用Smartyパラメータセット
+			$smarty->assign( 'pm', $pm );
+			$smarty->display( 'man/rs_sts_board_edit_done.tpl' );
+			exit();
+		}else{
+			$error = "<ul style='color:red;'><li>ドライバーセットに失敗しました</li></ul>";
+		}
+	}
+} else if(isset($_POST["send_back"]) == true) {
+	$shop_area = $_POST["shop_area"];
+	$year = $_POST["year"];
+	$month = $_POST["month"];
+	$day = $_POST["day"];
+
+	$shop_area = str_replace("_reraku","",$shop_area);
+	$shop_area = str_replace("_bigao","",$shop_area);
+
+	//----戻り先URLの取得
+	$url = "Location: " . PHP_getRetUrl(URL_BACK_PAGE, $shop_area, $year, $month, $day, $w_ArThisDay);		//in local
+	header($url);
+	exit();
+} elseif( (isset($_GET["id"])==true) && (isset($_GET["area"])==true) ){
+	$reservation_id = $_GET["id"];
+	$shop_area = $_GET["area"];
+
+	//予約データの取得
+	//$data = get_reservation_data_by_id($reservation_id);
+	$data = PHP_get_reservation_data_by_id($reservation_id);
+
+	$reservation_no = $data["reservation_no"];
+	$attendance_id = $data["attendance_id"];
+	$year = $data["year"];
+	$month = $data["month"];
+	$day = $data["day"];
+	$start_hour = $data["start_hour"];
+	$start_minute = $data["start_minute"];
+	$end_hour = $data["end_hour"];
+	$end_minute = $data["end_minute"];
+	$shop_name = $data["shop_name"];
+	$customer_name = $data["customer_name"];
+	$area_name = $data["area_name"];
+	
+	$start_hour_old = $data["start_hour"];
+	$start_minute_old = $data["start_minute"];
+	$end_hour_old = $data["end_hour"];
+	$end_minute_old = $data["end_minute"];
+	
+	$place_name = $data["area_name"];
+	
+	$course = $data["course"];
+	$course_var = $data["course_var"];
+	
+	$w_ArCourceDisp = PHP_getArCourseDisp($course_var);		//in local
+	$course_disp = $w_ArCourceDisp["disp"];
+	$course_add = $w_ArCourceDisp["add"];
+	
+	$extension_old = $data["extension"];
+	$extension_new = $data["extension"];
+	
+	$card_flg = $data["card_flg"];
+	$card_confirm_flg = $data["card_confirm_flg"];
+	
+	$complete_flg = $data["complete_flg"];
+	
+	$start_flg = $data["start_flg"];
+	
+	$card_state_extension = $data["card_state_extension"];
+	
+	$shimei_flg = $data["shimei_flg"];
+	$new_flg = $data["new_flg"];
+	$repeat_flg = $data["repeat_flg"];
+	$otherwise = $data["otherwise"];
+
+	$card_price_free = $data["card_price_free"];
+	$card_commission_free = $data["card_commission_free"];
+	$card_commission_type = $data["card_commission_type"];
+	
+	$attendance_tmp_flg = $data["attendance_tmp_flg"];
+	
+	if( $attendance_tmp_flg == "1" ) $attendance_id_tmp = $attendance_id;
+	
+	$therapist_name = $data["therapist_name"];
+	$therapist_id = $data["therapist_id"];
+
+	$discount = $data["discount"];
+	$transportation = $data["transportation"];
+
+	$okuri_driver_id = $data["okuri_driver_id"];
+	$okuri_driver_name = $data["okuri_driver_name"];
+	$okuri_kenmu = $data["okuri_kenmu"];
+	$mukae_driver_id = $data["mukae_driver_id"];
+	$mukae_driver_name = $data["mukae_driver_name"];
+	$mukae_kenmu = $data["mukae_kenmu"];
+
+	$orders_route = $data["orders_route"];
+	if($data["start_real_time"]) $start_real_time = date("Y-m-d H:i", $data["start_real_time"]); else $start_real_time = "";
+	if($data["end_real_time"]) $end_real_time = date("Y-m-d H:i", $data["end_real_time"]); else $end_real_time = "";
+
+	$price = get_price_by_reservation_for_board_id_common($reservation_id);		//in ^common/include/functions.php
+	if(!$price) $price = 0;
+
+	if( $card_flg == "1" ){
+		if( $card_price_free == "0" ) $card_price_free = $price;
+	}
+} else {
+	echo "不正なアクセスです。";
+	exit();
+}
+
+if (preg_match("/リピート作戦/",$course_disp)) $course_disp = str_replace("コース", "", $course_disp);
+
+if( $card_state_extension == "0" ) {
+	$ARRAY_PayMethod[1]["selected"] = " selected";
+} elseif( $card_state_extension == "1" ) {
+	$ARRAY_PayMethod[1]["selected"] = " selected";
+} else {
+	$ARRAY_PayMethod[0]["selected"] = " selected";
+}
+
+for($n=0; $n<count($ARRAY_shopGroup); $n++) {
+	if($ARRAY_shopGroup[$n]["area"] == $shop_area) {
+		$area_name = $ARRAY_shopGroup[$n]["short_name"];
+	}
+}
+
+//$therapist_data = get_therapist_data_for_reservation_status_board($year,$month,$day,$shop_area);
+$therapist_data = PHP_get_therapist_data_for_reservation_status_board($year, $month, $day, $shop_area);		//in local
+$therapist_data_num = count($therapist_data);
+for($n=0; $n<$therapist_data_num; $n++) {
+	if($therapist_data[$n]["therapist_id"] == $therapist_id) $therapist_data[$n]["selected"] = " selected"; else $therapist_data[$n]["selected"] = "";
+}
+
+//$driver_data = get_driver_data_for_board($year,$month,$day,$shop_area);
+$driver_data = PHP_get_driver_data_for_board($year, $month, $day, $shop_area);		//in local
+$driver_data_num = count($driver_data);
+$driver_data_ck = array("taxi" => "", "honbu" => "");
+if($driver_set_select == -2) {
+	$driver_data_ck["taxi"] = " checked";
+} elseif($driver_set_select == -3) {
+	$driver_data_ck["honbu"] = " checked";
+}
+for($n=0; $n<$driver_data_num; $n++) {
+	if( $driver_data[$n]["id"] == $driver_set_select) {
+		$driver_data[$n]["checked"] = " checked";
+	} else {
+		$driver_data[$n]["checked"] = "";
+	}
+}
+
+$okuri_driver_name = PHP_get_driver_name($okuri_driver_id, $okuri_driver_name);		//in ^common/include/const.php
+$mukae_driver_name = PHP_get_driver_name($mukae_driver_id, $mukae_driver_name);		//in ^common/include/const.php
+if($okuri_driver_id == -1) {
+	$okuri_color = "#aaaaaa";
+} elseif($okuri_driver_id == -2) {
+	$okuri_color = "#006400";
+} elseif($okuri_driver_id == -3) {
+	$okuri_color = "#000000";
+} else {
+	if($okuri_kenmu) $okuri_color = "#ff0000"; else $okuri_color = "#0000a0";
+}
+if($mukae_driver_id == -1) {
+	$mukae_color = "#aaaaaa";
+} elseif($mukae_driver_id == -2) {
+	$mukae_color = "#006400";
+} elseif($mukae_driver_id == -3) {
+	$mukae_color = "#000000";
+} else {
+	if($mukae_kenmu) $mukae_color = "#ff0000"; else $mukae_color = "#0000a0";
+}
+
+if( ($okuri_driver_name=="なし") && ($mukae_driver_name=="なし") ){
+	$driver_delete_button_not_disp_flg = true;
+}
+
+if( ($extension_new != "0") && ($extension_new != "-1") && ($extension_new != "") ){
+	$card_state_extension_disp_flg = true;
+}
+
+$shimei_flg_ck = "";
+if( $shimei_flg == "1" ){
+	$course_disp = "【指】".$course_disp;
+	$shimei_flg_ck = " checked";
+}
+
+$price_disp = number_format($price) . "円";
+
+if( $card_commission_free == "0" ){
+	$card_commission_free = get_card_commission_free_common($card_commission_type, $card_price_free);		//in ^common/include/functions.php
+}
+
+$office_address = get_office_address1_by_area($shop_area);		//in ^man/include/functions.php
+//$map_url = sprintf("%smap.php?from=%s&to=%s",WWW_URL_MAN,$office_address,$place_name);
+$map_url = sprintf("https://www.google.co.jp/maps/dir/%s/%s/",$office_address,$place_name);
+
+$shop_id = get_shop_id_by_shop_name_common($shop_name);			//in ^common/include/functions.php
+$arr_course = get_course_or_discount($shop_id,"course");		//in ^man/include/functions.php
+
+$price_except_kihon = $price;
+$n = 0;
+foreach($ARRAY_Course as $w_Key => $w_Val) {
+	$w_ArCourse[$n]["name"] = $w_Val . "分";
+	if($w_ArCourse[$n]["name"] == $course_var) {
+		$w_ArCourse[$n]["selected"] = " selected";
+        $price_except_kihon -= $val["kihon_price"];
+    } else {
+        $w_ArCourse[$n]["selected"] = "";
+    }
+	$n++;
+}
+
+for($i=0;$i<$extension_array_num;$i++) {
+	$w_ArExtension[$i] = array("name" => $ARRAY_Extension[$i], "selected" => "");
+	if( $ARRAY_Extension[$i] == $extension_new ) $w_ArExtension[$i]["selected"] = " selected";
+}
+
+$w_ArRadioDriver_type = array("", "", "");
+if( $driver_type == "okuri" ) {
+	$w_ArRadioDriver_type[1] = " checked";
+}else if( $driver_type == "mukae" ){
+	$w_ArRadioDriver_type[2] = " checked";
+}else{
+	$w_ArRadioDriver_type[0] = " checked";
+}
+
+$n = 0;
+//for($i=-71; $i<157; $i++){
+for($i=1; $i<157; $i++){
+	$tmp_hour = $time_array_board[$i]['hour'];
+	$tmp_minute = $time_array_board[$i]['minute'];
+
+	if( ( $start_hour == $tmp_hour ) && ( $start_minute == $tmp_minute ) ) $w_Selected = " selected"; else $w_Selected = "";
+
+	$w_ArTimes[$n] = array("id" => $i, "name" => $tmp_hour . "時" . $tmp_minute . "分", "selected" => $w_Selected);
+	$n++;
+}
+
+if( $complete_flg == "1" ) $w_ckComplete_flg = " checked"; else $w_ckComplete_flg = "";
+
+$start_flg_ck = "";
+if($start_flg) $start_flg_ck = " checked";
+
+$card_flg_ck = "";
+if( $card_flg == "1" ) $card_flg_ck = " checked";
+
+$card_confirm_flg_ck = "";
+if( $card_confirm_flg == "1" ) $card_confirm_flg_ck = " checked";
+
+if( $card_commission_type == "2" ) {
+	$w_ArCard_commission_type = array("", " checked");
+} else {
+	$w_ArCard_commission_type = array(" checked", "");
+}
+
+if($repeat_flg) {
+	$w_repeate_dsp = "(Repeat)";
+} elseif($new_flg) {
+	$w_repeate_dsp = "(New)";
+} else {
+	$w_repeate_dsp = "";
+}
+
+//----戻り先URLの取得
+$w_tmpArea = str_replace("_bigao", "", str_replace("_reraku", "", $shop_area));
+$w_retUrl = PHP_getRetUrl(URL_BACK_PAGE, $w_tmpArea, $year, $month, $day, $w_ArThisDay);		//in local
+
+//----Smarty
+$pm["retUrl"] = $w_retUrl;
+$pm['css_time'] = date("ymdHi");
+$pm['reservation_no'] = $reservation_no;
+$pm['area_name'] = $area_name;
+$pm['customer_name'] = $customer_name;
+$pm['place_name'] = $place_name;
+$pm['map_url'] = $map_url;
+$pm['price_disp'] = $price_disp;
+$pm['price_except_kihon'] = $price_except_kihon;
+$pm['card_state_extension_disp_flg'] = $card_state_extension_disp_flg;
+$pm['card_price_free'] = $card_price_free;
+$pm['card_commission_free'] = $card_commission_free;
+$pm['all_page_flg'] = $all_page_flg;
+$pm['reservation_id'] = $reservation_id;
+$pm['attendance_id'] = $attendance_id;
+$pm['year'] = $year;
+$pm['month'] = $month;
+$pm['day'] = $day;
+$pm['shop_name'] = $shop_name;
+$pm['area_name'] = $area_name;
+$pm['therapist_name'] = $therapist_name;
+$pm['therapist_id'] = $therapist_id;
+$pm['start_hour_old'] = $start_hour_old;
+$pm['start_minute_old'] = $start_minute_old;
+$pm['end_hour_old'] = $end_hour_old;
+$pm['end_minute_old'] = $end_minute_old;
+$pm['shop_area'] = $shop_area;
+$pm['shop_id'] = $shop_id;
+$pm['course'] = $course;
+$pm['course_add'] = $course_add;
+$pm['course_var'] = $course_var;
+$pm['extension_old'] = $extension_old;
+$pm['price'] = $price;
+$pm['attendance_tmp_flg'] = $attendance_tmp_flg;
+$pm['discount'] = $discount;
+$pm['transportation'] = $transportation;
+$pm['new_flg'] = $new_flg;
+$pm['repeat_flg'] = $repeat_flg;
+$pm['otherwise'] = $otherwise;
+$pm['shimei_flg'] = $shimei_flg;
+$pm['shimei_flg_ck'] = $shimei_flg_ck;
+
+$pm['repeate_dsp'] = $w_repeate_dsp;
+
+$pm['end_hour'] = $end_hour;
+$pm['end_minute'] = $end_minute;
+$pm['start_flg_ck'] = $start_flg_ck;
+$pm['card_flg_ck'] = $card_flg_ck;
+$pm['card_confirm_flg_ck'] = $card_confirm_flg_ck;
+$pm['ArCard_commission_type'] = $w_ArCard_commission_type;
+
+$pm['okuri_driver_id'] = $okuri_driver_id;
+$pm['okuri_driver_name'] = $okuri_driver_name;
+$pm['okuri_kenmu'] = $okuri_kenmu;
+$pm['okuri_color'] = $okuri_color;
+$pm['mukae_driver_id'] = $mukae_driver_id;
+$pm['mukae_driver_name'] = $mukae_driver_name;
+$pm['mukae_kenmu'] = $mukae_kenmu;
+$pm['mukae_color'] = $mukae_color;
+$pm['driver_delete_button_not_disp_flg'] = $driver_delete_button_not_disp_flg;
+
+$pm['start_real_time'] = $start_real_time;
+$pm['end_real_time'] = $end_real_time;
+
+$pm['orders_route'] = $orders_route;
+
+$pm['error'] = $error;
+
+$pm['driver_id'] = $driver_id;
+
+$pm['ckComplete_flg'] = $w_ckComplete_flg;
+
+$smarty->assign( 'pm', $pm );
+
+$smarty->assign( 'ArTherapist', $therapist_data );
+$smarty->assign( 'ArTherapistNum', $therapist_data_num );
+
+$smarty->assign( 'ArRadioDriver_type', $w_ArRadioDriver_type );
+$smarty->assign( 'ArRadioDriver_typeNum', count($w_ArRadioDriver_type) );
+
+$smarty->assign( 'ArExtension', $w_ArExtension );
+$smarty->assign( 'ArExtensionNum', count($w_ArExtension) );
+
+$smarty->assign( 'ArPayMethod', $ARRAY_PayMethod );
+$smarty->assign( 'ArPayMethodNum', count($ARRAY_PayMethod) );
+
+$smarty->assign( 'ArCourse', $w_ArCourse );
+$smarty->assign( 'ArCourseNum', count($w_ArCourse) );
+
+$smarty->assign( 'ArTimes', $w_ArTimes );
+$smarty->assign( 'ArTimesNum', count($w_ArTimes) );
+
+$smarty->assign( 'driver_data', $driver_data );
+$smarty->assign( 'driver_data_num', $driver_data_num );
+$smarty->assign( 'driver_data_ck', $driver_data_ck );
+
+$smarty->display( 'man/rs_sts_board_edit.tpl' );
+exit;
+//==================================================================================
+
+//----処理結果用Smartyパラメータセット
+function PHP_setSmartyParameta($u_url, $u_modeDisp, $u_area, $u_area_name, $u_all_page_flg, $u_year, $u_month, $u_day, &$u_ArThisDay) {
+	$pm['mode_Disp'] = $u_modeDisp;
+	$pm['area_name'] = $u_area_name;
+	$pm['all_page_flg'] = $u_all_page_flg;
+	$pm['retUrl'] = PHP_getRetUrl($u_url, $u_area, $u_year, $u_month, $u_day, $u_ArThisDay);
+	return $pm;
+}
+
+//----戻り先URLの取得
+function PHP_getRetUrl($u_url, $u_area, $u_year, $u_month, $u_day, &$u_ArThisDay) {
+
+	$ws_flagUnToday = true;
+	if($u_ArThisDay["year"] == $u_year && $u_ArThisDay["month"] == $u_month && $u_ArThisDay["day"] == $u_day) $ws_flagUnToday = false;
+
+	$ws_qStr = "";
+	if($u_area != "tokyo") $ws_qStr = "area=" . $u_area;
+
+	if($ws_flagUnToday) {
+		if($ws_qStr) $ws_qStr .= "&";
+		$ws_qStr .= "year=" . $u_year . "&month=" . $u_month . "&day=" . $u_day;
+	}
+	if($_SESSION["rs_STS_dsp_mode"] == 1) {
+		if($ws_qStr) $ws_qStr .= "&";
+		$ws_qStr .= "dsp_mode=1";
+	}
+	if($ws_qStr) $ws_qStr = "?" . $ws_qStr;
+	return $u_url . $ws_qStr;
+}
+
+function PHP_getArCourseDisp($course_var) {
+	$ws_ArRet = array("disp" => "", "add" => "");
+	if (preg_match("/リフレ/",$course_var)) {
+		$ws_ArRet["disp"] = $course_var;
+		$ws_ArRet["add"] = 30;
+	}else{
+		$ws_ArRet["disp"] = $course_var."コース";
+		$ws_ArRet["add"] = 0;
+	}
+	return $ws_ArRet;
+}
+
+//----セラピスト情報取得
+function PHP_get_therapist_data_for_reservation_status_board($u_year, $u_month, $u_day, $u_area) {
+
+	//----出勤しているセラピスト情報を取得するためのSQL文
+	$ws_SQL = "select *,A.id as attendance_id from attendance_new A";
+	$ws_SQL .= " left join therapist_new B on A.therapist_id=B.id";
+	$ws_SQL .= " where B.delete_flg=0 and B.leave_flg=0 and B.test_flg=0 and year='%s' and month='%s' and day='%s'";
+	$ws_SQL .= " and A.today_absence='0' and A.kekkin_flg='0' and A.area='%s'";
+	$ws_SQL .= " order by B.rank_order_num asc,B.order_num desc";
+
+	$sql = sprintf($ws_SQL, $u_year, $u_month, $u_day, $u_area);
+	$res = mysql_query($sql, DbCon);
+	//echo "line=" . __LINE__ . " " . $res . "/" . $sql . "<br />";
+	if($res == false){
+		echo "error!(get_therapist_data_for_reservation_status_board:1)";
+		exit();
+	}
+
+	$data = array();
+
+	$ws_addWhere = "";
+	$ws_ArIds = array();
+
+	$i=0;
+	while($row = mysql_fetch_assoc($res)){
+		//therapist_id重複チェック
+		$result = check_duplication_therapist_id_in_attendance_new($data, $row["therapist_id"]);		//in ^man/include/functions.php
+
+		if( $result == false ){
+
+			$data[$i] = $row;
+
+			//$attendance_id = $data[$i]["attendance_id"];
+			$ws_ArIds[$i] = $data[$i]["attendance_id"];
+
+			if($ws_addWhere) $ws_addWhere .= ",";
+			$ws_addWhere .= $data[$i]["attendance_id"];
+
+			$data[$i]["area"] = $u_area;
+			$data[$i]["time"] = array();
+			$data[$i]["time_num"] = 0;
+
+			$i++;
+		}
+
+	}
+	/*
+	if(count($data) > 0) {
+		$sql = "select time from reservation_new where attendance_id IN(" . $ws_addWhere . ") order by attendance_id,id";
+		$res = mysql_query($sql, DbCon);
+		//echo "line=" . __LINE__ . " " . $res . "/" . $sql . "<br />";
+		$ws_qAttendanceId = -1;
+		while($row = mysql_fetch_assoc($res)){
+			if($data[$i]["attendance_id"] != $ws_qAttendanceId) {
+				if($ws_qAttendanceId != -1) {
+					$data[$ws_Index]["time_num"] = count($data[$ws_Index]["time"]);
+				}
+				$ws_qAttendanceId = $row["attendance_id"];
+				$ws_Index = array_search($ws_qAttendanceId, $ws_ArIds);
+				$j = 0;
+			}
+			$data[$ws_Index]["time"][$j] = $row["time"];
+			$j++;
+		}
+		if($j > 0){
+			$data[$ws_Index]["time_num"] = count($data[$ws_Index]["time"]);
+		}
+	}
+	//print_r($data);
+	*/
+
+	return $data;
+	exit();
+
+}
+
+//----ドライバー情報取得
+function PHP_get_driver_data_for_board($u_year, $u_month, $u_day, $u_area){
+
+	$type = "driver";
+
+	/*
+	$ws_SQL = "select A.* from staff_new_new A";
+	$ws_SQL .= " left outer join attendance_staff_new B on A.id=B.staff_id and B.year='%s' and B.month='%s' and B.day='%s' and B.today_absence=0 and B.attendance_adjustment=0";
+	$ws_SQL .= " where A.delete_flg='0' and A.shayousha_flg='0' and A.type='%s' and A.area='%s' and B.id IS NOT NULL";
+	$ws_SQL .= " order by A.id";
+	*/
+	//----状況ボードに合わせる　承認状態＝１かつボード非表示フラグ＝0　またエリアが横浜ならば
+	$ws_SQL = "select '0' AS FLAG,A.id,A.area,A.name from staff_new_new AS A";
+	$ws_SQL .= " left outer join (select staff_id from attendance_staff_new where area='%s' and year='%s' and month='%s' and day='%s' and not_board_display_flg=0 and syounin_state=1 and today_absence=0 and attendance_adjustment=0) AS B ON A.id=B.staff_id";
+	$ws_SQL .= " where A.delete_flg='0' and A.type='%s' and A.area='%s' and A.shayousha_flg='0' and B.staff_id is not null";
+	$sql = sprintf($ws_SQL, $u_area, $u_year, $u_month, $u_day, $type, $u_area);
+	if( $u_area == "yokohama" ) {
+		$ws_SQL = " union ";
+		$ws_SQL .= " select '1' AS FLAG,A.id,A.area,A.name from staff_new_new AS A";
+		$ws_SQL .= " left outer join (select staff_id from attendance_staff_new where area='tokyo' and year='%s' and month='%s' and day='%s' and not_board_display_flg=0 and syounin_state=1 and today_absence=0 and attendance_adjustment=0) AS B ON A.id=B.staff_id";
+		$ws_SQL .= " where delete_flg='0' and type='%s' and kenmu like '%%yokohama%%' and area='tokyo' and shayousha_flg='0' and B.staff_id is not null";
+		$sql .= sprintf($ws_SQL, $u_year, $u_month, $u_day, $type);
+	}
+	$sql .= " order by FLAG,id";
+	$res = mysql_query($sql, DbCon);
+	//echo "line=" . __LINE__ . " " . $res . "/" . $sql . "<br />";
+	if($res == false){
+
+		echo "error!(get_driver_data_for_board:1)";
+		exit();
+
+	}
+
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+/*
+		$staff_id = $row["id"];
+
+		$result = check_staff_attendance_exist_board($staff_id, $u_year, $u_month, $u_day,$u_area);
+
+		if( $result == true ){
+*/
+			$list_data[$i] = $row;
+			$list_data[$i]["area"] = $u_area;
+			$i++;
+
+		//}
+
+	}
+
+/*
+	if( $u_area == "yokohama" ){
+
+		$area_tokyo = "tokyo";
+
+		$where_kenmu = "kenmu like '%".$u_area."%'";
+
+		$ws_SQL = "select A.* from staff_new_new A";
+		$ws_SQL .= " left outer join attendance_staff_new B on A.id=B.staff_id and B.year='%s' and B.month='%s' and B.day='%s' and B.today_absence=0 and B.attendance_adjustment=0";
+		$ws_SQL .= " where A.delete_flg='0' and A.type='%s' and (%s) and A.area='%s' and B.id IS NOT NULL";
+		$sql = sprintf($ws_SQL, $u_year, $u_month, $u_day, $type, $where_kenmu, $area_tokyo);
+		$res = mysql_query($sql, DbCon);
+		//echo "line=" . __LINE__ . " " . $sql . "<br />";
+		if($res == false){
+
+			echo "error!(get_driver_data_for_board:2)";
+			exit();
+
+		}
+
+		while($row = mysql_fetch_assoc($res)){
+
+			//$staff_id = $row["id"];
+
+			//$result = check_staff_attendance_exist_board($staff_id, $u_year, $u_month, $u_day,$area_tokyo);
+
+			//if( $result == true ){
+				$list_data[$i] = $row;
+				$list_data[$i]["area"] = $area_tokyo;
+				$i++;
+			//}
+		}
+	}
+*/
+	return $list_data;
+}
+
+//----予約データの取得
+function PHP_get_reservation_data_by_id($id){
+
+	$ws_SQL = "select A.*,C.id AS therapist_id,C.name AS therapist_name,D.name AS okuri_driver_name,D.kenmu AS okuri_kenmu,E.name AS mukae_driver_name,E.kenmu AS mukae_kenmu from (((reservation_for_board A";
+	$ws_SQL .= " left join attendance_new B on B.id=A.attendance_id)";
+	$ws_SQL .= " left join therapist_new C on C.id=B.therapist_id)";
+	$ws_SQL .= " left outer join staff_new_new D on D.id=A.okuri_driver_id)";
+	$ws_SQL .= " left outer join staff_new_new E on E.id=A.mukae_driver_id";
+	$ws_SQL .= " where A.id='%s'";
+	$sql = sprintf($ws_SQL, $id);
+
+	//$sql = sprintf("select * from reservation_for_board where id='%s'",$id);
+	$res = mysql_query($sql, DbCon);
+	//echo "line=" . __LINE__ . " " . $sql . "<br />";
+	if($res == false){
+		echo "error!(get_reservation_data_by_id)";
+		exit();
+	}
+	$row = mysql_fetch_assoc($res);
+
+	return $row;
+}
+
+function TMP_okuri_mukae_driver_set($reservation_id,$driver_id,$type,$driver_area){
+
+	$cti_id = get_cti_id_by_reservation_for_board_id($reservation_id);
+	$cti_mail_data = get_cti_mail_data_by_cti_id($cti_id);
+	$driver_data = get_driver_data_by_id($driver_id);
+
+	$mail_subject = $cti_mail_data["subject"];
+	$mail_body = $cti_mail_data["body"];
+
+	$driver_name = $driver_data["name"];
+	$driver_mail = $driver_data["mail"];
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, DbCon );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, DbCon );
+
+	$action_type = "";
+
+	if( $type == "okuri" ){
+
+		$sql = sprintf("update reservation_for_board set okuri_driver_id='%s',okuri_driver_area='%s' where id='%s'",$driver_id,$driver_area,$reservation_id);
+
+		$action_type = "送り";
+
+	}else if( $type == "mukae" ){
+
+		$sql = sprintf("update reservation_for_board set mukae_driver_id='%s',mukae_driver_area='%s',complete_flg='1' where id='%s'",$driver_id,$driver_area,$reservation_id);
+
+		$action_type = "迎え";
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, DbCon );
+
+		return false;
+		exit();
+
+	}
+
+	//echo $sql;
+	//exit();
+
+	$res = mysql_query($sql, DbCon);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, DbCon );
+
+		return false;
+		exit();
+
+	}
+
+	//$driver_mail = "";
+
+	if( $driver_mail != "" ){
+
+		$data = get_reservation_for_board_data_by_id_common($reservation_id);
+
+		$year = $data["year"];
+		$month = add_zero_when_under_ten_common($data["month"]);
+		$day = add_zero_when_under_ten_common($data["day"]);
+		$start_hour = add_zero_when_under_ten_common($data["start_hour"]);
+		$start_minute = add_zero_when_under_ten_common($data["start_minute"]);
+		$end_hour = add_zero_when_under_ten_common($data["end_hour"]);
+		$end_minute = add_zero_when_under_ten_common($data["end_minute"]);
+
+		$mail_add_pre = sprintf("【予約情報】\r\n■日時 ： %s/%s/%s %s:%s-%s:%s",$year,$month,$day,$start_hour,$start_minute,$end_hour,$end_minute);
+
+		$mail_body = edit_mail_body_for_driver($mail_body);
+
+		$mail_body = $mail_add_pre."\r\n".$mail_body;
+
+		//メール送信
+
+		$mail_title = sprintf("[%sさん][%s]%s",$driver_name,$action_type,$mail_subject);
+
+		mb_language("ja");
+		mb_internal_encoding("UTF-8");
+		$mailto = $driver_mail;
+		$title = $mail_title;
+		$content = $mail_body;
+
+		$header = "From: info@neo-gate.jp\n";
+		$header .= "Bcc: info@neo-gate.jp";
+
+		$parameter="-f info@neo-gate.jp";
+
+		$result = mb_send_mail($mailto,$title,$content,$header,$parameter);
+		//echo "line:" . __LINE__ . " " . $mailto . ", " . $title . ", " . $content . ", " . $header . ", " . $parameter . "<br />";
+		if($result==false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, DbCon );
+
+			return false;
+			exit();
+
+		}
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, DbCon );
+
+	return true;
+	exit();
+}
+
+//----
+function PHP_update_reservation_data_4(
+$reservation_id,$start_hour,$start_minute,$end_hour,$end_minute,$attendance_id,
+$start_hour_old,$start_minute_old,$end_hour_old,$end_minute_old,$shop_area,$place_name,$therapist_id,
+$year,$month,$day,$card_flg,$card_confirm_flg,$course,$complete_flg,$start_flg,$extension,
+$shop_name,$course_old,$course_new,$extension_old,$extension_new,$course_change_flg,$extension_change_flg,$course_var,
+$card_state_extension,$card_price_free,$card_commission_free,$card_commission_type,$attendance_id_tmp,$attendance_tmp_flg,$shimei_flg,$shimei_change_flg){
+
+	if($attendance_tmp_flg=="1"){
+	    //セラピスト指定なしからの変更
+	    if($attendance_id_tmp==""){
+	        $attendance_id = "-1";
+	    }
+	    else{
+	        $attendance_id = $attendance_id_tmp;
+	        $attendance_id_tmp = "";
+	    }
+	}
+	else{
+	    //指定有からの変更
+	    if($attendance_id_tmp==""){
+	        //指定無しへ
+	        $attendance_id_tmp = $attendance_id;
+	    }
+	    else{
+	        $attendance_id = $attendance_id_tmp;
+	        $attendance_id_tmp = "";
+	    }
+	}
+	//echo "line:" . __LINE__ . " " . $card_commission_type . "<br />";
+
+	$start_real_time_flg = false;
+	$mail_flg = false;
+	$mail_type = "";
+	$customer_name = "";
+	$check_url = "";
+	$reservation_for_board_id = $reservation_id;
+	$area_name = $place_name;
+
+	if( $card_flg != "1" ){
+
+		$card_commission_type = "1";
+		$card_price_free = "0";
+		$card_commission_free = "0";
+
+	}
+
+	$other_data["card_price_free"] = $card_price_free;
+	$other_data["card_commission_free"] = $card_commission_free;
+	$other_data["card_commission_type"] = $card_commission_type;
+
+$result = PHP_update_reservation_data_transaction_2_common(
+$start_hour,$start_minute,$end_hour,$end_minute,$reservation_for_board_id,$therapist_id,$attendance_id,
+$shop_area,$area_name,$course,$extension,$card_flg,$card_confirm_flg,$complete_flg,$start_flg,
+$start_real_time_flg,$mail_flg,$mail_type,$customer_name,$check_url,
+$shop_name,$course_old,$course_new,$extension_old,$extension_new,$course_change_flg,$extension_change_flg,
+$course_var,$other_data,$shimei_flg,$shimei_change_flg, $year,$month,$day);
+
+	if( $result == true ){
+
+        //延長時支払い方法の登録
+        update_card_state_extension_by_reservation_for_board_id($reservation_for_board_id,$card_state_extension);
+        //仮登録フラグの更新
+        update_reservation_for_board_attendance_tmp($attendance_id_tmp,$reservation_for_board_id);
+
+	}
+
+	return true;
+	exit();
+
+}
+
+function PHP_update_reservation_data_transaction_2_common(
+$start_hour,$start_minute,$end_hour,$end_minute,$reservation_for_board_id,$therapist_id,$attendance_id,
+$shop_area,$place_name,$course,$extension,$card_flg,$card_confirm_flg,$complete_flg,$start_flg,
+$start_real_time_flg,$mail_flg,$mail_type,$customer_name,$check_url,
+$shop_name,$course_old,$course_new,$extension_old,$extension_new,$course_change_flg,$extension_change_flg,
+$course_var,$other_data,$shimei_flg,$shimei_change_flg, $year,$month,$day){
+
+	$card_price_free = $other_data["card_price_free"];
+	$card_commission_free = $other_data["card_commission_free"];
+	$card_commission_type = $other_data["card_commission_type"];
+
+	$bbs_common_url = get_bbs_common_url_common();
+
+	if( $attendance_id != "-1" ){
+	    $therapist_id = get_therapist_id_by_attendance_id_common($attendance_id);
+	}
+	else{
+	    $therapist_id = "-1";
+	}
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou_common($therapist_id);
+	$now = time();
+	$now_hour = intval(date('H', $now));
+	$now_minute = intval(date('i', $now));
+	$now_hour_mail = hour_plus_24_common($now_hour);
+	$now_minute_mail = minute_zero_add_common($now_minute);
+	$area_name = $place_name;
+	$customer_name = preg_replace("/[\(（].*/u","",$customer_name);
+
+	$reservation_no = get_reservation_no_by_reservation_for_board_id_common($reservation_for_board_id);
+
+	$price = get_price_by_reservation_no_common($reservation_no);
+
+	if( $extension_change_flg == true ){
+
+		$price = get_change_price_extension_common($shop_name,$extension_old,$extension_new,$price);
+
+		$extension = $extension_new;
+
+	}
+
+	$data = get_reservation_for_board_data_by_id_common($reservation_for_board_id);
+
+	$discount = $data["discount"];
+	$card_flg_old = $data["card_flg"];
+	$course_var_old = $data["course_var"];
+	$start_real_time_old = $data["start_real_time"];
+	$year_re = $data["year"];
+	$month_re = $data["month"];
+	$day_re = $data["day"];
+
+	$price_old = get_price_by_reservation_for_board_id_common($reservation_for_board_id);
+
+	//札幌リフレその他、割引が「なし」ではない場合、コースの変更に応じて割引も変化しなければいけない
+	$discount_new = get_discount_new($discount,$shop_name,$course_var);
+
+	if( $course_change_flg == true ){
+
+		$price = get_change_price_course_common($shop_name,$course_var,$reservation_for_board_id,$discount_new);
+
+	}
+
+	$bcc_add = PHP_get_bcc_add_shift_common($shop_area, $year,$month,$day);
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, DbCon );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, DbCon );
+
+    //売り上げ情報変更
+	if($shimei_change_flg == true){
+        if($shimei_flg=="1"){
+            $price += 1000;
+        }
+        else{
+            $price -=1000;
+        }
+    }
+
+	$sql = sprintf("update sale_history set price='%s',therapist_id='%s' where reservation_no='%s'",$price,$therapist_id,$reservation_no);
+	$res = mysql_query($sql, DbCon);
+	//echo "line:" . __LINE__ . " " . $res . "/" . $sql . "<br />";
+
+	if($res == false){
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, DbCon );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:0)";
+		//header("Location: ".WWW_URL."error.php");
+		exit();
+	}
+	//echo "line:" . __LINE__ . " " . $res . "/" . $sql . "<br />";
+
+	$reservation_time_data = change_to_reservation_time_common($start_hour,$start_minute,$end_hour,$end_minute);
+	$update_start_time = $reservation_time_data["start_time"];
+	$update_end_time = $reservation_time_data["end_time"];
+
+	$sql = sprintf("delete from reservation_new where reservation_for_board_id='%s'",$reservation_for_board_id);
+	$res = mysql_query($sql, DbCon);
+	if($res == false){
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, DbCon );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:1)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	//echo "line:" . __LINE__ . " " . $res . "/" . $sql . "<br />";
+
+	if( $attendance_id != "-1" ){
+
+		//そして改めて登録
+
+		$update_start_time = $update_start_time - 1;
+		$update_end_time = $update_end_time + 1;
+
+		for( $i = $update_start_time; $i <= $update_end_time; $i++ ){
+
+			if( ($i == $update_start_time) || ($i == $update_end_time) ){
+
+				$sql = sprintf("insert into reservation_new(attendance_id,time,reservation_for_board_id,auto_flg,area) values('%s','%s','%s','%s','%s')",$attendance_id,$i,$reservation_for_board_id,1,$shop_area);
+
+			}else{
+
+				$sql = sprintf("insert into reservation_new(attendance_id,time,reservation_for_board_id,area) values('%s','%s','%s','%s')", $attendance_id,$i,$reservation_for_board_id,$shop_area);
+
+			}
+
+			$res = mysql_query($sql, DbCon);
+			if($res == false){
+
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, DbCon );
+
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:2)";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+
+			}
+
+		}
+
+		//前後が二時間以内の場合、そこも予約
+		$before_latest_end_time = get_before_latest_end_time_common($attendance_id,$update_start_time,$shop_area);
+		$after_first_start_time = get_after_first_start_time_common($attendance_id,$update_end_time,$shop_area);
+		$sa = $update_start_time - $before_latest_end_time;
+
+		if( $sa < 5 ){
+			for( $x = ( $before_latest_end_time + 0 ); $x < $update_start_time; $x++ ){
+
+				$sql = sprintf("insert into reservation_new(attendance_id,time,reservation_for_board_id,auto_flg,area) values('%s','%s','%s','%s','%s')",$attendance_id,$x,$reservation_for_board_id,1,$shop_area);
+
+				$res = mysql_query($sql, DbCon);
+				if($res == false){
+					//ロールバック
+					$sql = "rollback";
+					mysql_query( $sql, DbCon );
+
+					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:3)";
+					//header("Location: ".WWW_URL."error.php");
+					exit();
+
+				}
+			}
+		}
+
+		if( $after_first_start_time != "-1" ){
+			$sa = $after_first_start_time - $update_end_time;
+			if( $sa < 5 ){
+				for( $x = ( $update_end_time + 1 ); $x < $after_first_start_time; $x++ ){
+
+					$sql = sprintf("insert into reservation_new(attendance_id,time,reservation_for_board_id,auto_flg,area) values('%s','%s','%s','%s','%s')",$attendance_id,$x,$reservation_for_board_id,1,$shop_area);
+
+					$res = mysql_query($sql, DbCon);
+					if($res == false){
+						//ロールバック
+						$sql = "rollback";
+						mysql_query( $sql, Dbcon );
+
+						$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:4)";
+						//header("Location: ".WWW_URL."error.php");
+						exit();
+
+					}
+				}
+			}
+		}
+
+	}
+
+	$start_hour = hour_change_over_24_common($start_hour);	//9時以前は翌日とし24時間加算 in ^common/include/functions.php
+	$end_hour = hour_change_over_24_common($end_hour);		//9時以前は翌日とし24時間加算 in ^common/include/functions.php
+
+	$time_len = get_time_len_new_common($start_hour,$start_minute,$end_hour,$end_minute);		//5分単位の施術時間数取得 in ^common/include/functions.php
+
+	if( $therapist_id == "-1" ){
+		$attendance_id = "-1";
+		$ws_addText = "";
+	} else {
+		//course_var,discountも更新
+		$ws_addText = ",course_var='%s',discount='%s'";
+	}
+	$ws_SQL = "update reservation_for_board set";
+	$ws_SQL .= " start_hour='%s',start_minute='%s',end_hour='%s',end_minute='%s',time_len='%s',area_name='%s'";
+	$ws_SQL .= ",attendance_id='%s',course='%s',shop_area='%s',extension='%s',card_flg='%s',card_confirm_flg='%s'";
+	$ws_SQL .= ",complete_flg='%s',start_flg='%s',card_price_free='%s',card_commission_free='%s',card_commission_type='%s',shimei_flg='%s'";
+	$ws_SQL = sprintf($ws_SQL, $start_hour,$start_minute,$end_hour,$end_minute,$time_len,$place_name,$attendance_id,$course,$shop_area,$extension,$card_flg,$card_confirm_flg,$complete_flg,$start_flg,$card_price_free,$card_commission_free,$card_commission_type,$shimei_flg);
+	$ws_SQL .= $ws_addText . " where id='%s'";
+	$sql = sprintf($ws_SQL, $course_var, $discount_new, $reservation_for_board_id);
+	$res = mysql_query($sql, DbCon);
+echo $shop_area . $shop_name . "###<br />";
+	echo "line:" . __LINE__ . " " . $res . "/" . $sql . "<br />";
+
+	if($res == false){
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, DbCon );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:5)";
+		//header("Location: ".WWW_URL."error.php");
+		exit();
+	}
+
+	if( $start_real_time_flg == true ){
+		$start_real_time = time();
+
+		$sql = sprintf("update reservation_for_board set start_real_time='%s' where id='%s'",$start_real_time,$reservation_for_board_id);
+
+		$res = mysql_query($sql, DbCon);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, DbCon );
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:6)";
+			//header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+	}else{
+
+		if( ($start_flg == "1") && ($start_real_time_old == "0") ){
+
+			$year = $year_re;
+			$month = $month_re;
+			$day = $day_re;
+			$hour = $start_hour;
+			$minute = $start_minute;
+			$second = 0;
+			$start_real_time = mktime($hour, $minute, $second, $month, $day, $year);
+
+			$sql = sprintf("update reservation_for_board set start_real_time='%s',start_push_user='honbu' where id='%s'",$start_real_time,$reservation_for_board_id);
+
+			$res = mysql_query($sql, DbCon);
+
+			if($res == false){
+
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, DbCon );
+
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:6_2)";
+				//header("Location: ".WWW_URL."error.php");
+				exit();
+
+			}
+
+		}
+
+	}
+
+	if( $mail_flg == true ){
+
+		$shop_area_name = get_area_name_by_area_common($shop_area);		 //エリア名取得 in ^common/include/functions.php
+
+		$message_content = "";
+		$message_type = "";
+
+		if( $card_flg == "1" ){
+			$pay_type = "カード支払い";
+		}else{
+			$pay_type = "現金支払い";
+		}
+		$price_disp = number_format($price)."円";
+		if( $extension == 0 ){
+			$course_disp = $course_var."コース";
+		}else{
+			$course_disp = $course_var."＋".$extension."分コース";
+		}
+
+		if( $mail_type == "change" ){
+
+			//変更の場合
+
+			$title_name = "変更";
+			if( $card_flg_old == "1" ){
+				$pay_type_old = "カード支払い";
+			}else{
+				$pay_type_old = "現金支払い";
+			}
+			$price_disp_old = number_format($price_old)."円";
+			if( $extension == 0 ){
+				$course_disp_old = $course_var_old."コース";
+			}else{
+				$course_disp_old = $course_var_old."＋".$extension."分コース";
+			}
+
+$action_type =<<<EOT
+{$course_disp_old}/{$price_disp_old}/{$pay_type_old}
+から
+{$course_disp}/{$price_disp}/{$pay_type}
+に変更します
+EOT;
+
+			if( $course_var != $course_var_old ){
+				$message_content .= $course_var."に変更になりました。";
+			}else{
+				$message_content .= $course_var."のまま変更はありません。";
+			}
+
+			$message_content .= "<br />";
+
+			if( $card_flg_old != $card_flg ){
+				$message_content .= $pay_type."に変更になりました。";
+			}else{
+				$message_content .= $pay_type."のまま変更はありません。";
+			}
+
+			$message_type = "mail_change";
+
+		}else{
+
+			//スタートの場合
+
+			$title_name = "スタート";
+
+$action_type =<<<EOT
+{$course_disp}/{$price_disp}/{$pay_type}
+スタートします
+EOT;
+
+			$message_content .= sprintf("%s様(%s)%s　スタートします",$customer_name,$area_name,$course_disp);
+
+			$message_type = "mail_start";
+		}
+
+
+
+		$eigyou_day_data = get_eigyou_day_common();
+		$eigyou_year = $eigyou_day_data["year"];
+		$eigyou_month = $eigyou_day_data["month"];
+		$eigyou_day = $eigyou_day_data["day"];
+
+		$shift_message_area = get_shift_message_area_common($therapist_id,$eigyou_year,$eigyou_month,$eigyou_day);		 //エリア取得 in ^common/include/functions.php
+
+		$now = time();
+		$staff_type = "2";
+
+		$sql = sprintf("insert into shift_message(created,therapist_id,type,message_type,content,area) values('%s','%s','%s','%s','%s','%s')",$now,$therapist_id,$staff_type,$message_type,$message_content,$shift_message_area);
+
+		$res = mysql_query($sql, DbCon);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, DbCon );
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:7)";
+			//header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		//メール送信
+		mb_language("ja");
+		mb_internal_encoding("UTF-8");
+		$mailto = "info@neo-gate.jp";
+
+$title = sprintf("
+%s連絡：%s：%s　%s：%s",
+$title_name,$shop_area_name,$therapist_name,$now_hour_mail,$now_minute_mail);
+
+$content =<<<EOT
+{$customer_name}様（{$area_name}）
+
+{$action_type}
+
+{$check_url}
+
+EOT;
+
+		$header = "From: info@neo-gate.jp\n";
+		//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+		/*
+		$result = mb_send_mail($mailto,$title,$content,$header,MAIL_PARAMETER);
+
+		if( $result == false ){
+
+			//二回メールを送るので、トランザクションの対象とはしない
+
+		}
+
+		if( ($shop_name=="yokohama") || ($shop_name=="sapporo") || ($shop_name=="osaka") ){
+
+			if( $bcc_add != "" ){
+
+				//あらためてメール送信
+
+				$mailto = "info@neo-gate.jp";
+
+				$title = "[業務連絡BBS]投稿のお知らせ";
+
+$content =<<<EOT
+新しいメッセージがあります。確認してください。
+
+{$bbs_common_url}
+
+EOT;
+
+				$header = "From: info@neo-gate.jp\n";
+				//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+				$header .= ",";
+				$header .= $bcc_add;
+
+				$result = mb_send_mail($mailto,$title,$content,$header,MAIL_PARAMETER);
+
+				if( $result == false ){
+
+					//二回メールを送るので、トランザクションの対象とはしない
+
+				}
+
+			}
+
+		}
+		*/
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, DbCon );
+
+	//戻す
+	$sql = "set autocommit = 1";
+	mysql_query( $sql, DbCon );
+
+	return true;
+	exit();
+
+}
+?>

@@ -1,0 +1,168 @@
+
+
+
+#lp4_mail{
+	
+	margin:0px 0px 200px 0px;
+	
+}
+
+#lp4_mail > .error{
+	
+	color:red;
+	text-align:center;
+	
+}
+
+#lp4_mail > .message{
+	
+	font-size:14px;
+	margin:0px 0px 15px 10px;
+	
+}
+
+#lp4_mail > .message > span{
+	
+	color:red;
+	
+}
+
+#lp4_mail > .title{
+	
+	border-left:solid 5px #b9ad73;
+	margin:0px 0px 0px 10px;
+	padding:3px 0px 3px 10px;
+	font-size:14px;
+	
+}
+
+#lp4_mail > .title > span{
+	
+	color:red;
+	font-size:10px;
+	
+}
+
+#lp4_mail > .title_2{
+	
+	margin:0px 0px 0px 10px;
+	padding:3px 0px 3px 0px;
+	
+}
+
+#lp4_mail > .title_2 > .left_1{
+	
+	float:left;
+	border-left:solid 5px #b9ad73;
+	padding:0px 0px 0px 10px;
+	font-size:14px;
+	
+}
+
+#lp4_mail > .title_2 > .left_2{
+	
+	float:left;
+	font-size:14px;
+	color:#8b7752;
+	margin-left:5px;
+	
+}
+
+#lp4_mail > .title_2 > .left_2 > a{
+	
+	font-size:14px;
+	color:#8b7752;
+	
+}
+
+#lp4_mail > .content_1{
+	
+	margin:5px 0px 0px 10px;
+	
+}
+
+#lp4_mail > .content_2{
+	
+	margin:10px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_3{
+	
+	margin:10px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_4{
+	
+	margin:5px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_5{
+	
+	margin:5px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_6{
+	
+	margin:5px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_7{
+	
+	margin:5px 0px 0px 10px;
+	font-size:12px;
+	
+}
+
+#lp4_mail > .content_8{
+	
+	margin:0px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_9{
+	
+	font-size:12px;
+	margin:5px 0px 0px 10px;
+	
+}
+
+#lp4_mail > .content_10{
+	
+	margin:0px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_11{
+	
+	font-size:10px;
+	margin:5px 10px 5px 10px;
+	line-height:160%;
+	
+}
+
+#lp4_mail > .content_12{
+	
+	margin:0px 10px 15px 10px;
+	
+}
+
+#lp4_mail > .content_13{
+	
+	margin:10px 0px 10px 10px;
+	
+}
+
+#lp4_mail > .content_14{
+	
+	text-align:center;
+	margin:10px 0px 0px 0px;
+	
+}
+
+
+

@@ -1,0 +1,229 @@
+<?php
+
+include("include/common.php");
+include("include/auth.php");
+
+$error = "";
+
+if( isset($_POST["send"]) == true ){
+	
+	//print_r($_POST);
+	//exit();
+	
+	$area1_id = $_POST["area1_id"];
+	$area2_id = $_POST["area2_id"];
+	
+}else if( isset($_POST["send_input"]) == true ){
+	
+	/*
+	echo "<pre>";
+	print_r($_POST);
+	echo "</pre>";
+	exit();
+	*/
+	
+	$area1_id = $_POST["area1_id"];
+	$area2_id = $_POST["area2_id"];
+	$hotel_type = $_POST["hotel_type"];
+	$hotel_name = $_POST["hotel_name"];
+	$hotel_address = $_POST["hotel_address"];
+	$hotel_tel = $_POST["hotel_tel"];
+	$hotel_price = $_POST["hotel_price"];
+	$hotel_hp = $_POST["hotel_hp"];
+	
+	if( $hotel_name == "" ){
+		
+		$error = "ホテル名が未入力です。";
+		
+	}
+	
+	if( $error == "" ){
+		
+		$_SESSION["hotel_search_hotel_regist_area1_id"] = $area1_id;
+		$_SESSION["hotel_search_hotel_regist_area2_id"] = $area2_id;
+		$_SESSION["hotel_search_hotel_regist_hotel_type"] = $hotel_type;
+		$_SESSION["hotel_search_hotel_regist_hotel_name"] = $hotel_name;
+		$_SESSION["hotel_search_hotel_regist_hotel_address"] = $hotel_address;
+		$_SESSION["hotel_search_hotel_regist_hotel_tel"] = $hotel_tel;
+		$_SESSION["hotel_search_hotel_regist_hotel_price"] = $hotel_price;
+		$_SESSION["hotel_search_hotel_regist_hotel_hp"] = $hotel_hp;
+		
+		header('Location: hotel_search_hotel_regist_confirm.php');
+		exit();
+		
+	}
+	
+}else if( isset($_POST["send_back"]) == true ){
+	
+	$area2_id = $_POST["area2_id"];
+	
+	header('Location: hotel_search_list.php?id='.$area2_id);
+	exit();
+	
+}else if( isset($_GET["back"]) == true ){
+	
+	//echo "xxx";
+	//exit();
+	
+	$area1_id = $_SESSION["hotel_search_hotel_regist_area1_id"];
+	$area2_id = $_SESSION["hotel_search_hotel_regist_area2_id"];
+	$hotel_type = $_SESSION["hotel_search_hotel_regist_hotel_type"];
+	$hotel_name = $_SESSION["hotel_search_hotel_regist_hotel_name"];
+	$hotel_address = $_SESSION["hotel_search_hotel_regist_hotel_address"];
+	$hotel_tel = $_SESSION["hotel_search_hotel_regist_hotel_tel"];
+	$hotel_price = $_SESSION["hotel_search_hotel_regist_hotel_price"];
+	$hotel_hp = $_SESSION["hotel_search_hotel_regist_hotel_hp"];
+	
+}
+
+$area1_name = get_area1_name($area1_id);
+$area2_name = get_area2_name($area2_id);
+
+?>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>ホテル追加(<?php echo $area1_name;?>)(<?php echo $area2_name;?>) | 管理ページ</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+
+<meta name="robots" content="noindex" />
+
+</head>
+<body>
+
+	<div style="width:992px;margin:0px auto 0px auto;">
+		<div>
+			<div style="float:left;">
+				<a href="index.php">トップ</a> &gt; 
+				<a href="hotel_search.php">ホテル検索</a> &gt; 
+				<a href="hotel_search_area.php?id=<?php echo $area1_id;?>"><?php echo $area1_name;?></a> &gt; 
+				<a href="hotel_search_list.php?id=<?php echo $area2_id;?>"><?php echo $area2_name;?></a> &gt; 
+				ホテル追加
+			</div>
+			<div style="float:right;"><a href="logout.php">ログアウト</a></div>
+			<br class="clear" />
+		</div>
+		
+		<div style="padding:30px 0px 100px 0px;">
+			<div id="hotel_search_list">
+				<div id="hotel_search_list_title">(<?php echo $area1_name;?>)<?php echo $area2_name;?>のホテル追加</div>
+				<div id="hotel_search_list_content">
+					<div style="color:red;"><?php echo $error;?></div>
+					<form action="" method="post">
+						<input type="hidden" name="area1_id" value="<?php echo $area1_id;?>" />
+						<input type="hidden" name="area2_id" value="<?php echo $area2_id;?>" />
+						<table BORDER="1" CELLSPACING="0" CELLPADDING="0" bordercolor="#ccc">
+							<tr>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										タイプ
+									</div>
+								</td>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										<?php
+											if( $hotel_type == "1" ){
+												
+												echo '<input type="radio" name="hotel_type" value="-1">未選択';
+												echo '<input type="radio" name="hotel_type" value="1" checked>シティホテル';
+												echo '<input type="radio" name="hotel_type" value="2">ビジネスホテル';
+											
+											}else if( $hotel_type == "2" ){
+												
+												echo '<input type="radio" name="hotel_type" value="-1">未選択';
+												echo '<input type="radio" name="hotel_type" value="1">シティホテル';
+												echo '<input type="radio" name="hotel_type" value="2" checked>ビジネスホテル';
+												
+											}else{
+												
+												echo '<input type="radio" name="hotel_type" value="-1" checked>未選択';
+												echo '<input type="radio" name="hotel_type" value="1">シティホテル';
+												echo '<input type="radio" name="hotel_type" value="2">ビジネスホテル';
+												
+											}
+										?>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										名前
+									</div>
+								</td>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										<input type="text" name="hotel_name" value="<?php echo $hotel_name;?>" style="width:600px;" />
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										住所
+									</div>
+								</td>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										<input type="text" name="hotel_address" value="<?php echo $hotel_address;?>" style="width:600px;" />
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										電話
+									</div>
+								</td>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										<input type="text" name="hotel_tel" value="<?php echo $hotel_tel;?>" style="width:600px;" />
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										料金(半角数字)
+									</div>
+								</td>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										<input type="text" name="hotel_price" value="<?php echo $hotel_price;?>" style="width:70px;" /> 円
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										ホームページ
+									</div>
+								</td>
+								<td>
+									<div style="padding:5px 10px 5px 10px;">
+										<input type="text" name="hotel_hp" value="<?php echo $hotel_hp;?>" style="width:600px;" />
+									</div>
+								</td>
+							</tr>
+						</table>
+						<div style="padding:20px 0px 0px 0px;">
+							<input type="submit" name="send_back" value="戻る" style="padding:5px 10px 5px 10px;" />　
+							<input type="submit" name="send_input" value="確認" style="padding:5px 10px 5px 10px;" />
+						</div>
+					</form>
+					
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+</body>
+</html>

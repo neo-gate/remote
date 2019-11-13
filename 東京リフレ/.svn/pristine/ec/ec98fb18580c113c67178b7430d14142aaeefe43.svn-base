@@ -1,0 +1,130 @@
+<?php
+
+include("include/common.php");
+
+
+
+$area = $_GET["area"];
+$therapist_id = $_GET["id"];
+$ch = $_GET["ch"];
+
+$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+if( ($area == "") || ($therapist_id == "") || ($ch == "") ){
+
+	echo "error!";
+	exit();
+
+}
+
+$data = get_eigyou_day_common();
+$year_now = $data["year"];
+$month_now = $data["month"];
+$day_now = $data["day"];
+
+$num = 90;
+$data = get_old_day_common($year_now,$month_now,$day_now,$num);
+$year_old = $data["year"];
+$month_old = $data["month"];
+$day_old = $data["day"];
+
+$data = sprintf("%s年%s月%s日",$year_old,$month_old,$day_old);
+//echo $data;exit();
+
+$timestamp_old = get_timestamp_by_year_month_day_2_common($year_old,$month_old,$day_old);
+
+$timestamp_now = get_timestamp_by_year_month_day_3_common($year_now,$month_now,$day_now);
+
+//echo "timestamp_old:".$timestamp_old;echo "<br />";
+//echo "timestamp_now:".$timestamp_now;exit();
+
+//リピーター数の取得(すべて)
+$type = "all";
+$repeater_num = get_repeater_num_kikan_common(
+$year_old,$month_old,$day_old,$year_now,$month_now,$day_now,$type,$therapist_id,$area);
+
+//施術数、新規数、指名数、取得(すべて)
+$type = "all";
+$data = get_all_data_for_reportcard_common(
+$year_old,$month_old,$day_old,$year_now,$month_now,$day_now,$type,$therapist_id,$area);
+
+$all_num = $data["all_num"];
+$new_num = $data["new_num"];
+$shimei_num = $data["shimei_num"];
+
+$data = get_rate_for_reportcard($repeater_num,$new_num,$shimei_num,$all_num);
+
+$repeater_rate = $data["repeater_rate"];
+$shimei_rate = $data["shimei_rate"];
+
+/*
+echo "repeater_num(all):".$repeater_num;echo "<br />";
+echo "all_num(all):".$all_num;echo "<br />";
+echo "new_num(all):".$new_num;echo "<br />";
+echo "shimei_num(all):".$shimei_num;echo "<br />";
+echo "repeater_rate(all):".$repeater_rate;echo "<br />";
+echo "shimei_rate(all):".$shimei_rate;echo "<br />";
+*/
+
+$data_all["repeater_num"] = $repeater_num;
+$data_all["all_num"] = $all_num;
+$data_all["new_num"] = $new_num;
+$data_all["shimei_num"] = $shimei_num;
+$data_all["repeater_rate"] = $repeater_rate;
+$data_all["shimei_rate"] = $shimei_rate;
+
+//echo "<br />";echo "<br />";
+
+//リピーター数の取得(セラピスト)
+$type = "therapist";
+$repeater_num = get_repeater_num_kikan_common(
+$year_old,$month_old,$day_old,$year_now,$month_now,$day_now,$type,$therapist_id,$area);
+
+//施術数、新規数、指名数、取得(セラピスト)
+$type = "therapist";
+$data = get_all_data_for_reportcard_common(
+$year_old,$month_old,$day_old,$year_now,$month_now,$day_now,$type,$therapist_id,$area);
+
+$all_num = $data["all_num"];
+$new_num = $data["new_num"];
+$shimei_num = $data["shimei_num"];
+
+$data = get_rate_for_reportcard($repeater_num,$new_num,$shimei_num,$all_num);
+
+$repeater_rate = $data["repeater_rate"];
+$shimei_rate = $data["shimei_rate"];
+
+/*
+echo "repeater_num(therapist):".$repeater_num;echo "<br />";
+echo "all_num(therapist):".$all_num;echo "<br />";
+echo "new_num(therapist):".$new_num;echo "<br />";
+echo "shimei_num(therapist):".$shimei_num;echo "<br />";
+echo "repeater_rate(therapist):".$repeater_rate;echo "<br />";
+echo "shimei_rate(therapist):".$shimei_rate;echo "<br />";
+*/
+
+$data_therapist["repeater_num"] = $repeater_num;
+$data_therapist["all_num"] = $all_num;
+$data_therapist["new_num"] = $new_num;
+$data_therapist["shimei_num"] = $shimei_num;
+$data_therapist["repeater_rate"] = $repeater_rate;
+$data_therapist["shimei_rate"] = $shimei_rate;
+
+$top_url = get_top_url($area,$therapist_id,$ch);
+$params['top_url'] = $top_url;
+
+$params['therapist_name'] = $therapist_name;
+$params['area'] = $area;
+$params['therapist_id'] = $therapist_id;
+$params['ch'] = $ch;
+$params['page_title'] = "成績表";
+
+$params['data_all'] = $data_all;
+$params['data_therapist'] = $data_therapist;
+
+$smarty->assign( 'params', $params );
+
+$smarty->assign( 'content_tpl', 'sp/reportcard.tpl' );
+$smarty->display( 'sp/template.tpl' );
+
+?>

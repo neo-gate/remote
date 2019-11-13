@@ -1,0 +1,97 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>{{$params.page_title}}</title>
+<meta name="Keywords" content="出張マッサージ,東京,リフレクソロジー,アロママッサージ,リンパマッサージ" />
+<meta name="Description" content="東京リフレはアロマリンパマッサージ、足裏リフレクソロジーを中心とした出張マッサージです。高技術を持った女性セラピストが東京23区にお伺いします。" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+<link href="{{$smarty.const.WWW_URL_SSL}}css/pc/style.css?{{$params.css_time}}" rel="stylesheet" type="text/css" />
+
+{{if $params.clip_calendar_flg == true}}
+<link href="{{$smarty.const.WWW_URL_SSL}}css/pc/style_vip_clip_calendar.css?{{$params.css_time}}" rel="stylesheet" type="text/css" />
+{{else}}
+<link href="{{$smarty.const.WWW_URL_SSL}}css/pc/therapist_calendar_ssl.css?{{$params.css_time}}" rel="stylesheet" type="text/css" />
+{{/if}}
+
+<link rel="shortcuticon" href="{{$smarty.const.WWW_URL_SSL}}favicon.ico" />
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/jquery.exscrollevent.js"></script>
+
+{{if $params.clip_calendar_flg == true}}
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/vip_clip_calendar.js?{{$params.css_time}}"></script>
+{{else}}
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/vip_therapist_calendar_ssl.js?{{$params.css_time}}"></script>
+{{/if}}
+
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_SSL}}js/analytics.js?{{$params.css_time}}"></script>
+
+</head>
+<body>
+<!--base start-->
+<div id="base">
+
+<!--header_area start-->
+<div id="header_area" style="height:66px;">
+<div id="header_area_left">
+	<p id="site_logo_area" style="padding:0px;">
+		<a href="{{$params.url_root}}"><img src="{{$params.url_root}}img/logo.gif" alt="出張マッサージ東京リフレ" width="140" /></a>
+	</p>
+</div>
+<div id="header_area_center">
+</div>
+<div id="header_area_right">
+	<!-- header_info start -->
+	<div>
+		<p id="header_info_1" style="float:left;">
+			<img src="{{$params.url_root}}img/top_tel.gif" alt="電話番号" width="160" />
+		</p>
+		<div id="header_info_2" style="float:left;padding-left:30px;">
+			<p class="f_left"  style="font-size:12px;">
+			[&nbsp;営業時間&nbsp;]&nbsp18:00&nbsp;～&nbsp;翌6:00<br />
+			[&nbsp;受付時間&nbsp;]&nbsp12:00&nbsp;～&nbsp;翌5:00
+			</p>
+			<div class="f_left">
+			<p class="p_left_10">年中無休</p>
+			<p><img src="{{$params.url_root}}img/cards.jpg" alt="クレジットカード" width="60" /></p>
+			</div>
+			<br class="clear" />
+		</div>
+		<br class="clear" />
+	</div>
+	<!-- header_info end -->
+</div>
+<br class="clear" />
+</div>
+<!--header_area end-->
+
+<div id="navi">
+{{include file="pc/content/top_menu.tpl"}}
+</div>
+			
+<!--main start-->
+<div id="main">
+
+<div id="pankuzu_2">
+ <a href="{{$params.url_root}}">出張マッサージ 東京リフレ</a>{{$params.pankuzu}}
+</div>
+	
+<div>
+{{include file=$content_tpl params=$params}}
+</div>
+	
+</div>
+<!--/main end-->
+
+<address>
+Copyright(C)　<a href="{{$params.url_root}}">出張マッサージ 東京リフレ</a>　All Rights Reserved.
+</address>
+
+</div>
+<!--/base end-->
+</body>
+</html>

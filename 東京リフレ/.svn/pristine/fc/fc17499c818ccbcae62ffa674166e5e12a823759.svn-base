@@ -1,0 +1,12 @@
+<div class="reservation">
+    <div class="area1">
+        <a class="lp_tel" href="tel:0352065134" onclick="ga('send', 'event', 'reservation', 'tel_click', 'top');"></a><a class="lp_web" href="{{$params.url_root}}mail/reservation/input.php"></a><br class="clear">
+    </div>
+    <div class="area2">
+        <p>{{$params.month_now}}月{{$params.day_now}}日({{$params.week_name}})&nbsp; 出勤セラピスト{{$params.attendance_num}}名</p>
+        <p style="padding-top:8px;">{{$params.now_hour}}：{{$params.now_minute}}現在&nbsp; {{$params.reservation_message}}</p>
+    </div>
+</div>
+{{if $params.therapist_page_flg != true}}
+    {{include file="sp/content/to_attendance_therapist.tpl"}}
+{{/if}}

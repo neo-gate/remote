@@ -1,0 +1,5937 @@
+<?php
+
+function get_attendance_data(){
+
+	include(INC_PATH."/db_connect.php");
+
+	$under6_flag = false;
+
+	$now_hour = intval(date('H'));
+
+	if($now_hour <= 6){
+
+		//昨日の日付
+		$year = intval(date('Y', strtotime('-1 day')));
+		$month = intval(date('m', strtotime('-1 day')));
+		$day = intval(date('d', strtotime('-1 day')));
+
+		$under6_flag = true;
+
+	}else{
+
+		$year = intval(date('Y'));
+		$month = intval(date('m'));
+		$day = intval(date('d'));
+
+	}
+
+	$today_flag = true;
+
+	// 出勤しているセラピスト情報を取得するためのSQL文
+	$sql = sprintf("select *,attendance.id as attendance_id from attendance
+	left join therapist on attendance.therapist_id=therapist.id
+	where therapist.delete_flag=0 and year='%s' and month='%s' and day='%s'",
+	$year,$month,$day);
+	$res = mysql_query($sql, $con);
+	if($res == false){
+		echo "クエリ実行に失敗しました(get_attendance_data)";
+		exit();
+	}
+
+	$attendance_data = array();
+
+	// 一覧に表示される顧客データを変数に格納する処理
+	$i=0;
+	while($row = mysql_fetch_assoc($res)){
+
+		$attendance_data[$i] = $row;
+		$i++;
+
+	}
+
+	return $attendance_data;
+	exit();
+
+}
+
+//スタッフデータ登録(typeは1:セラピスト,2:ドライバー,3:本部メンバー)
+function regist_staff_data($name,$mail,$tel,$type){
+
+	include(INC_PATH."/db_connect.php");
+
+	$shop_id = "-1";
+
+	if( $type == "1" ){
+
+		//セラピストの場合は札幌リフレ所属
+		$shop_id = "6";
+
+	}
+
+	$sql = sprintf("insert into staff(shop_id,type,name,mail,tel) values('%s','%s','%s','%s','%s')",
+					$shop_id,$type,$name,$mail,$tel);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_staff_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}else{
+
+		return true;
+		exit();
+
+	}
+
+}
+
+//スタッフデータの取得
+function get_staff_data($type){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = "select * from staff where delete_flg=0 and type=".$type;
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_staff_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+//スタッフデータの取得(汎用)
+function get_staff_data_hanyou($type){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select * from staff where delete_flg=0 and type='%s' and area='%s'",$type,SHOP_AREA);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "error!(get_staff_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+//スタッフデータの取得(1つ)
+function get_staff_data_one($id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = "select * from staff where id=".$id;
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_staff_data_one)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$row = mysql_fetch_assoc($res);
+
+	return $row;
+	exit();
+
+}
+
+//スタッフデータ更新
+function update_staff_data($name,$mail,$tel,$staff_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("update staff set name='%s',mail='%s',tel='%s' where id='%s'",
+					$name,$mail,$tel,$staff_id);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_staff_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//スタッフデータ削除
+function delete_staff_data($staff_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("update staff set delete_flg='1' where id='%s'",$staff_id);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(delete_staff_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//ログイン実行
+function login_action($tel){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select * from staff where tel='%s'",$tel);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(login_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$num_rows = mysql_num_rows($res);
+
+	if($num_rows == 0){
+
+		return false;
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	$_SESSION["name"] = $row["name"];
+	$_SESSION["ticket"] = md5(TICKET_WORD.$row["name"]);
+	$_SESSION["staff_id"] = $row["id"];
+	$_SESSION["staff_type"] = $row["type"];
+
+	$cookie_value = md5(time()."-".$row["id"]);
+
+	//クッキーの値を保存
+	$sql = sprintf("update staff set login_cookie='%s' where id='%s'",$cookie_value,$row["id"]);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(login_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}else{
+
+		//クッキー(有効期限1年)
+		setcookie ("AutoLogin", $cookie_value, time()+(60*60*24*30*12));
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//ログイン実行(東京リフレ)
+function login_action_refle($tel){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select * from staff where tel='%s'",$tel);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(login_action_refle)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$num_rows = mysql_num_rows($res);
+
+	if($num_rows == 0){
+
+		return false;
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	$_SESSION["name"] = $row["name"];
+	$_SESSION["ticket_refle"] = md5(TICKET_WORD.$row["name"]);
+	$_SESSION["staff_id"] = $row["id"];
+	$_SESSION["staff_type"] = $row["type"];
+	$_SESSION["staff_id_refle"] = $row["id"];
+	$_SESSION["staff_type_refle"] = $row["type"];
+
+	$cookie_value = md5(time()."-".$row["id"]);
+
+	//クッキーの値を保存
+	$sql = sprintf("update staff set login_cookie_refle='%s' where id='%s'",$cookie_value,$row["id"]);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(login_action_refle)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}else{
+
+		//クッキー(有効期限1年)
+		setcookie ("AutoLoginRefle", $cookie_value, time()+(60*60*24*30*12));
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//ログイン実行(汎用)
+function login_action_hanyou($tel){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select * from staff where tel='%s' and (area='%s' or type='3')",$tel,SHOP_AREA);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "error!(login_action_hanyou:1)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$num_rows = mysql_num_rows($res);
+
+	if($num_rows == 0){
+
+		return false;
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	$_SESSION["name"] = $row["name"];
+	$_SESSION[SESSION_TICKET] = md5(TICKET_WORD.$row["name"]);
+	$_SESSION["staff_id"] = $row["id"];
+	$_SESSION["staff_type"] = $row["type"];
+	$_SESSION[SESSION_STAFF_ID] = $row["id"];
+	$_SESSION[SESSION_STAFF_TYPE] = $row["type"];
+
+	$cookie_value = md5(time()."-".$row["id"]);
+
+	//クッキーの値を保存
+	$sql = sprintf("update staff set %s='%s' where id='%s'",TBL_COOKIE_COLUMN,$cookie_value,$row["id"]);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "error!(login_action_hanyou:2)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}else{
+
+		//クッキー(有効期限1年)
+		setcookie (AutoLoginArea, $cookie_value, time()+(60*60*24*30*12));
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//ログイン実行(管理ページ)
+function login_action_man($tel){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select * from staff where type='3' and tel='%s'",$tel);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(login_action_man)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$num_rows = mysql_num_rows($res);
+
+	if($num_rows == 0){
+
+		return false;
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	$_SESSION["man_name"] = $row["name"];
+	$_SESSION["man_ticket"] = md5(TICKET_WORD.$row["name"]);
+	$_SESSION["man_staff_id"] = $row["id"];
+
+	$cookie_value = md5(time()."-".$row["id"]);
+
+	//クッキーの値を保存
+	$sql = sprintf("update staff set login_cookie_man='%s' where id='%s'",$cookie_value,$row["id"]);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(login_action_man)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}else{
+
+		//クッキー(有効期限1年)
+		setcookie ("AutoLoginMan", $cookie_value, time()+(60*60*24*30*12));
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//オートログインをチェック
+function check_auto_login(){
+
+	include(INC_PATH."/db_connect.php");
+
+	if(isset($_COOKIE["AutoLogin"])==true){
+
+		$auto_login_key = $_COOKIE["AutoLogin"];
+
+		$sql = "select * from staff where delete_flg=0 and login_cookie='".$auto_login_key."'";
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_auto_login)";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		$data_num = mysql_num_rows($res);
+
+		if($data_num==1){
+
+			$row = mysql_fetch_array($res);
+
+			$_SESSION["name"] = $row["name"];
+			$_SESSION["ticket"] = md5(TICKET_WORD.$row["name"]);
+			$_SESSION["staff_id"] = $row["id"];
+			$_SESSION["staff_type"] = $row["type"];
+
+			return true;
+			exit();
+
+		}else{
+
+			//オートログイン用クッキーの削除
+			setcookie('AutoLogin', '', time() - 60);
+
+			return false;
+			exit();
+
+		}
+
+	}else{
+
+		return false;
+		exit();
+
+	}
+
+}
+
+//オートログインをチェック(東京リフレ)
+function check_auto_login_refle(){
+
+	include(INC_PATH."/db_connect.php");
+
+	if(isset($_COOKIE["AutoLoginRefle"])==true){
+
+		$auto_login_key = $_COOKIE["AutoLoginRefle"];
+
+		$sql = "select * from staff where delete_flg=0 and login_cookie_refle='".$auto_login_key."'";
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_auto_login_refle)";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		$data_num = mysql_num_rows($res);
+
+		if($data_num==1){
+
+			$row = mysql_fetch_array($res);
+
+			$_SESSION["name"] = $row["name"];
+			$_SESSION["ticket_refle"] = md5(TICKET_WORD.$row["name"]);
+			$_SESSION["staff_id"] = $row["id"];
+			$_SESSION["staff_type"] = $row["type"];
+			$_SESSION["staff_id_refle"] = $row["id"];
+			$_SESSION["staff_type_refle"] = $row["type"];
+
+			return true;
+			exit();
+
+		}else{
+
+			//オートログイン用クッキーの削除
+			setcookie('AutoLoginRefle', '', time() - 60);
+
+			return false;
+			exit();
+
+		}
+
+	}else{
+
+		return false;
+		exit();
+
+	}
+
+}
+
+//オートログインをチェック(汎用)
+function check_auto_login_hanyou(){
+
+	include(INC_PATH."/db_connect.php");
+
+	if( isset($_COOKIE[AutoLoginArea]) == true ){
+
+		$auto_login_key = $_COOKIE[AutoLoginArea];
+
+$sql = sprintf("
+select * from staff where delete_flg=0 and %s='%s' and (area='%s' or type='3')",
+TBL_COOKIE_COLUMN,$auto_login_key,SHOP_AREA);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_auto_login_hanyou)";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		$data_num = mysql_num_rows($res);
+
+		if($data_num==1){
+
+			$row = mysql_fetch_array($res);
+
+			$_SESSION["name"] = $row["name"];
+			$_SESSION[SESSION_TICKET] = md5(TICKET_WORD.$row["name"]);
+			$_SESSION["staff_id"] = $row["id"];
+			$_SESSION["staff_type"] = $row["type"];
+			$_SESSION[SESSION_STAFF_ID] = $row["id"];
+			$_SESSION[SESSION_STAFF_TYPE] = $row["type"];
+
+			return true;
+			exit();
+
+		}else{
+
+			//オートログイン用クッキーの削除
+			setcookie(AutoLoginArea, '', time() - 60);
+
+			return false;
+			exit();
+
+		}
+
+	}else{
+
+		return false;
+		exit();
+
+	}
+
+}
+
+//オートログインをチェック(管理ページ)
+function check_auto_login_man(){
+
+	include(INC_PATH."/db_connect.php");
+
+	if(isset($_COOKIE["AutoLoginMan"])==true){
+
+		$auto_login_key = $_COOKIE["AutoLoginMan"];
+
+		$sql = "select * from staff where delete_flg=0 and login_cookie_man='".$auto_login_key."'";
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_auto_login_man)";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		$data_num = mysql_num_rows($res);
+
+		if($data_num==1){
+
+			$row = mysql_fetch_array($res);
+
+			$_SESSION["man_name"] = $row["name"];
+			$_SESSION["man_ticket"] = md5(TICKET_WORD_MAN.$row["name"]);
+			$_SESSION["man_staff_id"] = $row["id"];
+
+			return true;
+			exit();
+
+		}else{
+
+			//オートログイン用クッキーの削除
+			setcookie('AutoLoginMan', '', time() - 60);
+
+			return false;
+			exit();
+
+		}
+
+	}else{
+
+		return false;
+		exit();
+
+	}
+
+}
+
+//曜日取得
+function get_today_week_name(){
+
+	$week = intval(date('w'));
+	$name = "";
+
+	if( $week == "0" ){
+
+		$name = "日";
+
+	}else if( $week == "1" ){
+
+		$name = "月";
+
+	}else if( $week == "2" ){
+
+		$name = "火";
+
+	}else if( $week == "3" ){
+
+		$name = "水";
+
+	}else if( $week == "4" ){
+
+		$name = "木";
+
+	}else if( $week == "5" ){
+
+		$name = "金";
+
+	}else if( $week == "6" ){
+
+		$name = "土";
+
+	}
+
+	return $name;
+	exit();
+
+}
+
+//曜日取得(引数あり)
+function get_today_week_name2($week){
+
+	$name = "";
+
+	if( $week == "0" ){
+
+		$name = "日";
+
+	}else if( $week == "1" ){
+
+		$name = "月";
+
+	}else if( $week == "2" ){
+
+		$name = "火";
+
+	}else if( $week == "3" ){
+
+		$name = "水";
+
+	}else if( $week == "4" ){
+
+		$name = "木";
+
+	}else if( $week == "5" ){
+
+		$name = "金";
+
+	}else if( $week == "6" ){
+
+		$name = "土";
+
+	}
+
+	return $name;
+	exit();
+
+}
+
+//配列データをDB格納用に変更
+function get_insert_array_data($array_data){
+
+	if($array_data == null){
+
+		$insert_array_data = "";
+
+	}else{
+
+		$array_data_num = count($array_data);
+
+		for($i=0;$i<$array_data_num;$i++){
+
+			if($i==($array_data_num-1)){
+
+				$insert_array_data .= $array_data[$i];
+
+			}else{
+
+				$insert_array_data .= $array_data[$i].",";
+
+			}
+		}
+	}
+
+	return $insert_array_data;
+	exit();
+
+}
+
+//出勤データ格納
+function regist_today_work_data($therapist,$driver){
+
+	include(INC_PATH."/db_connect.php");
+
+	$year = intval(date('Y'));
+	$month = intval(date('m'));
+	$day = intval(date('d'));
+
+	//本日のデータがあるかどうかのチェック(無ければインサート)
+	check_today_work_data($year,$month,$day);
+
+	$insert_therapist = get_insert_array_data($therapist);
+	$insert_driver = get_insert_array_data($driver);
+
+	$sql = sprintf("update work_today set therapist='%s',driver='%s'
+					where delete_flg=0 and year='%s' and month='%s' and day='%s'",
+					$insert_therapist,$insert_driver,$year,$month,$day);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_today_work_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//本日のデータがあるかどうかのチェック(無ければインサート)
+function check_today_work_data($year,$month,$day){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select id from work_today where delete_flg=0 and year='%s' and month='%s' and day='%s'",
+					$year,$month,$day);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_today_work_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$data_num = mysql_num_rows($res);
+
+	if( $data_num == 0 ){
+
+		//データをインサート
+		$sql = sprintf("insert into work_today(year,month,day) values('%s','%s','%s')",
+						$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_today_work_data)";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//出勤データの取得
+function get_today_work_data(){
+
+	include(INC_PATH."/db_connect.php");
+
+	$year = intval(date('Y'));
+	$month = intval(date('m'));
+	$day = intval(date('d'));
+
+	$sql = sprintf("select * from work_today where delete_flg=0 and year='%s' and month='%s' and day='%s'",
+					$year,$month,$day);
+
+	$res = mysql_query($sql, $con);
+
+	$data_num = mysql_num_rows($res);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_today_work_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	$data = array();
+
+	$data["therapist"] = explode(",",$row["therapist"]);
+	$data["driver"] = explode(",",$row["driver"]);
+
+	return $data;
+	exit();
+
+}
+
+//出勤スタッフデータ取得
+function get_today_staff($type){
+
+	$data = get_today_work_data();
+
+	if($type=="1"){
+
+		$staff = $data["therapist"];
+
+	}else if($type=="2"){
+
+		$staff = $data["driver"];
+
+	}else{
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_today_staff)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+
+	$staff_num = count($staff);
+
+	$data = array();
+	$x = 0;
+
+	for($i=0;$i<$staff_num;$i++){
+
+		if($staff[$i] != ""){
+
+			$data[$x]["id"] = $staff[$i];
+			$data[$x]["name"] = get_staff_name($staff[$i]);
+			$x++;
+
+		}
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+//スタッフの名前を取得
+function get_staff_name($id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = "select name from staff where id=".$id;
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_staff_name)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	return $row["name"];
+	exit();
+
+}
+
+//メール送信処理(顧客情報)
+function send_customer_info_mail($year,$month,$day,$namae,$course,$age,$bunrui,$operation,$other,$staff_name){
+
+	$operation_num = count($operation);
+	$operation_name = "";
+
+	if($operation_num==0){
+
+		$operation_name = "未選択";
+
+	}else{
+
+		for($i=0;$i<$operation_num;$i++){
+
+			$tmp = $operation[$i];
+
+			if( $tmp == "1" ){
+
+				$operation_name .= "アロマトリートメント　";
+
+			}else if( $tmp == "2" ){
+
+				$operation_name .= "リンパドレナージュ　";
+
+			}else if( $tmp == "3" ){
+
+				$operation_name .= "パウダーリフレクソロジー　";
+
+			}else if( $tmp == "4" ){
+
+				$operation_name .= "オイルリフレクソロジー　";
+
+			}else if( $tmp == "5" ){
+
+				$operation_name .= "指圧　";
+
+			}else if( $tmp == "6" ){
+
+				$operation_name .= "ソフト整体　";
+
+			}else if( $tmp == "7" ){
+
+				$operation_name .= "ヘッドマッサージ　";
+
+			}else if( $tmp == "8" ){
+
+				$operation_name .= "ストレッチ　";
+
+			}
+
+		}
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = "info@neo-gate.jp";
+	$title = "[業務連絡BBS]顧客データ";
+	$content = "
+業務連絡BBSから以下の顧客データが送信されました。\n
+-----------------------------------------------------------------\n
+送信者:".$staff_name."\n
+日にち:".$year."年".$month."月".$day."日\n
+顧客名:".$namae."\n
+コース:".$course."\n
+年代:".$age."\n
+分類:".$bunrui."\n
+施術:".$operation_name."\n
+特記事項:\n".$other."\n";
+
+	$header = "From: info@neo-gate.jp\n";
+	//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	if($result==false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(send_customer_info_mail)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	return true;
+	exit();
+
+}
+
+//投稿データの登録
+function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_type,$to_staff_id,$to_staff_mail,$to_staff_name,$base_url){
+
+	include(INC_PATH."/db_connect.php");
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	$now = time();
+
+	if($from_staff_type == "3"){
+
+		$from_staff_id = $from_staff_id;
+		$to_staff_id = $to_staff_id;
+
+	}else{
+
+		$from_staff_id = $from_staff_id;
+		$to_staff_id = $from_staff_id;
+
+	}
+
+	//threadに登録
+	$sql = sprintf("insert into thread(created,updated,from_staff_id,to_staff_id) values('%s','%s','%s','%s')",
+					$now,$now,$from_staff_id,$to_staff_id);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_contribute)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	// インサートしたデータのIDを取得
+	$thread_id = mysql_insert_id();
+
+	//thread_commentに登録
+	$sql = sprintf("insert into thread_comment(created,thread_id,staff_id,staff_type,content) values('%s','%s','%s','%s','%s')",
+					$now,$thread_id,$from_staff_id,$from_staff_type,$naiyou);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_contribute)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$staff_id = $to_staff_id;
+	$from_staff_name = $from_staff_name;
+	$to_staff_name = $to_staff_name;
+	$staff_type = $from_staff_type;
+	$base_url = $base_url;
+	if( $staff_type == "3" ){
+
+		$mailto = $to_staff_mail;
+
+	}else{
+
+		$mailto = "info@neo-gate.jp";
+
+	}
+	$naiyou = $naiyou;
+
+	$result = send_contribute_mail($staff_id,$from_staff_name,$to_staff_name,$staff_type,$base_url,$mailto,$naiyou);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_contribute)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+//投稿メール
+function send_contribute_mail($staff_id,$from_staff_name,$to_staff_name,$staff_type,$base_url,$mailto,$naiyou){
+
+	$year = intval(date('Y'));
+	$month = intval(date('m'));
+	$day = intval(date('d'));
+	$hour = intval(date('H'));
+	$minute = intval(date('i'));
+
+	//メール送信
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+
+	if( $staff_type == "3" ){
+
+		$url = $base_url."index.php?staff_id=".$staff_id;
+
+		$mailto = $mailto;
+		$title = "[業務連絡BBS]新着のコメント";
+		$content = "
+受信日時:".$year."年".$month."月".$day."日".$hour."時".$minute."分\n
+".$to_staff_name."さん\n
+新着のコメントがあります。\n
+確認してください。\n
+".$url."\n";
+
+		$header = "From: info@neo-gate.jp\n";
+		$header .= "Cc: info@neo-gate.jp\n";
+		//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+	}else{
+
+		$url = $base_url."index.php?staff_id=".$staff_id;
+
+		$mailto = $mailto;
+		$title = "[業務連絡BBS]投稿のお知らせ";
+		$content = "
+業務連絡BBSに以下の内容が投稿されました。\n
+-----------------------------------------------------------------\n
+投稿者:".$from_staff_name."\n
+投稿日時:".$year."年".$month."月".$day."日".$hour."時".$minute."分\n
+URL:".$url."\n
+投稿内容:\n".$naiyou."\n";
+
+		$header = "From: info@neo-gate.jp\n";
+		//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+	}
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	return $result;
+	exit();
+
+}
+
+//スタッフのメールアドレスを取得
+function get_staff_mail($id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = "select mail from staff where id=".$id;
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_staff_mail)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	return $row["mail"];
+	exit();
+
+}
+
+//スレッドのデータを取得
+function get_thread_data($data_id,$data_type){
+
+	include(INC_PATH."/db_connect.php");
+
+	if( ($data_id == "") || ($data_id == "-1") ){
+
+		$sql = sprintf("select *,thread.id as th_id from thread left join staff on staff.id=thread.to_staff_id where staff.type='%s' and thread.delete_flg=0 order by thread.updated desc limit 0,30",$data_type);
+
+	}else{
+
+		$sql = sprintf("select *,thread.id as th_id from thread left join staff on staff.id=thread.to_staff_id where staff.type='%s' and thread.to_staff_id='%s' and thread.delete_flg=0 order by thread.updated desc limit 0,30",$data_type,$data_id);
+
+	}
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_thread_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+
+		$id = $row["th_id"];
+
+		//コメントデータの取得
+		$comment = get_thread_comment_data($id);
+		$comment_num = count($comment);
+
+		$list_data[$i] = $row;
+
+		$list_data[$i]["comment"] = $comment;
+		$list_data[$i]["comment_num"] = $comment_num;
+
+		$i++;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+//スレッドのデータを取得(汎用)
+function get_thread_data_hanyou($data_id,$data_type){
+
+	include(INC_PATH."/db_connect.php");
+
+	if( ($data_id == "") || ($data_id == "-1") ){
+
+$sql = sprintf("
+select *,thread.id as th_id from thread
+left join staff on staff.id=thread.to_staff_id
+where staff.type='%s' and thread.delete_flg=0 and staff.area='%s' and staff.delete_flg=0
+order by thread.updated desc limit 0,30",
+$data_type,SHOP_AREA);
+
+	}else{
+
+$sql = sprintf("
+select *,thread.id as th_id from thread
+left join staff on staff.id=thread.to_staff_id
+where staff.type='%s' and thread.to_staff_id='%s' and thread.delete_flg=0 and staff.area='%s' and staff.delete_flg=0
+order by thread.updated desc limit 0,30",
+$data_type,$data_id,SHOP_AREA);
+
+	}
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "error!(get_thread_data_hanyou)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+
+		$id = $row["th_id"];
+
+		//コメントデータの取得
+		$comment = get_thread_comment_data($id);
+		$comment_num = count($comment);
+
+		$list_data[$i] = $row;
+
+		$list_data[$i]["comment"] = $comment;
+		$list_data[$i]["comment_num"] = $comment_num;
+
+		$i++;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+//コメントデータの取得
+function get_thread_comment_data($id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select * from thread_comment where delete_flg=0 and thread_id='%s' order by created desc",$id);
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_thread_comment_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+
+		$list_data[$i++] = $row;
+
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+//整形された日付情報取得
+function get_seikei_time($date){
+
+	$month = date('m',$date);
+	$day = date('d',$date);
+	$hour = date('H',$date);
+	$minute = date('i',$date);
+	$week = date('w',$date);
+	$week_name = get_today_week_name2($week);
+
+	$data = $month."/".$day."（".$week_name."）".$hour."：".$minute;
+
+	return $data;
+	exit();
+
+}
+
+//整形された日付情報取得(秒まで)
+function get_seikei_time2($date){
+
+	$hour = date('H',$date);
+	$minute = date('i',$date);
+	$s = date('s',$date);
+
+	$data = $hour."：".$minute."：".$s;
+
+	return $data;
+	exit();
+
+}
+
+//投稿データの更新
+function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,$base_url){
+
+	include(INC_PATH."/db_connect.php");
+
+	//to_staff_idの取得
+	$to_staff_id = get_to_staff_id($thread_id);
+
+	//スタッフのメールアドレスを取得
+	$to_staff_mail = get_staff_mail($to_staff_id);
+
+	//スタッフの名前を取得
+	$to_staff_name = get_staff_name($to_staff_id);
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	$now = time();
+
+	//threadのupdatedを更新する
+	$sql = sprintf("update thread set updated='%s' where id='%s'",$now,$thread_id);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_contribute)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//thread_commentに登録
+	$sql = sprintf("insert into thread_comment(created,thread_id,staff_id,staff_type,content) values('%s','%s','%s','%s','%s')",
+					$now,$thread_id,$staff_id,$staff_type,$naiyou);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_contribute)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$staff_id = $to_staff_id;
+	$from_staff_name = $staff_name;
+	$to_staff_name = $to_staff_name;
+	$staff_type = $staff_type;
+	$base_url = $base_url;
+	if( $staff_type == "3" ){
+
+		$mailto = $to_staff_mail;
+
+	}else{
+
+		$mailto = "info@neo-gate.jp";
+
+	}
+	$naiyou = $naiyou;
+
+	$result = send_contribute_mail($staff_id,$from_staff_name,$to_staff_name,$staff_type,$base_url,$mailto,$naiyou);
+
+
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_contribute)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+//to_staff_idの取得
+function get_to_staff_id($id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = "select to_staff_id from thread where id=".$id;
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_to_staff_id)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	return $row["to_staff_id"];
+	exit();
+
+}
+
+//振り分け
+function furiwake(){
+
+	$header = getallheaders();
+	$agent = $header["User-Agent"] ;
+	$ua=$_SERVER['HTTP_USER_AGENT'];
+
+	$type = "pc";
+
+	//スマートフォンの振替処理
+	if((strpos($ua,'iPhone')!==false)||(strpos($ua,'iPod')!==false)||(strpos($ua,'Android')!==false)) {
+
+		$type = "sp";
+
+		//携帯電話の振替処理
+	}else if((preg_match("/DoCoMo/",$agent)) || (preg_match("/^UP.Browser|^KDDI/", $agent)) || (preg_match("/^J-PHONE|^Vodafone|^SoftBank/", $agent))){
+
+		$type = "m";
+
+	}
+
+	return $type;
+	exit();
+
+}
+
+//セラピスト名取得
+function get_therapist_name_by_therapist_id($therapist_id,$area){
+
+	// DBに接続
+	include(INC_PATH."/db_connect.php");
+
+	if( $area=="tokyo" ){
+
+		$sql = sprintf("select name_refle from therapist where id='%s'",$therapist_id);
+
+	}else if( $area=="sapporo" ){
+
+		$sql = sprintf("select name_sapporo from therapist_sapporo where id='%s'",$therapist_id);
+
+	}else{
+
+		$sql = sprintf("select name_site from therapist_new where id='%s'",$therapist_id);
+
+	}
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	if( $area=="tokyo" ){
+
+		$name = $row["name_refle"];
+
+	}else if( $area=="sapporo" ){
+
+		$name = $row["name_sapporo"];
+
+	}else{
+
+		$name = $row["name_site"];
+
+	}
+
+	return $name;
+	exit();
+
+}
+
+//セラピスト名取得(本名)
+function get_therapist_name_by_therapist_id_honmyou($therapist_id,$area){
+
+	// DBに接続
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select name from therapist_new where id='%s'",$therapist_id);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	$name = $row["name"];
+
+	return $name;
+	exit();
+
+}
+
+function get_therapist_month_attendance_data($therapist_id, $year, $month,$area){
+
+	include(INC_PATH."/db_connect.php");
+
+	if( $area == "tokyo" ){
+
+	$sql = sprintf("
+select * from attendance where therapist_id='%s' and year='%s' and month='%s' order by day asc",
+$therapist_id, $year, $month);
+
+	}else{
+
+		echo "error!";
+		exit();
+
+	}
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_month_attendance_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+function get_therapist_month_attendance_data_2($therapist_id, $year, $month,$area,$zengo){
+
+	include(INC_PATH."/db_connect.php");
+
+	if( $zengo == "2" ){
+
+		$where_part = "(day>15)";
+
+	}else{
+
+		$where_part = "(day<=15)";
+
+	}
+
+	$sql = sprintf("
+select * from attendance_new where therapist_id='%s' and year='%s' and month='%s' and (%s) order by day asc",
+$therapist_id, $year, $month, $where_part);
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_month_attendance_data_2)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+function get_therapist_month_attendance_data_3($therapist_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$today_year = intval(date("Y"));
+	$today_month = intval(date("m"));
+	$today_day = intval(date("d"));
+
+	//$next_month_year = intval(date('Y', strtotime('+1 month')));
+	//$next_month_month = intval(date('m', strtotime('+1 month')));
+
+	$next_month_year = intval(date('Y', strtotime(date('Y-m-1').' +1 month')));
+	$next_month_month = intval(date('m', strtotime(date('Y-m-1').' +1 month')));
+
+	$where_part = sprintf("day>=%s",$today_day);
+
+	$sql = sprintf("
+select * from attendance_new where therapist_id='%s' and year='%s' and month='%s' and (%s) order by day asc",
+$therapist_id, $today_year, $today_month, $where_part);
+
+	//echo $sql;exit();
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_month_attendance_data_3)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$i=0;
+
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	$sql = sprintf("
+select * from attendance_new where therapist_id='%s' and year='%s' and month='%s' order by day asc",
+$therapist_id, $next_month_year, $next_month_month);
+
+	//echo $sql;exit();
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_month_attendance_data_3)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+function get_max_day($year,$month){
+
+	$uru_flag = false;
+
+	//うるう年判定
+	if(($year%4)==0){
+		if(($year%100)==0){
+			if(($year%400)==0){
+				$uru_flag = true;
+			}else{
+				$uru_flag = false;
+			}
+		}else{
+			$uru_flag = true;
+		}
+	}else{
+		$uru_flag = false;
+	}
+	if($month==2){
+		if($uru_flag==true){
+			$day = 29;
+		}else{
+			$day = 28;
+		}
+	}else{
+		if(($month==4)||($month==6)||($month==9)||($month==11)){
+			$day = 30;
+		}else{
+			$day = 31;
+		}
+	}
+
+	return $day;
+	exit();
+
+}
+
+function get_day_data($year,$month,$max_day){
+
+	$data = array();
+
+	for($i=0;$i<$max_day;$i++){
+
+		$data[$i]["year"] = $year;
+		$data[$i]["month"] = $month;
+		$day = $i+1;
+		$data[$i]["day"] = $day;
+		$w = intval(date("w", mktime(0, 0, 0, $month, $day, $year)));
+		$data[$i]["week"] = get_ja_week($w);
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_day_data_two_month($year,$month,$max_day,$next_month_year,$next_month_month,$next_month_max_day){
+
+	$data = array();
+
+	for($i=0;$i<$max_day;$i++){
+
+		$data[$i]["year"] = $year;
+		$data[$i]["month"] = $month;
+		$day = $i+1;
+		$data[$i]["day"] = $day;
+		$w = intval(date("w", mktime(0, 0, 0, $month, $day, $year)));
+		$data[$i]["week"] = get_ja_week($w);
+
+	}
+
+	$data_num = count($data);
+
+	$max_sum_num = $max_day + $next_month_max_day;
+
+	$x = 0;
+
+	for($i=$data_num;$i<$max_sum_num;$i++){
+
+		$data[$i]["year"] = $next_month_year;
+		$data[$i]["month"] = $next_month_month;
+		$day = $x+1;
+		$data[$i]["day"] = $day;
+		$w = intval(date("w", mktime(0, 0, 0, $month, $day, $year)));
+		$data[$i]["week"] = get_ja_week($w);
+
+		$x++;
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_ja_week($w){
+
+	$word = "";
+
+	if($w==0){
+
+		$word = "日";
+
+	}else if($w==1){
+
+		$word = "月";
+
+	}else if($w==2){
+
+		$word = "火";
+
+	}else if($w==3){
+
+		$word = "水";
+
+	}else if($w==4){
+
+		$word = "木";
+
+	}else if($w==5){
+
+		$word = "金";
+
+	}else if($w==6){
+
+		$word = "土";
+
+	}
+
+	return $word;
+	exit();
+
+}
+
+function test(){
+
+	return "test!";
+	exit;
+
+}
+
+function get_attendance_list_data($attendance_data,$day_data,$therapist_id,$area){
+global $time_array;
+
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$data = array();
+
+	$k=0;
+
+	$day_data_num = count($day_data);
+	$attendance_data_num = count($attendance_data);
+
+	for($i=0;$i<$day_data_num;$i++){
+
+		$year = $day_data[$i]["year"];
+		$month = $day_data[$i]["month"];
+		$day = $day_data[$i]["day"];
+		$week = $day_data[$i]["week"];
+
+		$past_flg = today_past_check($year,$month,$day);
+
+		//echo $past_flg;echo "<br />";
+
+		if( $past_flg == false ){
+
+			$common_comment = get_shift_common_comment_data($year,$month,$day);
+
+			$match_flg = false;
+
+			for($j=0;$j<$attendance_data_num;$j++){
+
+				if($match_flg == false){
+
+					$year_a = $attendance_data[$j]["year"];
+					$month_a = $attendance_data[$j]["month"];
+					$day_a = $attendance_data[$j]["day"];
+					$start_time = $attendance_data[$j]["start_time"];
+					$end_time = $attendance_data[$j]["end_time"];
+					$syounin_state = $attendance_data[$j]["syounin_state"];
+					$comment = $attendance_data[$j]["comment"];
+
+					if( ($year==$year_a) && ($month==$month_a) && ($day==$day_a) ){
+
+						$match_flg = true;
+
+					}
+
+				}
+
+			}
+
+			$html = "";
+
+			if( $match_flg == true ){
+
+				$start_time_ta = $time_array[$start_time]["minute"];
+				$end_time_ta = $time_array[$end_time]["minute"];
+
+				if($start_time_ta=="0"){
+
+					$start_time_ta = "0".$start_time_ta;
+
+				}
+
+				if($end_time_ta=="0"){
+
+					$end_time_ta = "0".$end_time_ta;
+
+				}
+
+				$html .= '<form action="edit.php" method="post">';
+				$html .= '<input type="hidden" name="therapist_id" value="'.$therapist_id.'" />';
+				$html .= '<input type="hidden" name="area" value="'.$area.'" />';
+				$html .= '<input type="hidden" name="year" value="'.$year.'" />';
+				$html .= '<input type="hidden" name="month" value="'.$month.'" />';
+				$html .= '<input type="hidden" name="day" value="'.$day.'" />';
+				$html .= '<input type="hidden" name="start_time" value="'.$start_time.'" />';
+				$html .= '<input type="hidden" name="end_time" value="'.$end_time.'" />';
+				$html .= '<div style="font-size:12px;">';
+				$html .= $day."(".$week.")";
+				$html .= "　";
+				$html .= $time_array[$start_time]["hour"]."時".$start_time_ta."分";
+				$html .= "／";
+				$html .= $time_array[$end_time]["hour"]."時".$end_time_ta."分";
+				$html .= "　";
+
+				if($syounin_state=="1"){
+					$html .= '<span style="color:red;">確</span>';
+					$html .= "　|　";
+					$html .= '<input type="submit" value="シフト編集" name="send_list_edit" />';
+				}else if($syounin_state=="2"){
+
+					$html .= '不承認';
+					$html .= "　|　";
+					$html .= '<input type="submit" value="シフト編集" name="send_list_edit" />';
+
+				}else if($syounin_state=="3"){
+
+					$html .= '　';
+					$html .= "　|　";
+					$html .= '締切';
+
+				}else{
+
+					$html .= '仮';
+					$html .= "　|　";
+					$html .= '<input type="submit" value="シフト編集" name="send_list_edit" />';
+
+				}
+				$html .= '</div>';
+				$html .= '</form>';
+
+				if($comment != ""){
+
+					$html .= '<div style="color:red;padding:5px 0px 0px 40px;font-size:12px;">'.$comment.'</div>';
+
+				}else if($common_comment != ""){
+
+					$html .= '<div style="color:red;padding:5px 0px 0px 40px;font-size:12px;">'.$common_comment.'</div>';
+
+				}
+
+				$data[$k] = $html;
+
+			}else{
+
+				$html .= '<form action="add.php" method="post">';
+				$html .= '<input type="hidden" name="therapist_id" value="'.$therapist_id.'" />';
+				$html .= '<input type="hidden" name="area" value="'.$area.'" />';
+				$html .= '<input type="hidden" name="year" value="'.$year.'" />';
+				$html .= '<input type="hidden" name="month" value="'.$month.'" />';
+				$html .= '<input type="hidden" name="day" value="'.$day.'" />';
+				$html .= '<div style="font-size:12px;">';
+				$html .= $day."(".$week.")";
+				$html .= "　　　　　　　　　　　　　　　　　";
+				$html .= '<input type="submit" value="シフト追加" name="send_list_add" />';
+				$html .= '</div>';
+				$html .= '</form>';
+
+				if($common_comment != ""){
+
+					$html .= '<div style="color:red;padding:5px 0px 0px 40px;font-size:12px;">'.$common_comment.'</div>';
+
+				}
+
+				$data[$k] = $html;
+
+			}
+
+			$k++;
+
+		}
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_attendance_list_data_2($attendance_data,$day_data,$therapist_id,$area,$type){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include(COMMON_INC."time_array.php");
+	//include_once(COMMON_INC."time_array.php");
+
+
+	$data = array();
+
+	$k=0;
+
+	$data_empty_flg = false;
+
+	$day_data_num = count($day_data);
+	$attendance_data_num = count($attendance_data);
+
+
+	for($i=0;$i<$day_data_num;$i++){
+
+		$year = $day_data[$i]["year"];
+		$month = $day_data[$i]["month"];
+		$day = $day_data[$i]["day"];
+		$week = $day_data[$i]["week"];
+
+		$kikan = $year."_".$month."_".$day;
+
+		$past_flg = today_past_check($year,$month,$day);
+
+		//echo $past_flg;echo "<br />";
+
+		if( $past_flg == false ){
+
+			$match_flg = false;
+
+			for($j=0;$j<$attendance_data_num;$j++){
+
+				if($match_flg == false){
+
+					$year_a = $attendance_data[$j]["year"];
+					$month_a = $attendance_data[$j]["month"];
+					$day_a = $attendance_data[$j]["day"];
+					$start_time = $attendance_data[$j]["start_time"];
+					$end_time = $attendance_data[$j]["end_time"];
+					$syounin_state = $attendance_data[$j]["syounin_state"];
+					$comment = $attendance_data[$j]["comment"];
+					$shift_change_flg = $attendance_data[$j]["shift_change_flg"];
+					$kekkin_flg = $attendance_data[$j]["kekkin_flg"];
+					$updated = $attendance_data[$j]["updated"];
+
+					$updated_month = intval(date('m', $updated));
+					$updated_day = intval(date('d', $updated));
+					$updated_hour = intval(date('H', $updated));
+					$updated_minute = intval(date('i', $updated));
+
+					$today_absence = $attendance_data[$j]["today_absence"];
+
+					if( $updated_minute < 10 ){
+
+						$updated_minute = "0".$updated_minute;
+
+					}
+
+					if( ($year==$year_a) && ($month==$month_a) && ($day==$day_a) ){
+
+						$match_flg = true;
+
+					}
+
+				}
+
+			}
+
+			$html = "";
+
+			$day_disp = $month."/".$day;
+
+			if( $type == "regist" ){
+
+				if( ($syounin_state == "0") && ($shift_change_flg == "0") && ($kekkin_flg == "0") && ($today_absence == "0") ){
+
+					if( $match_flg == true ){
+
+						$start_time_ta = $time_array[$start_time]["minute"];
+						$end_time_ta = $time_array[$end_time]["minute"];
+
+						if($start_time_ta=="0"){
+
+							$start_time_ta = "0".$start_time_ta;
+
+						}
+
+						if($end_time_ta=="0"){
+
+							$end_time_ta = "0".$end_time_ta;
+
+						}
+
+						$html .= '<div style="font-size:12px;width:50px;float:left;">';
+						$html .= $day_disp."(".$week.")";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:60px;float:left;">';
+						$html .= $time_array[$start_time]["hour"]."時".$start_time_ta."分";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:20px;float:left;">';
+						$html .= "／";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:90px;float:left;">';
+						$html .= $time_array[$end_time]["hour"]."時".$end_time_ta."分";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:30px;float:left;">';
+						$html .= "|";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="1"){
+							$html .= '<input type="checkbox" name="syounin[]" value="'.$kikan.'" class="syounin_ckb" id="syounin_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="syounin[]" value="'.$kikan.'" class="syounin_ckb" id="syounin_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="2"){
+							$html .= '<input type="checkbox" name="fusyounin[]" value="'.$kikan.'" class="syounin_ckb" id="fusyou_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="fusyounin[]" value="'.$kikan.'" class="syounin_ckb" id="fusyou_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="3"){
+							$html .= '<input type="checkbox" name="shimekiri[]" value="'.$kikan.'" class="syounin_ckb" id="shimekiri_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="shimekiri[]" value="'.$kikan.'" class="syounin_ckb" id="shimekiri_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<br class="clear" />';
+
+						$data[$k] = $html;
+
+					}else{
+
+						$data_empty_flg = true;
+
+					}
+
+					if($data_empty_flg == false){
+
+						$k++;
+
+					}else{
+
+						$data_empty_flg = false;
+
+					}
+
+				}
+
+			}else if( $type == "edit" ){
+
+				if( ( ($shift_change_flg == "1") && ($syounin_state == "0") ) || ( ($kekkin_flg == "1") && ($syounin_state == "0") ) ){
+
+					$change_type = "";
+
+					if( $kekkin_flg == "1" ){
+
+						$change_type = "欠勤";
+
+					}else{
+
+						$change_type = "変更";
+
+					}
+
+					if( $match_flg == true ){
+
+						$start_time_ta = $time_array[$start_time]["minute"];
+						$end_time_ta = $time_array[$end_time]["minute"];
+
+						if( $start_time_ta == "0" ){
+
+							$start_time_ta = "0".$start_time_ta;
+
+						}
+
+						if($end_time_ta=="0"){
+
+							$end_time_ta = "0".$end_time_ta;
+
+						}
+
+						$updated_time_disp = sprintf("%s/%s　%s：%s",$updated_month,$updated_day,$updated_hour,$updated_minute);
+
+						$html .= '<div style="padding-bottom:5px;">依頼日　'.$updated_time_disp.'</div>';
+						$html .= '<div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;">';
+						$html .= $day_disp."(".$week.")";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:60px;float:left;">';
+						$html .= $time_array[$start_time]["hour"]."時".$start_time_ta."分";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:20px;float:left;">';
+						$html .= "／";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:120px;float:left;">';
+						$html .= $time_array[$end_time]["hour"]."時".$end_time_ta."分(".$change_type.")";
+						$html .= '</div>';
+
+						$html .= '<div style="font-size:12px;width:70px;float:left;padding-left:30px;">';
+						if($kekkin_flg=="1"){
+							$html .= '<input type="checkbox" name="syounin[]" value="kekkin_'.$kikan.'" />';
+						}else{
+							$html .= '<input type="checkbox" name="syounin[]" value="henkou_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+
+
+
+						$html .= '<div style="font-size:12px;width:70px;float:left;padding-left:30px;">';
+						if($kekkin_flg=="1"){
+							//$html .= '<input type="checkbox" name="fusyounin[]" value="kekkin_'.$kikan.'" />';
+						}else{
+							$html .= '<input type="checkbox" name="fusyounin[]" value="henkou_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+
+
+
+						$html .= '<br class="clear" />';
+						$html .= '</div>';
+
+						$data[$k] = $html;
+
+					}else{
+
+						$data_empty_flg = true;
+
+					}
+
+					if($data_empty_flg == false){
+
+						$k++;
+
+					}else{
+
+						$data_empty_flg = false;
+
+					}
+
+				}
+
+			}else{
+
+				echo "error!(get_attendance_list_data_2)";
+				exit();
+
+			}
+
+		}
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_attendance_list_data_2_bk201408261318($attendance_data,$day_data,$therapist_id,$area,$type){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$data = array();
+
+	$k=0;
+
+	$data_empty_flg = false;
+
+	$day_data_num = count($day_data);
+	$attendance_data_num = count($attendance_data);
+
+	for($i=0;$i<$day_data_num;$i++){
+
+		$year = $day_data[$i]["year"];
+		$month = $day_data[$i]["month"];
+		$day = $day_data[$i]["day"];
+		$week = $day_data[$i]["week"];
+
+		$kikan = $year."_".$month."_".$day;
+
+		$past_flg = today_past_check($year,$month,$day);
+
+		//echo $past_flg;echo "<br />";
+
+		if( $past_flg == false ){
+
+			$match_flg = false;
+
+			for($j=0;$j<$attendance_data_num;$j++){
+
+				if($match_flg == false){
+
+					$year_a = $attendance_data[$j]["year"];
+					$month_a = $attendance_data[$j]["month"];
+					$day_a = $attendance_data[$j]["day"];
+					$start_time = $attendance_data[$j]["start_time"];
+					$end_time = $attendance_data[$j]["end_time"];
+					$syounin_state = $attendance_data[$j]["syounin_state"];
+					$comment = $attendance_data[$j]["comment"];
+					$shift_change_flg = $attendance_data[$j]["shift_change_flg"];
+					$kekkin_flg = $attendance_data[$j]["kekkin_flg"];
+					$updated = $attendance_data[$j]["updated"];
+
+					$updated_month = intval(date('m', $updated));
+					$updated_day = intval(date('d', $updated));
+					$updated_hour = intval(date('H', $updated));
+					$updated_minute = intval(date('i', $updated));
+
+					$today_absence = $attendance_data[$j]["today_absence"];
+
+					if( $updated_minute < 10 ){
+
+						$updated_minute = "0".$updated_minute;
+
+					}
+
+					if( ($year==$year_a) && ($month==$month_a) && ($day==$day_a) ){
+
+						$match_flg = true;
+
+					}
+
+				}
+
+			}
+
+			$html = "";
+
+			$day_disp = $month."/".$day;
+
+			if( $type == "regist" ){
+
+				if( ($syounin_state == "0") && ($shift_change_flg == "0") && ($kekkin_flg == "0") && ($today_absence == "0") ){
+
+					if( $match_flg == true ){
+
+						$start_time_ta = $time_array[$start_time]["minute"];
+						$end_time_ta = $time_array[$end_time]["minute"];
+
+						if($start_time_ta=="0"){
+
+							$start_time_ta = "0".$start_time_ta;
+
+						}
+
+						if($end_time_ta=="0"){
+
+							$end_time_ta = "0".$end_time_ta;
+
+						}
+
+						$html .= '<div style="font-size:12px;width:50px;float:left;">';
+						$html .= $day_disp."(".$week.")";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:60px;float:left;">';
+						$html .= $time_array[$start_time]["hour"]."時".$start_time_ta."分";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:20px;float:left;">';
+						$html .= "／";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:90px;float:left;">';
+						$html .= $time_array[$end_time]["hour"]."時".$end_time_ta."分";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:30px;float:left;">';
+						$html .= "|";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="1"){
+							$html .= '<input type="checkbox" name="syounin[]" value="'.$kikan.'" class="syounin_ckb" id="syounin_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="syounin[]" value="'.$kikan.'" class="syounin_ckb" id="syounin_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="2"){
+							$html .= '<input type="checkbox" name="fusyounin[]" value="'.$kikan.'" class="syounin_ckb" id="fusyou_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="fusyounin[]" value="'.$kikan.'" class="syounin_ckb" id="fusyou_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="3"){
+							$html .= '<input type="checkbox" name="shimekiri[]" value="'.$kikan.'" class="syounin_ckb" id="shimekiri_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="shimekiri[]" value="'.$kikan.'" class="syounin_ckb" id="shimekiri_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<br class="clear" />';
+
+						$data[$k] = $html;
+
+					}else{
+
+						$data_empty_flg = true;
+
+					}
+
+					if($data_empty_flg == false){
+
+						$k++;
+
+					}else{
+
+						$data_empty_flg = false;
+
+					}
+
+				}
+
+			}else if( $type == "edit" ){
+
+				if( ($shift_change_flg == "1") || ( ($kekkin_flg == "1") && ($today_absence == "0") ) ){
+
+					$change_type = "";
+
+					if($kekkin_flg=="1"){
+
+						$change_type = "欠勤";
+
+					}else{
+
+						$change_type = "変更";
+
+					}
+
+					if( $match_flg == true ){
+
+						$start_time_ta = $time_array[$start_time]["minute"];
+						$end_time_ta = $time_array[$end_time]["minute"];
+
+						if($start_time_ta=="0"){
+
+							$start_time_ta = "0".$start_time_ta;
+
+						}
+
+						if($end_time_ta=="0"){
+
+							$end_time_ta = "0".$end_time_ta;
+
+						}
+
+						$updated_time_disp = sprintf("%s/%s　%s：%s",$updated_month,$updated_day,$updated_hour,$updated_minute);
+
+						$html .= '<div style="padding-bottom:5px;">依頼日　'.$updated_time_disp.'</div>';
+						$html .= '<div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;">';
+						$html .= $day_disp."(".$week.")";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:60px;float:left;">';
+						$html .= $time_array[$start_time]["hour"]."時".$start_time_ta."分";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:20px;float:left;">';
+						$html .= "／";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:120px;float:left;">';
+						$html .= $time_array[$end_time]["hour"]."時".$end_time_ta."分(".$change_type.")";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:70px;float:left;padding-left:30px;">';
+
+						if($kekkin_flg=="1"){
+
+							$html .= '<input type="radio" name="syounin" value="kekkin_'.$kikan.'" />';
+
+						}else{
+
+							$html .= '<input type="radio" name="syounin" value="henkou_'.$kikan.'" />';
+
+						}
+
+						$html .= '</div>';
+						$html .= '<br class="clear" />';
+						$html .= '</div>';
+
+						$data[$k] = $html;
+
+					}else{
+
+						$data_empty_flg = true;
+
+					}
+
+					if($data_empty_flg == false){
+
+						$k++;
+
+					}else{
+
+						$data_empty_flg = false;
+
+					}
+
+				}
+
+			}else{
+
+				echo "error!(get_attendance_list_data_2)";
+				exit();
+
+			}
+
+		}
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_attendance_list_data_2_bk201406231414($attendance_data,$day_data,$therapist_id,$area,$zengo,$type){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$data = array();
+
+	$k=0;
+
+	$data_empty_flg = false;
+
+	$day_data_num = count($day_data);
+	$attendance_data_num = count($attendance_data);
+
+	if( $zengo == "2" ){
+
+		$start_num = 15;
+		$end_num = $day_data_num;
+
+	}else{
+
+		$start_num = 0;
+		$end_num = 15;
+
+	}
+
+	for($i=$start_num;$i<$end_num;$i++){
+
+		$year = $day_data[$i]["year"];
+		$month = $day_data[$i]["month"];
+		$day = $day_data[$i]["day"];
+		$week = $day_data[$i]["week"];
+
+		$kikan = $year."_".$month."_".$day;
+
+		$past_flg = today_past_check($year,$month,$day);
+
+		//echo $past_flg;echo "<br />";
+
+		if( $past_flg == false ){
+
+			$match_flg = false;
+
+			for($j=0;$j<$attendance_data_num;$j++){
+
+				if($match_flg == false){
+
+					$year_a = $attendance_data[$j]["year"];
+					$month_a = $attendance_data[$j]["month"];
+					$day_a = $attendance_data[$j]["day"];
+					$start_time = $attendance_data[$j]["start_time"];
+					$end_time = $attendance_data[$j]["end_time"];
+					$syounin_state = $attendance_data[$j]["syounin_state"];
+					$comment = $attendance_data[$j]["comment"];
+					$shift_change_flg = $attendance_data[$j]["shift_change_flg"];
+					$kekkin_flg = $attendance_data[$j]["kekkin_flg"];
+					$updated = $attendance_data[$j]["updated"];
+
+					$updated_month = intval(date('m', $updated));
+					$updated_day = intval(date('d', $updated));
+					$updated_hour = intval(date('H', $updated));
+					$updated_minute = intval(date('i', $updated));
+
+					$today_absence = $attendance_data[$j]["today_absence"];
+
+					if( $updated_minute < 10 ){
+
+						$updated_minute = "0".$updated_minute;
+
+					}
+
+					if( ($year==$year_a) && ($month==$month_a) && ($day==$day_a) ){
+
+						$match_flg = true;
+
+					}
+
+				}
+
+			}
+
+			$html = "";
+
+			if( $type == "regist" ){
+
+				if( ($syounin_state == "0") && ($shift_change_flg == "0") && ($kekkin_flg == "0") && ($today_absence == "0") ){
+
+					if( $match_flg == true ){
+
+						$start_time_ta = $time_array[$start_time]["minute"];
+						$end_time_ta = $time_array[$end_time]["minute"];
+
+						if($start_time_ta=="0"){
+
+							$start_time_ta = "0".$start_time_ta;
+
+						}
+
+						if($end_time_ta=="0"){
+
+							$end_time_ta = "0".$end_time_ta;
+
+						}
+
+						$html .= '<div style="font-size:12px;width:50px;float:left;">';
+						$html .= $day."(".$week.")";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:60px;float:left;">';
+						$html .= $time_array[$start_time]["hour"]."時".$start_time_ta."分";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:20px;float:left;">';
+						$html .= "／";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:90px;float:left;">';
+						$html .= $time_array[$end_time]["hour"]."時".$end_time_ta."分";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:30px;float:left;">';
+						$html .= "|";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="1"){
+							$html .= '<input type="checkbox" name="syounin[]" value="'.$kikan.'" class="syounin_ckb" id="syounin_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="syounin[]" value="'.$kikan.'" class="syounin_ckb" id="syounin_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="2"){
+							$html .= '<input type="checkbox" name="fusyounin[]" value="'.$kikan.'" class="syounin_ckb" id="fusyou_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="fusyounin[]" value="'.$kikan.'" class="syounin_ckb" id="fusyou_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;padding-left:10px;">';
+						if($syounin_state=="3"){
+							$html .= '<input type="checkbox" name="shimekiri[]" value="'.$kikan.'" class="syounin_ckb" id="shimekiri_'.$kikan.'" checked />';
+						}else{
+							$html .= '<input type="checkbox" name="shimekiri[]" value="'.$kikan.'" class="syounin_ckb" id="shimekiri_'.$kikan.'" />';
+						}
+						$html .= '</div>';
+						$html .= '<br class="clear" />';
+
+						$data[$k] = $html;
+
+					}else{
+
+						$data_empty_flg = true;
+
+						//$html .= '<div style="font-size:12px;width:200px;">';
+						//$html .= $day."(".$week.")";
+						//$html .= '</div>';
+						//$data[$k] = $html;
+
+					}
+
+					if($data_empty_flg == false){
+
+						$k++;
+
+					}else{
+
+						$data_empty_flg = false;
+
+					}
+
+				}
+
+			}else if( $type == "edit" ){
+
+				if( ($shift_change_flg == "1") || ( ($kekkin_flg == "1") && ($today_absence == "0") ) ){
+
+					$change_type = "";
+
+					if($kekkin_flg=="1"){
+
+						$change_type = "欠勤";
+
+					}else{
+
+						$change_type = "変更";
+
+					}
+
+					if( $match_flg == true ){
+
+						$start_time_ta = $time_array[$start_time]["minute"];
+						$end_time_ta = $time_array[$end_time]["minute"];
+
+						if($start_time_ta=="0"){
+
+							$start_time_ta = "0".$start_time_ta;
+
+						}
+
+						if($end_time_ta=="0"){
+
+							$end_time_ta = "0".$end_time_ta;
+
+						}
+
+						$updated_time_disp = sprintf("%s/%s　%s：%s",$updated_month,$updated_day,$updated_hour,$updated_minute);
+
+						$html .= '<div style="padding-bottom:5px;">依頼日　'.$updated_time_disp.'</div>';
+						$html .= '<div>';
+						$html .= '<div style="font-size:12px;width:50px;float:left;">';
+						$html .= $day."(".$week.")";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:60px;float:left;">';
+						$html .= $time_array[$start_time]["hour"]."時".$start_time_ta."分";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:20px;float:left;">';
+						$html .= "／";
+						$html .= "</div>";
+						$html .= '<div style="font-size:12px;width:120px;float:left;">';
+						$html .= $time_array[$end_time]["hour"]."時".$end_time_ta."分(".$change_type.")";
+						$html .= '</div>';
+						$html .= '<div style="font-size:12px;width:70px;float:left;padding-left:30px;">';
+
+						if($kekkin_flg=="1"){
+
+							$html .= '<input type="radio" name="syounin" value="kekkin_'.$kikan.'" />';
+
+						}else{
+
+							$html .= '<input type="radio" name="syounin" value="henkou_'.$kikan.'" />';
+
+						}
+
+						$html .= '</div>';
+						$html .= '<br class="clear" />';
+						$html .= '</div>';
+
+						$data[$k] = $html;
+
+					}else{
+
+						$data_empty_flg = true;
+
+					}
+
+					if($data_empty_flg == false){
+
+						$k++;
+
+					}else{
+
+						$data_empty_flg = false;
+
+					}
+
+				}
+
+			}else{
+
+				echo "error!(get_attendance_list_data_2)";
+				exit();
+
+			}
+
+		}
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_next_month($month){
+
+	$month = $month + 1;
+
+	if($month==13){
+
+		$month = 1;
+
+	}
+
+	return $month;
+	exit();
+
+}
+
+function escape_for_db($data){
+
+	include(INC_PATH."/db_connect.php");
+
+	$data = mysql_real_escape_string($data);
+
+	return $data;
+	exit();
+
+}
+
+function get_next_year($year,$month){
+
+	$month = $month+1;
+
+	if($month==13){
+
+		$year = $year + 1;
+
+	}
+
+	return $year;
+	exit();
+
+}
+
+//shift_historyを取得
+function get_shift_history($area,$therapist_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("
+select shift_history.created,shift_history.staff_type,shift_history.message,therapist_new.name
+from shift_history
+left join therapist_new on therapist_new.id=shift_history.therapist_id
+where
+shift_history.delete_flg=0 and
+shift_history.therapist_id='%s' and
+shift_history.area='%s'
+order by shift_history.created desc limit 0,20",
+$therapist_id,$area);
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_shift_history)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+function get_shift_common_comment_data($year,$month,$day){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("
+select content from shift_common_comment where delete_flg=0 and year='%s' and month='%s' and day='%s'",
+$year,$month,$day);
+
+	//echo $sql;exit();
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_shift_common_comment_data)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	return $row["content"];
+	exit();
+
+}
+
+function creat_period_select_option($therapist_id,$today_year,$today_month,$next_year,$next_month,$area){
+
+	$today_zenhan_flg = false;
+	$today_kouhan_flg = false;
+	$next_zenhan_flg = false;
+	$next_kouhan_flg = false;
+
+	$type = "zenhan";
+	$today_zenhan_flg = check_attendance_data_exist($type,$therapist_id,$today_year,$today_month,$area);
+
+	$type = "kouhan";
+	$today_kouhan_flg = check_attendance_data_exist($type,$therapist_id,$today_year,$today_month,$area);
+
+	$type = "zenhan";
+	$next_zenhan_flg = check_attendance_data_exist($type,$therapist_id,$next_year,$next_month,$area);
+
+	$type = "kouhan";
+	$next_kouhan_flg = check_attendance_data_exist($type,$therapist_id,$next_year,$next_month,$area);
+
+	$html = "";
+
+	if($today_zenhan_flg==false){
+
+		$html .= '<option value="'.$today_year.'_'.$today_month.'_zenhan">'.$today_month.'月前半</option>';
+
+	}
+
+	if($today_kouhan_flg==false){
+
+		$html .= '<option value="'.$today_year.'_'.$today_month.'_kouhan">'.$today_month.'月後半</option>';
+
+	}
+
+	if($next_zenhan_flg==false){
+
+		$html .= '<option value="'.$next_year.'_'.$next_month.'_zenhan">'.$next_month.'月前半</option>';
+
+	}
+
+	if($next_kouhan_flg==false){
+
+		$html .= '<option value="'.$next_year.'_'.$next_month.'_kouhan">'.$next_month.'月後半</option>';
+
+	}
+
+	return $html;
+	exit();
+
+}
+
+function check_attendance_data_exist($type,$therapist_id,$year,$month,$area){
+
+	include(INC_PATH."/db_connect.php");
+
+	if($area=="tokyo"){
+
+		if($type=="zenhan"){
+
+			$sql = sprintf("
+select id from attendance where therapist_id='%s' and year='%s' and month='%s' and (day>=1) and (day<=15)",
+$therapist_id,$year,$month,$day);
+
+		}else if($type=="kouhan"){
+
+			$sql = sprintf("
+select id from attendance where therapist_id='%s' and year='%s' and month='%s' and (day>=16) and (day<=31)",
+$therapist_id,$year,$month,$day);
+
+		}else{
+
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_attendance_data_exist):1";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		//echo $sql;echo "<br />";
+
+	}else{
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_attendance_data_exist):2";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_attendance_data_exist):3";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$num = mysql_num_rows($res);
+
+	if($num > 0){
+
+		return true;
+		exit();
+
+	}else{
+
+		return false;
+		exit();
+
+	}
+
+}
+
+function today_past_check($year,$month,$day){
+
+	$today_year = intval(date("Y"));
+	$today_month = intval(date("m"));
+	$today_day = intval(date("d"));
+
+	$hour = 12;
+	$minute = 0;
+	$second = 0;
+
+	$today_timestamp = mktime($hour, $minute, $second, $today_month, $today_day, $today_year);
+
+	$hikisuu_timestamp = mktime($hour, $minute, $second, $month, $day, $year);
+
+	if( $today_timestamp > $hikisuu_timestamp ){
+
+		return true;
+		exit();
+
+	}else{
+
+		return false;
+		exit();
+
+	}
+
+}
+
+function get_kikan_name($kikan){
+
+	if($kikan=="zenhan"){
+
+		$data = "前半";
+
+	}else if($kikan=="kouhan"){
+
+		$data = "後半";
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_shift_regist_list_data($day_data,$kikan,$therapist_id,$shift_time_data){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$day_data_num = count($day_data);
+
+	$data = array();
+
+	$x = 0;
+
+	for($i=0;$i<$day_data_num;$i++){
+
+		$year = $day_data[$i]["year"];
+		$month = $day_data[$i]["month"];
+		$day = $day_data[$i]["day"];
+		$week = $day_data[$i]["week"];
+
+		if( $kikan == "zenhan" ){
+
+			if( $i <= 14 ){
+
+				$num = $x+1;
+
+				$html = "";
+				$html .= '<div style="float:left;">';
+				$html .= $day."(".$week.")";
+				$html .= '</div>';
+				$html .= '<div style="float:left;padding:0px 0px 0px 10px;">';
+				$html .= '<select name="start_time_'.$num.'">';
+				$html .= '<option value="-1">未選択</option>';
+
+				$type = "start";
+				$html .= get_shift_time_option_for_selected($type,$shift_time_data,$num);
+
+				$html .= '</select>';
+				$html .= '</div>';
+				$html .= '<div style="float:left;padding:0px 0px 0px 10px;">';
+				$html .= '<select name="end_time_'.$num.'">';
+				$html .= '<option value="-1">未選択</option>';
+
+				$type = "end";
+				$html .= get_shift_time_option_for_selected($type,$shift_time_data,$num);
+
+				$html .= '</select>';
+				$html .= '</div>';
+				$html .= '<br class="clear" />';
+
+				$data[$x] = $html;
+
+				$x++;
+
+			}
+
+		}else if( $kikan == "kouhan" ){
+
+			if( $i >= 15 ){
+
+				$num = $x+1;
+
+				$html = "";
+				$html .= '<div style="float:left;">';
+				$html .= $day."(".$week.")";
+				$html .= '</div>';
+				$html .= '<div style="float:left;padding:0px 0px 0px 10px;">';
+				$html .= '<select name="start_time_'.$num.'">';
+				$html .= '<option value="-1">未選択</option>';
+
+				$type = "start";
+				$html .= get_shift_time_option_for_selected($type,$shift_time_data,$num);
+
+				$html .= '</select>';
+				$html .= '</div>';
+				$html .= '<div style="float:left;padding:0px 0px 0px 10px;">';
+				$html .= '<select name="end_time_'.$num.'">';
+				$html .= '<option value="-1">未選択</option>';
+
+				$type = "end";
+				$html .= get_shift_time_option_for_selected($type,$shift_time_data,$num);
+
+				$html .= '</select>';
+				$html .= '</div>';
+				$html .= '<br class="clear" />';
+
+				$data[$x] = $html;
+
+				$x++;
+
+			}
+
+		}
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function get_shift_time_option_for_selected($type,$shift_time_data,$num){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$start_time = $shift_time_data[$num]["start_time"];
+	$end_time = $shift_time_data[$num]["end_time"];
+
+	//echo $start_time;
+
+	$html = "";
+
+	if( $type == "start" ){
+
+		for($z=1;$z<=13;$z++){
+			$minute = $time_array[$z]["minute"];
+			$hour = $time_array[$z]["hour"];
+			if($minute=="0"){
+				$minute = "0".$minute;
+			}
+
+			if( ($start_time=="-1") || ($start_time=="") ){
+
+				$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+
+			}else{
+
+				if( $z == $start_time ){
+
+					$html .= '<option value="'.$z.'" selected>'.$hour.':'.$minute.'</option>';
+
+				}else{
+
+					$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+
+				}
+
+			}
+
+		}
+
+	}else if( $type == "end" ){
+
+		for($z=9;$z<=23;$z++){
+			$minute = $time_array[$z]["minute"];
+			$hour = $time_array[$z]["hour"];
+			if($minute=="0"){
+				$minute = "0".$minute;
+			}
+
+			if( ($end_time=="-1") || ($end_time=="") ){
+
+				if($z=="23"){
+					$html .= '<option value="'.$z.'">ラスト('.$hour.':'.$minute.')</option>';
+				}else{
+					$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+				}
+
+			}else{
+
+				if( $z == $end_time ){
+
+					if($z=="23"){
+						$html .= '<option value="'.$z.'" selected>ラスト('.$hour.':'.$minute.')</option>';
+					}else{
+						$html .= '<option value="'.$z.'" selected>'.$hour.':'.$minute.'</option>';
+					}
+
+				}else{
+
+				if($z=="23"){
+					$html .= '<option value="'.$z.'">ラスト('.$hour.':'.$minute.')</option>';
+				}else{
+					$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+				}
+
+				}
+
+			}
+
+		}
+
+	}
+
+
+	return $html;
+	exit();
+
+}
+
+function get_shift_time_option_for_selected_2($type,$start_time,$end_time){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$html = "";
+
+	if( $type == "start" ){
+
+		for($z=1;$z<=13;$z++){
+			$minute = $time_array[$z]["minute"];
+			$hour = $time_array[$z]["hour"];
+			if($minute=="0"){
+				$minute = "0".$minute;
+			}
+
+			if( ($start_time=="-1") || ($start_time=="") ){
+
+				$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+
+			}else{
+
+				if( $z == $start_time ){
+
+					$html .= '<option value="'.$z.'" selected>'.$hour.':'.$minute.'</option>';
+
+				}else{
+
+					$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+
+				}
+
+			}
+
+		}
+
+	}else if( $type == "end" ){
+
+		for($z=9;$z<=23;$z++){
+			$minute = $time_array[$z]["minute"];
+			$hour = $time_array[$z]["hour"];
+			if($minute=="0"){
+				$minute = "0".$minute;
+			}
+
+			if( ($end_time=="-1") || ($end_time=="") ){
+
+				if($z=="23"){
+					$html .= '<option value="'.$z.'">ラスト('.$hour.':'.$minute.')</option>';
+				}else{
+					$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+				}
+
+			}else{
+
+				if( $z == $end_time ){
+
+					if($z=="23"){
+						$html .= '<option value="'.$z.'" selected>ラスト('.$hour.':'.$minute.')</option>';
+					}else{
+						$html .= '<option value="'.$z.'" selected>'.$hour.':'.$minute.'</option>';
+					}
+
+				}else{
+
+					if($z=="23"){
+						$html .= '<option value="'.$z.'">ラスト('.$hour.':'.$minute.')</option>';
+					}else{
+						$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+
+	return $html;
+	exit();
+
+}
+
+function get_shift_time_option_for_selected_3($type,$start_time,$end_time){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$html = "";
+
+	$html .= '<option value="-1">未選択</option>';
+
+	if( $type == "start" ){
+
+		for($z=1;$z<=13;$z++){
+
+			$minute = $time_array[$z]["minute"];
+			$hour = $time_array[$z]["hour"];
+
+			if($minute=="0"){
+				$minute = "0".$minute;
+			}
+
+			if( ($start_time=="-1") || ($start_time=="") ){
+
+				$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+
+			}else{
+
+				if( $z == $start_time ){
+
+					$html .= '<option value="'.$z.'" selected>'.$hour.':'.$minute.'</option>';
+
+				}else{
+
+					$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+
+				}
+
+			}
+
+		}
+
+	}else if( $type == "end" ){
+
+		for($z=9;$z<=23;$z++){
+
+			$minute = $time_array[$z]["minute"];
+			$hour = $time_array[$z]["hour"];
+
+			if($minute=="0"){
+				$minute = "0".$minute;
+			}
+
+			if( ($end_time=="-1") || ($end_time=="") ){
+
+				if($z=="23"){
+					$html .= '<option value="'.$z.'">ラスト('.$hour.':'.$minute.')</option>';
+				}else{
+					$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+				}
+
+			}else{
+
+				if( $z == $end_time ){
+
+					if($z=="23"){
+						$html .= '<option value="'.$z.'" selected>ラスト('.$hour.':'.$minute.')</option>';
+					}else{
+						$html .= '<option value="'.$z.'" selected>'.$hour.':'.$minute.'</option>';
+					}
+
+				}else{
+
+					if($z=="23"){
+						$html .= '<option value="'.$z.'">ラスト('.$hour.':'.$minute.')</option>';
+					}else{
+						$html .= '<option value="'.$z.'">'.$hour.':'.$minute.'</option>';
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+
+	return $html;
+	exit();
+
+}
+
+function regist_shift_data_by_therapist($therapist_id,$area,$year,$month,$kikan,$shift_time_data){
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+	$kikan_name = get_kikan_name($kikan);
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	/*
+	echo "<pre>";
+	print_r($shift_time_data);
+	echo "</pre>";
+	exit();
+	*/
+
+	$max_day = get_max_day($year,$month);
+
+	if($kikan=="zenhan"){
+
+		for($i=1;$i<=15;$i++){
+
+			$day = $i;
+
+			$week = get_week_value($year,$month,$day);
+
+			$shift_time_data;
+
+			$start_time = $shift_time_data[$i]["start_time"];
+			$end_time = $shift_time_data[$i]["end_time"];
+
+			$nothing_flg = false;
+
+			if( ($start_time=="-1") || ($end_time=="-1") ){
+
+				$nothing_flg = true;
+
+			}
+
+			if( $nothing_flg == false ){
+
+				$sql = sprintf("
+insert into attendance(therapist_id,year,month,day,week,start_time,end_time)
+values('%s','%s','%s','%s','%s','%s','%s')",
+$therapist_id,$year,$month,$day,$week,$start_time,$end_time);
+
+				$res = mysql_query($sql, $con);
+
+				if($res == false){
+
+					//ロールバック
+					$sql = "rollback";
+					mysql_query( $sql, $con );
+					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
+					header("Location: ".WWW_URL."error.php");
+					exit();
+
+				}
+
+			}
+
+		}
+
+
+	}else if($kikan=="kouhan"){
+
+		for($i=16;$i<=$max_day;$i++){
+
+			$day = $i;
+
+			$week = get_week_value($year,$month,$day);
+
+			$shift_time_data;
+
+			$x = $i - 15;
+
+			$start_time = $shift_time_data[$x]["start_time"];
+			$end_time = $shift_time_data[$x]["end_time"];
+
+			$nothing_flg = false;
+
+			if( ($start_time=="-1") || ($end_time=="-1") ){
+
+				$nothing_flg = true;
+
+			}
+
+			if( $nothing_flg == false ){
+
+				$sql = sprintf("
+insert into attendance(therapist_id,year,month,day,week,start_time,end_time)
+values('%s','%s','%s','%s','%s','%s','%s')",
+$therapist_id,$year,$month,$day,$week,$start_time,$end_time);
+
+				$res = mysql_query($sql, $con);
+
+				if($res == false){
+
+					//ロールバック
+					$sql = "rollback";
+					mysql_query( $sql, $con );
+					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
+					header("Location: ".WWW_URL."error.php");
+					exit();
+
+				}
+
+			}
+
+		}
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$now = time();
+	$staff_type = "2";
+	$message = $month."月".$kikan_name."シフト登録しました";
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = "minamikawa@neo-gate.jp";
+	$title = $month."月".$kikan_name."シフト登録【".$therapist_name."】";
+	$content =<<<EOT
+{$therapist_name}さんより、{$month}月{$kikan_name}のシフト登録がありました。
+
+(該当者のシフトチェック画面URL)
+EOT;
+
+	$header = "From: minamikawa@neo-gate.jp\n";
+	//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function get_week_value($year,$month,$day){
+
+	$hour = 12;
+	$minute = 0;
+	$second = 0;
+	$timestamp = mktime($hour, $minute, $second, $month, $day, $year);
+
+	$week = date('w', $timestamp);
+
+	return $week;
+	exit();
+
+}
+
+function get_week_name($week){
+
+	$data = "";
+
+	if($week=="0"){
+
+		$data = "日";
+
+	}else if($week=="1"){
+
+		$data = "月";
+
+	}else if($week=="2"){
+
+		$data = "火";
+
+	}else if($week=="3"){
+
+		$data = "水";
+
+	}else if($week=="4"){
+
+		$data = "木";
+
+	}else if($week=="5"){
+
+		$data = "金";
+
+	}else if($week=="6"){
+
+		$data = "土";
+
+	}else{
+
+		$data = "不明";
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function shift_kekkin_action($therapist_id,$area,$year,$month,$day,$week_name){
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	if( $area == "tokyo" ){
+
+		$sql = sprintf("
+insert into kekkin(area,therapist_id,year,month,day)
+values('%s','%s','%s','%s','%s')",
+$area,$therapist_id,$year,$month,$day);
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$now = time();
+	$staff_type = "2";
+	$message = sprintf("%s/%s(%s)を欠勤に変更",$month,$day,$week_name);
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = "minamikawa@neo-gate.jp";
+	$title = "欠勤連絡".$month."月".$day."日【".$therapist_name."】";
+	$content =<<<EOT
+{$therapist_name}さんより、{$month}月{$day}日の欠勤連絡がありました。
+
+(該当者のシフトチェック画面URL)
+EOT;
+
+	$header = "From: minamikawa@neo-gate.jp\n";
+	//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function shift_edit_action($therapist_id,$area,$year,$month,$day,$start_time,$end_time,$start_start_time,$start_end_time,$week_name){
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$start_time_hour = get_time_ja_hour($start_time);
+	$start_time_minute = get_time_ja_minute($start_time);
+
+	$end_time_hour = get_time_ja_hour($end_time);
+	$end_time_minute = get_time_ja_minute($end_time);
+
+	$start_start_time_hour = get_time_ja_hour($start_start_time);
+	$start_start_time_minute = get_time_ja_minute($start_start_time);
+
+	$start_end_time_hour = get_time_ja_hour($start_end_time);
+	$start_end_time_minute = get_time_ja_minute($start_end_time);
+
+
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	if( $area == "tokyo" ){
+
+		$sql = sprintf("
+update attendance set shift_change_flg='1',syounin_state='0',start_time='%s',end_time='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$start_time,$end_time,$therapist_id,$year,$month,$day);
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$now = time();
+	$staff_type = "2";
+	$message = sprintf("
+%s/%s(%s)を%s:%s-%s:%sから%s:%s-%s:%sに変更",
+$month,$day,$week_name,$start_start_time_hour,$start_start_time_minute,$start_end_time_hour,$start_end_time_minute,
+$start_time_hour,$start_time_minute,$end_time_hour,$end_time_minute);
+
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = "minamikawa@neo-gate.jp";
+	$title = "シフト編集".$month."月".$day."日【".$therapist_name."】";
+	$content =<<<EOT
+{$therapist_name}さんより、{$month}月{$day}日のシフト変更依頼がありました。
+
+(該当者のシフトチェック画面URL)
+EOT;
+
+	$header = "From: minamikawa@neo-gate.jp\n";
+	//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function get_time_ja_hour($time){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$hour = $time_array[$time]["hour"];
+
+	return $hour;
+	exit();
+
+}
+
+function get_time_ja_minute($time){
+global $time_array;
+	//include(INC_PATH."/time_array.php");
+	//include_once(INC_PATH."/time_array.php");
+
+	$minute = $time_array[$time]["minute"];
+
+	if( $minute == "0" ){
+
+		$minute = "0".$minute;
+
+	}
+
+	return $minute;
+	exit();
+
+}
+
+function shift_add_action($therapist_id,$area,$year,$month,$day,$start_time,$end_time,$week_name){
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$week = get_week_value($year, $month, $day);
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	if( $area == "tokyo" ){
+
+		$charge_area = "1";
+
+		$sql = sprintf("
+insert into attendance(therapist_id,year,month,day,week,start_time,end_time,charge_area)
+values('%s','%s','%s','%s','%s','%s','%s','%s')",
+$therapist_id,$year,$month,$day,$week,$start_time,$end_time,$charge_area);
+
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$now = time();
+	$staff_type = "2";
+	$message = sprintf("%s/%s(%s)シフト追加しました",$month,$day,$week_name);
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = "minamikawa@neo-gate.jp";
+	$title = "シフト追加".$month."月".$day."日【".$therapist_name."】";
+	$content =<<<EOT
+{$therapist_name}さんより、{$month}月{$day}日のシフト追加がありました。
+
+(該当者のシフトチェック画面URL)
+EOT;
+
+	$header = "From: minamikawa@neo-gate.jp\n";
+	//$header .= "Bcc: minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function create_kikan_menu($therapist_id,$today_year,$today_month,$next_year,$next_month,$area,$select_kikan){
+
+	$html = "";
+
+	$kikan_1 = $today_year."_".$today_month."_1";
+	$kikan_2 = $today_year."_".$today_month."_2";
+
+	$kikan_3 = $next_year."_".$next_month."_1";
+	$kikan_4 = $next_year."_".$next_month."_2";
+
+	$kikan_1_ja = $today_month."月前半";
+	$kikan_2_ja = $today_month."月後半";
+
+	$kikan_3_ja = $next_month."月前半";
+	$kikan_4_ja = $next_month."月後半";
+
+	if( $select_kikan == $kikan_1 ){
+
+		$html .= sprintf('%s　　　',$kikan_1_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_2,$area,$kikan_2_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_3,$area,$kikan_3_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_4,$area,$kikan_4_ja);
+
+	}else if( $select_kikan == $kikan_2 ){
+
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_1,$area,$kikan_1_ja);
+		$html .= sprintf('%s　　　',$kikan_2_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_3,$area,$kikan_3_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_4,$area,$kikan_4_ja);
+
+	}else if( $select_kikan == $kikan_3 ){
+
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_1,$area,$kikan_1_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_2,$area,$kikan_2_ja);
+		$html .= sprintf('%s　　　',$kikan_3_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_4,$area,$kikan_4_ja);
+
+	}else if( $select_kikan == $kikan_4 ){
+
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_1,$area,$kikan_1_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_2,$area,$kikan_2_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_3,$area,$kikan_3_ja);
+		$html .= sprintf('%s　　　',$kikan_4_ja);
+
+	}else{
+
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_1,$area,$kikan_1_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_2,$area,$kikan_2_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_3,$area,$kikan_3_ja);
+		$html .= sprintf('<a href="index.php?id=%s&kikan=%s&area=%s">%s</a>　　　',$therapist_id,$kikan_4,$area,$kikan_4_ja);
+
+	}
+
+	return $html;
+	exit();
+
+}
+
+function update_shift_syounin_check($area,$therapist_id,$syounin,$fusyounin,$shimekiri){
+
+	$syounin_num = count($syounin);
+	$fusyounin_num = count($fusyounin);
+	$shimekiri_num = count($shimekiri);
+
+	if( ($syounin_num == 1) && ($fusyounin_num == 0) && ($shimekiri_num == 0) ){
+
+		update_shift_syounin_check_add($area,$therapist_id,$syounin);
+
+		return true;
+		exit();
+
+	}
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$therapist_mail = get_therapist_mail_by_therapist_id($therapist_id);
+
+	$check_url = get_check_url_shift_front($area,$therapist_id);
+
+	$area_name = get_area_name_by_area($area);
+
+	$site_name = $area_name."リフレ";
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+
+	$first_flg = false;
+	$mail_month = "";
+	$mail_day = "";
+
+	for($i=0;$i<$syounin_num;$i++){
+
+		$val = $syounin[$i];
+		$pieces = explode("_", $val);
+		$year = $pieces[0];
+		$month = $pieces[1];
+		$day = $pieces[2];
+
+		if( $first_flg == false ){
+
+			$mail_month = $month;
+			$mail_day = $day;
+			$first_flg = true;
+
+		}
+
+		$syounin_state = 1;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):2";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+		$sql = sprintf("
+update attendance_new_small set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):2";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+	}
+
+	for($i=0;$i<$fusyounin_num;$i++){
+
+		$val = $fusyounin[$i];
+		$pieces = explode("_", $val);
+		$year = $pieces[0];
+		$month = $pieces[1];
+		$day = $pieces[2];
+
+		if( $first_flg == false ){
+
+			$mail_month = $month;
+			$mail_day = $day;
+			$first_flg = true;
+
+		}
+
+		$syounin_state = 2;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):4";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+		$sql = sprintf("
+update attendance_new_small set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):4";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+	}
+
+	for($i=0;$i<$shimekiri_num;$i++){
+
+		$val = $shimekiri[$i];
+		$pieces = explode("_", $val);
+		$year = $pieces[0];
+		$month = $pieces[1];
+		$day = $pieces[2];
+
+		if( $first_flg == false ){
+
+			$mail_month = $month;
+			$mail_day = $day;
+			$first_flg = true;
+
+		}
+
+		$syounin_state = 3;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):6";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+		$sql = sprintf("
+update attendance_new_small set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):6";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+	}
+
+	$now = time();
+	$staff_type = "1";
+	//$message = $select_month."月".$kikan_name."シフト確定しました！";
+	$message = sprintf("%s月%s日ほかシフト確定しました！",$mail_month,$mail_day);
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):6_2";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = $therapist_mail;
+	//$mailto = "minamikawa@neo-gate.jp";
+
+	//$title = sprintf("%s月%sシフトが確定しました【%s】",$select_month,$kikan_name,$site_name);
+	//$title = sprintf("【シフト登録】%s月%sシフト承認[%s]",$select_month,$kikan_name,$therapist_name);
+	$title = sprintf("【シフト登録】%s月%s日ほかシフト承認[%s]",$mail_month,$mail_day,$therapist_name);
+
+	$content =<<<EOT
+{$therapist_name}さん
+
+{$mail_month}月{$mail_day}日ほかのシフト登録が確定しました。
+
+{$check_url}
+EOT;
+
+	$header = "From: info@neo-gate.jp\n";
+	$header .= "Bcc: info@neo-gate.jp";
+	//$header .= ",";
+	//$header .= "minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header,MAIL_PARAMETER);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):7";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function update_shift_syounin_check_bk201406231509($area,$therapist_id,$syounin,$fusyounin,$shimekiri,$select_kikan){
+
+	$syounin_num = count($syounin);
+	$fusyounin_num = count($fusyounin);
+	$shimekiri_num = count($shimekiri);
+
+	if( ($syounin_num == 1) && ($fusyounin_num == 0) && ($shimekiri_num == 0) ){
+
+		update_shift_syounin_check_add($area,$therapist_id,$syounin);
+
+		return true;
+		exit();
+
+	}
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$therapist_mail = get_therapist_mail_by_therapist_id($therapist_id);
+
+	$check_url = get_check_url_shift_front($area,$therapist_id);
+
+	$area_name = get_area_name_by_area($area);
+
+	$site_name = $area_name."リフレ";
+
+	$pieces = explode("_", $select_kikan);
+
+	$select_year = $pieces[0];
+	$select_month = $pieces[1];
+	$select_zengo = $pieces[2];
+
+	$kikan_name = "";
+
+	if( $select_zengo == "1" ){
+
+		$kikan_name = "前半";
+
+	}else if( $select_zengo == "2" ){
+
+		$kikan_name = "後半";
+
+	}else{
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):0";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+
+
+	for($i=0;$i<$syounin_num;$i++){
+
+		$val = $syounin[$i];
+		$pieces = explode("_", $val);
+		$year = $pieces[0];
+		$month = $pieces[1];
+		$day = $pieces[2];
+
+		$syounin_state = 1;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):2";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+	}
+
+	for($i=0;$i<$fusyounin_num;$i++){
+
+		$val = $fusyounin[$i];
+		$pieces = explode("_", $val);
+		$year = $pieces[0];
+		$month = $pieces[1];
+		$day = $pieces[2];
+
+		$syounin_state = 2;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):4";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+	}
+
+	for($i=0;$i<$shimekiri_num;$i++){
+
+		$val = $shimekiri[$i];
+		$pieces = explode("_", $val);
+		$year = $pieces[0];
+		$month = $pieces[1];
+		$day = $pieces[2];
+
+		$syounin_state = 3;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):6";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+	}
+
+	$now = time();
+	$staff_type = "1";
+	$message = $select_month."月".$kikan_name."シフト確定しました！";
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):6_2";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = $therapist_mail;
+	//$mailto = "minamikawa@neo-gate.jp";
+
+	//$title = sprintf("%s月%sシフトが確定しました【%s】",$select_month,$kikan_name,$site_name);
+	$title = sprintf("【シフト登録】%s月%sシフト承認[%s]",$select_month,$kikan_name,$therapist_name);
+
+	$content =<<<EOT
+{$therapist_name}さん
+
+{$select_month}月{$kikan_name}のシフト登録が確定しました。
+
+{$check_url}
+EOT;
+
+	$header = "From: info@neo-gate.jp\n";
+	$header .= "Bcc: info@neo-gate.jp";
+	//$header .= ",";
+	//$header .= "minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check):7";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function update_shift_syounin_check_edit($area,$therapist_id,$syounin){
+
+	$syounin_num = count($syounin);
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$therapist_mail = get_therapist_mail_by_therapist_id($therapist_id);
+
+	$check_url = get_check_url_shift_front($area,$therapist_id);
+
+	$area_name = get_area_name_by_area($area);
+
+	$site_name = $area_name."リフレ";
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	$first_year = 0;
+	$first_month = 0;
+	$first_day = 0;
+
+	for($i=0;$i<$syounin_num;$i++){
+
+		$val = $syounin[$i];
+		$pieces = explode("_", $val);
+		$syori_type = $pieces[0];
+		$year = $pieces[1];
+		$month = $pieces[2];
+		$day = $pieces[3];
+
+		if( $i == 0 ){
+
+			$first_year = $year;
+			$first_month = $month;
+			$first_day = $day;
+
+		}
+
+		if( $syori_type == "henkou" ){
+
+			$syounin_state = 1;
+
+			$sql = sprintf("
+update attendance_new set
+syounin_state='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+			$res = mysql_query($sql, $con);
+			if($res == false){
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):4";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+			}
+
+			$sql = sprintf("
+update attendance_new_small set
+syounin_state='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+			$res = mysql_query($sql, $con);
+			if($res == false){
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):4";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+			}
+
+		}else if( $syori_type == "kekkin" ){
+
+			$syounin_state = 1;
+			$kekkin_flg = 1;
+
+			$sql = sprintf("
+update attendance_new set
+syounin_state='%s',
+kekkin_flg='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$kekkin_flg,$therapist_id,$year,$month,$day);
+			$res = mysql_query($sql, $con);
+			if($res == false){
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):4";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+			}
+
+			$sql = sprintf("
+update attendance_new_small set
+syounin_state='%s',
+kekkin_flg='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$kekkin_flg,$therapist_id,$year,$month,$day);
+			$res = mysql_query($sql, $con);
+			if($res == false){
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):4";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+			}
+
+		}else{
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):3";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		if( $syori_type == "henkou" ){
+
+			$sql = sprintf("
+select start_time,end_time,start_time_update,end_time_update from shift_change_record
+where delete_flg=0 and therapist_id='%s' and area='%s' and year='%s' and month='%s' and day='%s'",
+$therapist_id,$area,$year,$month,$day);
+
+			$res = mysql_query($sql, $con);
+			if($res == false){
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):5";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+			}
+
+			$row = mysql_fetch_assoc($res);
+
+			$start_time = $row["start_time"];
+			$end_time = $row["end_time"];
+			$start_time_update = $row["start_time_update"];
+			$end_time_update = $row["end_time_update"];
+
+			$start_time_hour = get_time_ja_hour($start_time_update);
+			$start_time_minute = get_time_ja_minute($start_time_update);
+
+			$end_time_hour = get_time_ja_hour($end_time_update);
+			$end_time_minute = get_time_ja_minute($end_time_update);
+
+			$start_start_time_hour = get_time_ja_hour($start_time);
+			$start_start_time_minute = get_time_ja_minute($start_time);
+
+			$start_end_time_hour = get_time_ja_hour($end_time);
+			$start_end_time_minute = get_time_ja_minute($end_time);
+
+			$sql = sprintf("
+update shift_change_record set delete_flg='1'
+where therapist_id='%s' and area='%s' and year='%s' and month='%s' and day='%s'",
+$therapist_id,$area,$year,$month,$day);
+
+			$res = mysql_query($sql, $con);
+
+			if($res == false){
+
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):6";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+
+			}
+
+		}
+
+	}
+
+	$now = time();
+	$staff_type = "1";
+
+	$week_name = get_week_name_new($first_year, $first_month, $first_day);
+
+	$message = sprintf("%s/%s(%s)他シフト変更・欠勤了解しました",$first_month,$first_day,$week_name);
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):8";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = $therapist_mail;
+	//$mailto = "minamikawa@neo-gate.jp";
+
+	$title = sprintf("【シフト登録】%s月%s日他シフト変更・欠勤承認[%s]",$first_month,$first_day,$therapist_name);
+
+	$content =<<<EOT
+{$therapist_name}さん
+
+{$first_month}月{$first_day}日他のシフト変更・欠勤を確認し了承いたしました。
+
+{$check_url}
+EOT;
+
+	$header = "From: info@neo-gate.jp\n";
+	$header .= "Bcc: info@neo-gate.jp";
+	//$header .= ",";
+	//$header .= "minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header,MAIL_PARAMETER);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):10";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function update_shift_syounin_check_edit_bk201408261329($area,$therapist_id,$syounin){
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$therapist_mail = get_therapist_mail_by_therapist_id($therapist_id);
+
+	$check_url = get_check_url_shift_front($area,$therapist_id);
+
+	$area_name = get_area_name_by_area($area);
+
+	$site_name = $area_name."リフレ";
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	$val = $syounin;
+	$pieces = explode("_", $val);
+	$syori_type = $pieces[0];
+	$year = $pieces[1];
+	$month = $pieces[2];
+	$day = $pieces[3];
+
+	if( $syori_type == "henkou" ){
+
+		$syounin_state = 1;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s',shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+	}else if( $syori_type == "kekkin" ){
+
+/*
+$sql = sprintf("
+delete from attendance_new where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$therapist_id,$year,$month,$day);
+*/
+
+		$kekkin_flg = 1;
+		$today_absence = 1;
+
+$sql = sprintf("
+update attendance_new set
+kekkin_flg='%s',
+today_absence='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$kekkin_flg,$today_absence,$therapist_id,$year,$month,$day);
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):3";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):4";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	if( $syori_type == "henkou" ){
+
+		$sql = sprintf("
+select start_time,end_time,start_time_update,end_time_update from shift_change_record
+where delete_flg=0 and therapist_id='%s' and area='%s' and year='%s' and month='%s' and day='%s'",
+$therapist_id,$area,$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):5";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+		$row = mysql_fetch_assoc($res);
+
+		$start_time = $row["start_time"];
+		$end_time = $row["end_time"];
+		$start_time_update = $row["start_time_update"];
+		$end_time_update = $row["end_time_update"];
+
+		$start_time_hour = get_time_ja_hour($start_time_update);
+		$start_time_minute = get_time_ja_minute($start_time_update);
+
+		$end_time_hour = get_time_ja_hour($end_time_update);
+		$end_time_minute = get_time_ja_minute($end_time_update);
+
+		$start_start_time_hour = get_time_ja_hour($start_time);
+		$start_start_time_minute = get_time_ja_minute($start_time);
+
+		$start_end_time_hour = get_time_ja_hour($end_time);
+		$start_end_time_minute = get_time_ja_minute($end_time);
+
+		$sql = sprintf("
+update shift_change_record set delete_flg='1'
+where therapist_id='%s' and area='%s' and year='%s' and month='%s' and day='%s'",
+$therapist_id,$area,$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):6";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+	}
+
+	$now = time();
+	$staff_type = "1";
+
+	$week_name = get_week_name_new($year, $month, $day);
+
+	if( $syori_type == "henkou" ){
+
+		$message = sprintf("%s/%s(%s)シフト変更了解しました",$month,$day,$week_name);
+
+
+	}else if( $syori_type == "kekkin" ){
+
+		$message = sprintf("%s/%s(%s)欠勤了解しました",$month,$day,$week_name);
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):7";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):8";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = $therapist_mail;
+	//$mailto = "minamikawa@neo-gate.jp";
+
+	if( $syori_type == "henkou" ){
+
+		//$title = sprintf("%s月%s日シフト編集を承認しました【%s】",$month,$day,$site_name);
+		$title = sprintf("【シフト登録】%s月%s日シフト承認[%s]",$month,$day,$therapist_name);
+
+		$content =<<<EOT
+{$therapist_name}さん
+
+{$month}月{$day}日({$week_name})のシフト変更依頼を確認し了承いたしました。
+
+出勤：{$start_start_time_hour}:{$start_start_time_minute}→{$start_time_hour}:{$start_time_minute}
+退勤：{$start_end_time_hour}:{$start_end_time_minute}→{$end_time_hour}:{$end_time_minute}
+
+{$check_url}
+EOT;
+
+	}else if( $syori_type == "kekkin" ){
+
+		//$title = sprintf("%s月%s日の欠勤を確認しました【%s】",$month,$day,$site_name);
+		$title = sprintf("【シフト登録】%s月%s日欠勤承認[%s]",$month,$day,$therapist_name);
+
+		$content =<<<EOT
+{$therapist_name}さん
+
+{$month}月{$day}日の欠勤を確認し了承いたしました。
+
+{$check_url}
+EOT;
+
+	}else{
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):9";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$header = "From: info@neo-gate.jp\n";
+	$header .= "Bcc: info@neo-gate.jp";
+	//$header .= ",";
+	//$header .= "minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit):10";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function get_week_name_new($year, $month, $day){
+
+	$week = get_week_value($year, $month, $day);
+
+	$data = "";
+
+	if($week=="0"){
+
+		$data = "日";
+
+	}else if($week=="1"){
+
+		$data = "月";
+
+	}else if($week=="2"){
+
+		$data = "火";
+
+	}else if($week=="3"){
+
+		$data = "水";
+
+	}else if($week=="4"){
+
+		$data = "木";
+
+	}else if($week=="5"){
+
+		$data = "金";
+
+	}else if($week=="6"){
+
+		$data = "土";
+
+	}else{
+
+		$data = "不明";
+
+	}
+
+	return $data;
+	exit();
+
+}
+
+function send_free_mail_about_shift($area,$therapist_id,$mail_naiyou,$mail_type){
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$therapist_mail = get_therapist_mail_by_therapist_id($therapist_id);
+
+	$check_url = get_check_url_shift_front($area,$therapist_id);
+
+	$area_name = get_area_name_by_area_common($area);
+
+	$site_name = $area_name."リフレ";
+
+	$now = time();
+	$now_hour = intval(date('H', $now));
+	$now_minute = intval(date('i', $now));
+	$now_hour_mail = hour_plus_24_common($now_hour);
+	$now_minute_mail = minute_zero_add_common($now_minute);
+
+	$eigyou_day_data = get_eigyou_day_common();
+	$eigyou_year = $eigyou_day_data["year"];
+	$eigyou_month = $eigyou_day_data["month"];
+	$eigyou_day = $eigyou_day_data["day"];
+
+	$shift_message_area = get_shift_message_area_common($therapist_id,$eigyou_year,$eigyou_month,$eigyou_day);
+
+
+
+	include(INC_PATH."/db_connect.php");
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	$now = time();
+
+	$staff_type = 1;
+
+	$sql = sprintf("
+insert into shift_message(created,therapist_id,type,content,area) values('%s','%s','%s','%s','%s')",
+$now,$therapist_id,$staff_type,$mail_naiyou,$shift_message_area);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(send_free_mail_about_shift)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = $therapist_mail;
+	//$mailto = "minamikawa@neo-gate.jp";
+
+	if( $mail_type == "2" ){
+
+		$title = sprintf("
+施術連絡：本部：%sさんへ　%s：%s",
+$therapist_name,$now_hour_mail,$now_minute_mail);
+
+	}else{
+
+		$title = sprintf("【シフト登録】出勤シフトに関するメール[%s]",$site_name);
+
+	}
+
+	$content =<<<EOT
+{$therapist_name}さん
+
+{$mail_naiyou}
+
+{$check_url}
+EOT;
+
+	$header = "From: info@neo-gate.jp\n";
+	$header .= "Bcc: info@neo-gate.jp";
+	//$header .= ",";
+	//$header .= "minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header,MAIL_PARAMETER);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(send_free_mail_about_shift)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function get_area_name_by_area($area){
+
+	if($area=="sendai"){
+
+		$area_name = "仙台";
+
+	}else if(($area=="yokohama")||($area=="yokohama2")){
+
+		$area_name = "横浜";
+
+	}else if($area=="tokyo"){
+
+		$area_name = "東京";
+
+	}else if($area=="sapporo"){
+
+		$area_name = "札幌";
+
+	}else if($area=="fukuoka"){
+
+		$area_name = "福岡";
+
+	}else{
+
+		$area_name = "不明";
+
+	}
+
+	return $area_name;
+	exit();
+
+}
+
+function get_check_url_shift_front($area,$therapist_id){
+
+	$ch = get_therapist_for_kobetsu_url($therapist_id);
+
+	$check_url = sprintf("%sshift/index.php?area=%s&id=%s&ch=%s",WWW_URL_SITE,$area,$therapist_id,$ch);
+
+	return $check_url;
+	exit();
+
+}
+
+//セラピストのメールアドレス
+function get_therapist_mail_by_therapist_id($therapist_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select mail from therapist_new where id='%s'",$therapist_id);
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_mail_by_therapist_id)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	return $row["mail"];
+	exit();
+
+}
+
+function get_therapist_for_kobetsu_url($therapist_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select for_kobetsu_url from therapist_new where id='%s'",$therapist_id);
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_for_kobetsu_url)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	$row = mysql_fetch_assoc($res);
+
+	return $row["for_kobetsu_url"];
+	exit();
+
+}
+
+function update_shift_syounin_check_add($area,$therapist_id,$syounin){
+
+	$syounin_num = count($syounin);
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$therapist_mail = get_therapist_mail_by_therapist_id($therapist_id);
+
+	$check_url = get_check_url_shift_front($area,$therapist_id);
+
+	$area_name = get_area_name_by_area($area);
+
+	$site_name = $area_name."リフレ";
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+
+
+	for($i=0;$i<$syounin_num;$i++){
+
+		$val = $syounin[$i];
+		$pieces = explode("_", $val);
+		$year = $pieces[0];
+		$month = $pieces[1];
+		$day = $pieces[2];
+
+		$syounin_state = 1;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_add):1";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+		$sql = sprintf("
+update attendance_new_small set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+		$res = mysql_query($sql, $con);
+		if($res == false){
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_add):1";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+		}
+
+	}
+
+	$now = time();
+	$staff_type = "1";
+	$message = $month."月".$day."日シフト承認しました！";
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+	$res = mysql_query($sql, $con);
+	if($res == false){
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_add):2";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = $therapist_mail;
+	//$mailto = "minamikawa@neo-gate.jp";
+
+	$title = sprintf("【シフト登録】%s月%s日シフト承認[%s]",$month,$day,$therapist_name);
+
+	$content =<<<EOT
+{$therapist_name}さん
+
+{$month}月{$day}日のシフト登録が確定しました。
+
+{$check_url}
+EOT;
+
+	$header = "From: info@neo-gate.jp\n";
+	$header .= "Bcc: info@neo-gate.jp";
+	//$header .= ",";
+	//$header .= "minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header,MAIL_PARAMETER);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_add):3";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function get_shift_message_by_order_num($order_num,$therapist_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("
+select * from shift_message where delete_flg=0 and therapist_id='%s' order by created desc limit 0,%s",$therapist_id,$order_num);
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_shift_message_by_order_num)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+
+		$list_data[$i] = $row;
+
+		$created = $row["created"];
+
+		$month = intval(date("m", $created));
+		$day = intval(date("d", $created));
+		$week = intval(date("w", $created));
+		$hour = intval(date("H", $created));
+		$minute = intval(date("i", $created));
+		$week_name = get_week_name($week);
+
+		if( $minute < 10){
+
+			$minute = "0".$minute;
+
+		}
+
+		$time_disp = sprintf("%s/%s（%s）%s：%s",$month,$day,$week_name,$hour,$minute);
+
+		$list_data[$i]["time_disp"] = $time_disp;
+
+		$i++;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+function get_shift_message_all($therapist_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("
+select * from shift_message where delete_flg=0 and therapist_id='%s' order by created desc",
+$therapist_id);
+
+	$res = mysql_query($sql, $con);
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_shift_message_all)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$i=0;
+	$list_data = array();
+	while($row = mysql_fetch_assoc($res)){
+
+		$list_data[$i] = $row;
+
+		$created = $row["created"];
+
+		$month = intval(date("m", $created));
+		$day = intval(date("d", $created));
+		$week = intval(date("w", $created));
+		$hour = intval(date("H", $created));
+		$minute = intval(date("i", $created));
+		$week_name = get_week_name($week);
+
+		if( $minute < 10){
+
+			$minute = "0".$minute;
+
+		}
+
+		$time_disp = sprintf("%s/%s（%s）%s：%s",$month,$day,$week_name,$hour,$minute);
+
+		$list_data[$i]["time_disp"] = $time_disp;
+
+		$i++;
+	}
+
+	return $list_data;
+	exit();
+
+}
+
+function get_therapist_page_data_by_id($therapist_id){
+
+	include(INC_PATH."/db_connect.php");
+
+	$sql = sprintf("select * from therapist_page where id='%s'",$therapist_id);
+
+	//echo $sql;exit();
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_page_data_by_id)";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+	$row = mysql_fetch_assoc($res);
+
+	return $row;
+	exit();
+
+}
+
+function update_shift_syounin_check_edit_2($area,$therapist_id,$syounin,$fusyounin){
+
+	$syounin_num = count($syounin);
+	$fusyounin_num = count($fusyounin);
+
+	include(INC_PATH."/db_connect.php");
+
+	$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+	$therapist_mail = get_therapist_mail_by_therapist_id($therapist_id);
+
+	$check_url = get_check_url_shift_front($area,$therapist_id);
+
+	$area_name = get_area_name_by_area($area);
+
+	$site_name = $area_name."リフレ";
+
+	//トランザクションをはじめる準備
+	$sql = "set autocommit = 0";
+	mysql_query( $sql, $con );
+
+	//トランザクション開始
+	$sql = "begin";
+	mysql_query( $sql, $con );
+
+	$first_year = 0;
+	$first_month = 0;
+	$first_day = 0;
+
+	$first_num = 0;
+
+	for($i=0;$i<$syounin_num;$i++){
+
+		$val = $syounin[$i];
+		$pieces = explode("_", $val);
+		$syori_type = $pieces[0];
+		$year = $pieces[1];
+		$month = $pieces[2];
+		$day = $pieces[3];
+
+		if( $first_num == 0 ){
+
+			$first_year = $year;
+			$first_month = $month;
+			$first_day = $day;
+
+		}
+
+		if( $syori_type == "henkou" ){
+
+			$syounin_state = 1;
+
+			$sql = sprintf("
+update attendance_new set
+syounin_state='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+			$res = mysql_query($sql, $con);
+
+			if($res == false){
+
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):1";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+
+			}
+
+			$sql = sprintf("
+update attendance_new_small set
+syounin_state='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+			$res = mysql_query($sql, $con);
+
+			if($res == false){
+
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):2";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+
+			}
+
+		}else if( $syori_type == "kekkin" ){
+
+			$syounin_state = 1;
+			$kekkin_flg = 1;
+
+			$sql = sprintf("
+update attendance_new set
+syounin_state='%s',
+kekkin_flg='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$kekkin_flg,$therapist_id,$year,$month,$day);
+
+			$res = mysql_query($sql, $con);
+
+			if($res == false){
+
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):3";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+
+			}
+
+			$sql = sprintf("
+update attendance_new_small set
+syounin_state='%s',
+kekkin_flg='%s',
+shift_change_flg='0'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$kekkin_flg,$therapist_id,$year,$month,$day);
+
+			$res = mysql_query($sql, $con);
+
+			if($res == false){
+
+				//ロールバック
+				$sql = "rollback";
+				mysql_query( $sql, $con );
+				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):4";
+				header("Location: ".WWW_URL."error.php");
+				exit();
+
+			}
+
+		}else{
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):5";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		$first_num++;
+
+	}
+
+	for($i=0;$i<$fusyounin_num;$i++){
+
+		$val = $fusyounin[$i];
+		$pieces = explode("_", $val);
+		$syori_type = $pieces[0];
+		$year = $pieces[1];
+		$month = $pieces[2];
+		$day = $pieces[3];
+
+		if( $first_num == 0 ){
+
+			$first_year = $year;
+			$first_month = $month;
+			$first_day = $day;
+
+		}
+
+		$syounin_state = 2;
+
+		$sql = sprintf("
+update attendance_new set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):6";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		$sql = sprintf("
+update attendance_new_small set syounin_state='%s'
+where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
+$syounin_state,$therapist_id,$year,$month,$day);
+
+		$res = mysql_query($sql, $con);
+
+		if($res == false){
+
+			//ロールバック
+			$sql = "rollback";
+			mysql_query( $sql, $con );
+			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):7";
+			header("Location: ".WWW_URL."error.php");
+			exit();
+
+		}
+
+		$first_num++;
+
+	}
+
+	$now = time();
+	$staff_type = "1";
+
+	$week_name = get_week_name_new($first_year, $first_month, $first_day);
+
+	$message = sprintf("%s/%s(%s)他シフト変更・欠勤を確認し、承認、不承認しました",$first_month,$first_day,$week_name);
+
+	$sql = sprintf("
+insert into shift_history(created,area,therapist_id,staff_type,message)
+values('%s','%s','%s','%s','%s')",
+$now,$area,$therapist_id,$staff_type,$message);
+
+	$res = mysql_query($sql, $con);
+
+	if($res == false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):8";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	mb_language("ja");
+	mb_internal_encoding("UTF-8");
+	$mailto = $therapist_mail;
+	//$mailto = "minamikawa@neo-gate.jp";
+
+	$title = sprintf("【シフト登録】%s月%s日他シフト変更・欠勤承認・不承認[%s]",$first_month,$first_day,$therapist_name);
+
+$content =<<<EOT
+{$therapist_name}さん
+
+{$first_month}月{$first_day}日他のシフト変更・欠勤を確認し了承・不承認いたしました。
+
+{$check_url}
+EOT;
+
+	$header = "From: info@neo-gate.jp\n";
+	$header .= "Bcc: info@neo-gate.jp";
+	//$header .= ",";
+	//$header .= "minamikawa@neo-gate.jp";
+
+	$result = mb_send_mail($mailto,$title,$content,$header,MAIL_PARAMETER);
+
+	if($result==false){
+
+		//ロールバック
+		$sql = "rollback";
+		mysql_query( $sql, $con );
+		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_shift_syounin_check_edit_2):9";
+		header("Location: ".WWW_URL."error.php");
+		exit();
+
+	}
+
+	//コミット
+	$sql = "commit";
+	mysql_query( $sql, $con );
+
+	//MySQL切断
+	mysql_close( $con );
+
+	return true;
+	exit();
+
+}
+
+function get_shift_message_data_man_shift($shift_message_data_all,$shift_message_data_num){
+
+	$return_data = array();
+
+	for($i=0;$i<$shift_message_data_num;$i++){
+
+		$return_data[$i] = $shift_message_data_all[$i];
+
+	}
+
+	return $return_data;
+	exit();
+
+}
+
+
+
+
+
+
+
+
+
+?>

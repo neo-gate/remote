@@ -1,0 +1,63 @@
+<?php
+
+include("include/common.php");
+include("include/auth.php");
+
+$hotel_deri_id = $_SESSION["hotel_deri_id"];
+$area1_id = $_SESSION["area1_id"];
+$area2_id = $_SESSION["area2_id"];
+$area1_name = $_SESSION["area1_name"];
+$area2_name = $_SESSION["area2_name"];
+$hotel_name = $_SESSION["hotel_name"];
+
+/*
+unset($_SESSION["hotel_deri_id"]);
+unset($_SESSION["area1_id"]);
+unset($_SESSION["area2_id"]);
+unset($_SESSION["area1_name"]);
+unset($_SESSION["area2_name"]);
+unset($_SESSION["hotel_name"]);
+*/
+
+?>
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>投稿完了 | ホテル検索 | 管理ページ</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+
+<meta name="robots" content="noindex" />
+
+</head>
+<body>
+
+	<div style="width:992px;margin:0px auto 0px auto;">
+		<div>
+			<div style="float:left;">
+				<a href="index.php">トップ</a> &gt; 
+				<a href="hotel_search.php">ホテル検索</a> &gt; 
+				<a href="hotel_search_area.php?id=<?php echo $area1_id;?>"><?php echo $area1_name;?></a> &gt; 
+				<a href="hotel_search_list.php?id=<?php echo $area2_id;?>"><?php echo $area2_name;?></a> &gt; 
+				<a href="hotel_search_detail.php?id=<?php echo $hotel_deri_id;?>"><?php echo $hotel_name;?></a> &gt; 
+				投稿確認 &gt; 投稿完了
+			</div>
+			<div style="float:right;"><a href="logout.php">ログアウト</a></div>
+			<br class="clear" />
+		</div>
+		
+		<div style="text-align:center;padding:50px 0px 100px 0px;font-weight:bold;">
+			
+			投稿完了しました。
+			
+		</div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,815 @@
+
+@CHARSET "UTF-8";
+
+body{
+	
+	overflow:hidden;
+	
+	font-family: "ＭＳ Ｐゴシック",sans-serif;
+	
+}
+
+.clear{
+	
+	clear:both;
+	
+}
+
+/*------------------------------*/
+
+.error{
+	
+	
+	
+}
+
+.error > li{
+	
+	color:red;
+	
+}
+
+/*------------------------------*/
+
+#therapist_calendar_wrapper_wrapper{
+	
+	position:relative;
+	overflow:hidden;
+	margin:10px 0px 0px 0px;
+	
+}
+
+#for_hidden{
+	
+	
+}
+
+#therapist_calendar_wrapper{
+	
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+	
+	height:730px;
+	/*height:590px;*/
+	width:1350px;
+	
+	overflow-x:scroll;
+	overflow-y:scroll;
+	
+}
+
+#therapist_calendar_wrapper_top{
+	
+	
+	
+}
+
+#therapist_calendar_wrapper_top_title{
+	
+	width:100px;
+	padding:3px 0px 0px 0px;
+	background-color:#eee;
+	border-top:solid 1px #000;
+	border-bottom:solid 1px #000;
+	border-right:solid 1px #000;
+	border-left:solid 1px #000;
+	height:28px;
+	float:left;
+	position:absolute;
+	top:0px;
+	left:0px;
+	
+	z-index:9999;
+	
+}
+
+#therapist_calendar_wrapper_top_gyou_day{
+	
+	padding-left:102px;
+	z-index:2999;
+	
+}
+
+#therapist_calendar_wrapper_top_gyou_day .day{
+	
+	width:84px;
+	padding:3px 0px 0px 0px;
+	float:left;
+	background-color:#eee;
+	border-right:solid 1px #000;
+	border-top:solid 1px #000;
+	border-bottom:solid 1px #000;
+	height:28px;
+	font-size:12px;
+}
+
+
+#therapist_calendar_all{
+	
+	
+	
+}
+
+#therapist_calendar_therapist_name{
+	
+	width:100px;
+	float:left;
+	border-right:solid 1px #000;
+	border-left:solid 1px #000;
+	background-color:#fff;
+	font-size:12px;
+	
+	z-index:1999;
+	
+}
+
+#therapist_calendar_therapist_name .name{
+	
+	/*padding:5px 0px 0px 5px;*/
+	padding:2px 0px 2px 5px;
+	/*border-bottom:solid 1px #000;*/
+	/*height:30px;*/
+	height:25px;
+	
+}
+
+#therapist_calendar_content{
+	
+	
+	float:left;
+	
+}
+
+#therapist_calendar_content_yotei{
+	
+}
+
+#therapist_calendar_content_yotei > .one_1{
+	
+	width:84px;
+	background-color:#a7d28d;
+	text-align:center;
+	float:left;
+	border-right:solid 1px #000;
+	/*height:30px;*/
+	height:25px;
+	border-bottom:solid 1px #000;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2{
+	
+	width:41.5px;
+	background-color:#fff;
+	float:left;
+	border-right:solid 1px #000;
+	/*height:35px;*/
+	height:29px;
+	border-bottom:solid 1px #000;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x{
+	
+	width:41.5px;
+	background-color:#fff;
+	float:left;
+	border-right:solid 1px #000;
+	/*height:35px;*/
+	height:29px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	background:#fde9d9;
+	
+	position:relative;
+	
+}
+
+#therapist_calendar_content_yotei > .bord_bk_rank_a{
+	
+	background:#eaeea2;
+	
+}
+
+#therapist_calendar_content_yotei > .bord_bk_rank_b{
+	
+	background:#dbebc4;
+	
+}
+
+#therapist_calendar_content_yotei > .bord_bk_rank_c{
+	
+	background:#bbe2f1;
+	
+}
+
+#therapist_calendar_content_yotei > .bord_bk_rank_d{
+	
+	background:#e9dfe5;
+	
+}
+
+#therapist_calendar_content_yotei > .bord_bk_rank_n{
+	
+	background:#f5b2b2;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .box{
+	
+	position:absolute;
+	top:0px;
+	left:0px;
+	z-index:10;
+	height:26px;
+	font-size:10px;
+	padding-top:3px;
+	
+	display:block;
+	text-decoration:none;
+	
+	/*margin-left:30px;*/
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_2{
+	
+	/*width:116px;*/
+	width:116px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_3{
+	
+	/*width:180px;*/
+	width:180px;
+	
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_4{
+	
+	/*width:264px;*/
+	width:264px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_5{
+	
+	/*width:348px;*/
+	width:348px;
+	
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_6{
+	
+	/*width:432px;*/
+	width:432px;
+	
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_7{
+	
+	/*width:516px;*/
+	width:516px;
+	
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_8{
+	
+	/*width:600px;*/
+	width:600px;
+	
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_9{
+	
+	/*width:684px;*/
+	width:684px;
+	
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_10{
+	
+	/*width:768px;*/
+	width:768px;
+	
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_2_2{
+	
+	/*width:116px;*/
+	width:116px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_3_2{
+	
+	/*width:180px;*/
+	width:180px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_4_2{
+	
+	/*width:264px;*/
+	width:264px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_5_2{
+	
+	/*width:348px;*/
+	width:348px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_6_2{
+	
+	/*width:432px;*/
+	width:432px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_7_2{
+	
+	/*width:516px;*/
+	width:516px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_8_2{
+	
+	/*width:600px;*/
+	width:600px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_9_2{
+	
+	/*width:684px;*/
+	width:684px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .haba_10_2{
+	
+	/*width:768px;*/
+	width:768px;
+	
+	margin-left:40px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .refle{
+	
+	background:#538dd5;
+	color:#fff;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .lymph{
+	
+	background:#76933c;
+	color:#fff;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .aroma{
+	
+	background:#ff0000;
+	color:#fff;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .sonota{
+	
+	background:#a25768;
+	color:#fff;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .out_time{
+	
+	background:#000;
+	color:#fff;
+	
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .attendance_id_tmp{
+	
+	background:#fff;
+	color:#000;
+	border:solid 2px #000;
+	
+}
+
+#therapist_calendar_content_yotei > .one_3{
+	
+	width:78px;
+	background-color:#fff;
+	float:left;
+	border-right:solid 1px #000;
+	height:25px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:5px 0px 0px 0px;
+}
+
+#therapist_calendar_content_yotei > .one_4{
+	
+	width:78px;
+	text-align:center;
+	float:left;
+	border-right:solid 1px #000;
+	height:21px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:9px 0px 0px 0px;
+	font-size:12px;
+	display:block;
+	text-decoration:none;
+	color:#000;
+	
+}
+
+#therapist_calendar_content_yotei > .blue{
+	background:#a1d8e6;
+}
+
+#therapist_calendar_content_yotei > .green{
+	background:#a7d28d;
+}
+
+#therapist_calendar_content_yotei > .gray{
+	background:#e6eae6;
+}
+
+#therapist_calendar_content_yotei > .one_5{
+	
+	width:78px;
+	background-color:#fff;
+	float:left;
+	border-right:solid 1px #000;
+	height:21px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:9px 0px 0px 0px;
+	background:yellow;
+	font-size:12px;
+	
+}
+
+#therapist_calendar_content_yotei > .one_6{
+	
+	width:78px;
+	background-color:#fff;
+	float:left;
+	border-right:solid 1px #000;
+	height:21px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:9px 0px 0px 0px;
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+#attendance_regist_refle{
+	
+	width:180px;
+	margin:0px 0px 0px 30px;
+	padding:5px 0px 5px 0px;
+	background-color:#4f81bd;
+	color:#fff;
+	border:solid 2px #385d8a;
+	text-align:center;
+	display:block;
+	text-decoration:none;
+	float:left;
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+.board_driver_box{
+	
+	border:solid 1px #000;
+	font-size:10px;
+	padding:2px;
+	width:32px;
+	z-index:1000;
+	background-color:#fff;
+	cursor: pointer;
+	
+}
+
+.board_driver_box_2{
+	
+	border:solid 1px #000;
+	font-size:10px;
+	padding:2px;
+	width:32px;
+	z-index:1000;
+	background-color:#fff;
+	color:#000;
+	cursor: pointer;
+	
+	/*margin-left:0px;*/
+	margin-left:-18px;
+	
+}
+
+.board_driver_box_3{
+	
+	border:solid 1px #000;
+	font-size:10px;
+	padding:2px;
+	width:32px;
+	z-index:1000;
+	background-color:#fff;
+	color:#000;
+	cursor: pointer;
+	
+	/*margin-left:-28px;*/
+	margin-left:-10px;
+	
+}
+
+/*--------------------------*/
+
+.resev_box_time{
+	font-size:11px;
+}
+
+.resev_box_customer{
+	
+}
+
+.resev_box_new{
+	color:yellow;
+}
+
+#therapist_calendar_content_yotei > .one_2_x > .attendance_id_tmp > .resev_box_new{
+	color:#000;
+}
+
+.resev_box_driver{
+	
+	background:#ccc;
+	height:26px;
+	width:10px;
+	position:relative;
+	top:-22px;
+	
+}
+
+.f_left{
+	
+	float:left;
+	
+}
+
+.f_right{
+	
+	float:right;
+	
+}
+
+.resev_box_start_on{
+	
+	background:#f1bf99;
+	
+}
+
+/*--------------------------*/
+
+#driver_list_box{
+	
+	float:left;
+	padding:10px 10px 10px 10px;
+	margin:10px 10px 10px 10px;
+	border:solid 1px #000;
+	height:500px;
+	
+	position:absolute;
+	top:0px;
+	right:40px;
+	
+	z-index:100;
+	
+}
+
+/*--------------------------*/
+
+#board_day_menu{
+	float:left;
+	margin-left:10px;
+	
+}
+
+#board_day_menu a{
+	font-size:12px;
+	padding-left:10px;
+}
+
+/*--------------------------*/
+
+#board_site_menu{
+	float:left;
+	margin-left:10px;
+	
+}
+
+#board_site_menu a{
+	font-size:12px;
+	padding-left:10px;
+}
+
+/*--------------------------*/
+
+.mitei_box{
+	display:block;
+	text-decoration:none;
+	float:left;
+	width:100px;
+	height:28px;
+	/*position:absolute;*/
+	margin:5px 10px 0px 0px;
+}
+
+.mitei_box_bk201507151401{
+	display:block;
+	text-decoration:none;
+	float:left;
+	width:100px;
+	height:28px;
+	position:absolute;
+	top:5px;
+}
+
+.refle_mitei_box{
+	
+	background:#538dd5;
+	color:#fff;
+	
+}
+
+.lymph_mitei_box{
+	
+	background:#76933c;
+	color:#fff;
+	
+}
+
+.aroma_mitei_box{
+	
+	background:#ff0000;
+	color:#fff;
+	
+}
+
+.sonota_mitei_box{
+	
+	background:#a25768;
+	color:#fff;
+	
+}
+
+.mitei_box_time{
+	
+	font-size:11px;
+	text-align:center;
+	
+}
+
+.mitei_box_name{
+	
+	font-size:11px;
+	text-align:center;
+	
+}
+
+/*--------------------------*/
+
+#therapist_name_mitei{
+	
+	margin:5px 0px 0px 0px;
+	border:solid 1px #000;
+	width:1350px;
+	
+	z-index:9999;
+	background:#fff;
+	
+}
+
+#therapist_name_mitei > .title{
+	
+	float:left;
+	width:95px;
+	font-size:12px;
+	border-right:solid 1px #000;
+	height:32px;
+	padding:5px 0px 0px 5px;
+	
+}
+
+#therapist_name_mitei > .content{
+	
+	float:left;
+	position:relative;
+	
+}
+
+/*--------------------------*/
+
+.board_card_flg_on{
+	
+	border:solid 3px #fac559;
+	
+}
+
+.board_card_confirm_flg_on{
+	
+	border:solid 3px #003f8e;
+	
+}
+
+.board_complete_flg_on{
+	
+	background:#aaa;
+	color:#fff;
+	
+}
+
+.name_bold{
+	
+	font-weight:bold;
+	
+}
+
+/*--------------------------*/
+
+.not_publish_therapist{
+	
+	background:#eee;
+	
+}
+
+/*--------------------------*/
+
+#staff_man_menu{
+	
+	margin:0px 0px 10px 0px;
+	
+}
+
+#staff_man_menu > a{
+	
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+#staff_man_day_menu{
+	
+	padding:10px 0px 10px 0px;
+	
+}
+
+#staff_man_day_menu > a{
+	
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+
+
+

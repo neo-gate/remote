@@ -1,0 +1,144 @@
+
+{{include file="pc/ssl/include/vip_menu.tpl"}}
+
+<div id="clip">
+
+<div class="page_title">
+クリップボード
+</div>
+
+<div class="message">
+クリップボタンを押して、お気に入り登録したセラピストが確認できます。<br />
+セラピストを指名して予約をしたいときにご活用いただけます。
+</div>
+
+<div class="list">
+
+<div class="title">
+
+<div class="left_1">
+セラピスト
+</div>
+
+<div class="left_2">
+評価
+</div>
+
+<div class="left_3">
+本日の出勤状況
+</div>
+
+<div class="left_4">
+<img src="{{$params.url_root}}img/ssl/vip/clip/title.gif" alt="指定して予約" width="200" />
+</div>
+
+<br class="clear" />
+
+</div>
+
+{{section name=cnt loop=$params.list_data}}
+
+<div class="one">
+
+<div class="one_1">
+
+<div class="left_1">
+{{if $params.list_data[cnt].therapist_img_url == ""}}
+	<img src="{{$params.url_root}}img/ssl/vip/therapist_image_sample.jpg" alt="セラピスト" width="50" />
+{{else}}
+	<img src="{{$smarty.const.S3_URL}}{{$params.list_data[cnt].therapist_img_url}}" alt="セラピスト" width="50" />
+{{/if}}
+</div>
+
+<div class="left_2">
+{{$params.list_data[cnt].therapist_name}}
+</div>
+
+<div class="left_3">
+<img src="{{$params.url_root}}img/ssl/vip/calendar/sankaku.gif" alt="三角" width="5" />
+</div>
+
+<br class="clear" />
+
+</div>
+
+<div class="one_2">
+
+{{if $params.list_data[cnt].evaluation_data.skill == ""}}
+
+<div class="no_data">
+未登録
+</div>
+
+{{else}}
+
+<div class="left_1">
+技術：
+</div>
+
+<div class="left_2">
+<img src="{{$params.url_root}}img/ssl/vip/history/star.gif" alt="星" width="20" />&nbsp;×&nbsp;
+{{$params.list_data[cnt].evaluation_data.skill}}
+</div>
+
+<div class="left_3">
+｜
+</div>
+
+<div class="left_4">
+接客：
+</div>
+
+<div class="left_5">
+<img src="{{$params.url_root}}img/ssl/vip/history/star.gif" alt="星" width="20" />&nbsp;×&nbsp;
+{{$params.list_data[cnt].evaluation_data.service}}
+</div>
+
+<br class="clear" />
+
+{{/if}}
+
+</div>
+
+<div class="one_3">
+{{if $params.list_data[cnt].black_flg == "1"}}
+&nbsp;
+{{elseif $params.list_data[cnt].attendance_flg == "1"}}
+<img src="{{$params.url_root}}img/ssl/vip/calendar/maru.gif" alt="マル" width="20" />
+{{else}}
+<img src="{{$params.url_root}}img/ssl/vip/calendar/batsu.gif" alt="バツ" width="20" />
+{{/if}}
+</div>
+
+<div class="one_4">
+{{if $params.list_data[cnt].black_flg == "1"}}
+&nbsp;
+{{else}}
+<a href="clip_calendar.php?id={{$params.list_data[cnt].therapist_id}}">
+<img src="{{$params.url_root}}img/ssl/vip/clip/btn.gif" alt="ボタン" width="230" />
+</a>
+{{/if}}
+</div>
+
+<br class="clear" />
+
+
+
+</div>
+
+{{sectionelse}}
+				
+	<div style="text-align:center;padding:20px 0px 0px 0px;">データはありません。</div>
+	
+{{/section}}
+
+</div>
+
+<div class="paging">
+{{$params.paging_html}}
+</div>
+
+</div>
+
+
+

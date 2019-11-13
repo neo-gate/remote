@@ -1,0 +1,34 @@
+<?php
+
+include("include/common.php");
+
+
+
+$area = $_GET["area"];
+$therapist_id = $_GET["id"];
+$ch = $_GET["ch"];
+
+$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+if( ($area == "") || ($therapist_id == "") || ($ch == "") ){
+
+	echo "error!";
+	exit();
+
+}
+
+$top_url = get_top_url($area,$therapist_id,$ch);
+$params['top_url'] = $top_url;
+
+$params['therapist_name'] = $therapist_name;
+$params['area'] = $area;
+$params['therapist_id'] = $therapist_id;
+$params['ch'] = $ch;
+$params['page_title'] = "ヘルプ動画";
+
+$smarty->assign( 'params', $params );
+
+$smarty->assign( 'content_tpl', 'sp/help_movie.tpl' );
+$smarty->display( 'sp/template.tpl' );
+
+?>

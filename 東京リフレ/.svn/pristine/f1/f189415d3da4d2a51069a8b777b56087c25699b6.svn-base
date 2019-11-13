@@ -1,0 +1,113 @@
+<?php
+
+	// 各ページ共通の処理
+	require_once("../../../include/common.php");
+
+	require_once("common.php");
+
+	include(COMMON_INC."auth_ssl_common.php");
+
+
+
+	if( isset($_POST["send"]) == true ){
+
+		/*
+		echo "<pre>";
+		print_r($_POST);
+		echo "</pre>";
+		exit();
+		*/
+
+		$tel = $_POST["tel"];
+		$pass = $_POST["pass"];
+
+		$error = "";
+
+		if( $tel == "" ){
+
+			$error = "電話番号が未入力です";
+
+		}else if (!preg_match("/^[0-9]{2,4}[-]*[0-9]{2,4}[-]*[0-9]{3,4}$/", $tel)) {
+
+			$error = "電話番号の形式が不正です(半角数字とハイフンのみ)";
+
+		}else{
+
+			$customer_tel = str_replace("-","",$tel);
+
+			$customer_data = vip_login_check_2_common($customer_tel);
+
+			if( $customer_data === false ){
+
+				$url = "error.php";
+				header("Location: ".$url);
+				exit();
+
+			}else{
+
+				//パスワードチェック
+				$password = $customer_data["password"];
+
+				if( $password != "" ){
+
+					if( $pass == "" ){
+
+						$error = "パスワードが未入力です";
+
+					}else if( $password != $pass ){
+
+						$error = "パスワードが違います";
+
+					}
+
+				}
+
+				if( $error == "" ){
+
+					$_SESSION["customer_id"] = $customer_data["id"];
+					$_SESSION["customer_name"] = $customer_data["name"];
+					$_SESSION["customer_type"] = $customer_data["type"];
+					$_SESSION["ticket"] = VIP_TICKET_WORD.$customer_data["name"];
+
+					$url = "therapist_calendar.php";
+					header("Location: ".$url);
+					exit();
+
+				}
+
+			}
+
+		}
+
+	}
+
+/*
+echo "<pre>";
+print_r($_SESSION);
+echo "</pre>";
+*/
+
+	$page_title = "VIPログイン";
+	$params['page_title'] = $page_title;
+
+	$pankuzu = "　＞　VIPログイン";
+
+	$params['pankuzu'] = $pankuzu;
+
+	$params['error'] = $error;
+
+	$smarty->assign( 'params', $params );
+
+	if( $access_type == "sp" ){
+
+		$smarty->assign( 'content_tpl', 'sp/ssl/common/vip/indexbk.tpl' );
+		$smarty->display( 'sp/ssl/common/template_vipbk.tpl' );
+
+	}else{
+
+		$smarty->assign( 'content_tpl', 'pc/ssl/common/vip/indexbk.tpl' );
+		$smarty->display( 'pc/ssl/common/template_vip_2bk.tpl' );
+
+	}
+
+?>

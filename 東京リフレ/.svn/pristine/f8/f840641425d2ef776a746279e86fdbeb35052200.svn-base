@@ -1,0 +1,1597 @@
+<?php
+/* =================================================================================
+		Script Name	slp_report.php(売上レポート)
+		Author		copy by aida
+		Create Date	2018/02/26	Created based on shop_report.php
+		Update Date	----/--/--
+		IN/OUT		受信：GET	送信:無し
+		Back Script	***********
+		Prev Script	***********
+		Description	売上レポート
+================================================================================= */
+if(isset($_REQUEST["year"]) && isset($_REQUEST["month"])) $_DecisionYm = $_REQUEST["year"] * 100 + $_REQUEST["month"]; else $_DecisionYm = 0;
+
+include("include/common.php");
+include("include/auth.php");
+//==================================================================================
+
+$time1 = time();
+
+//----店舗情報設定
+for($n=0; $n<$shop_list_num; $n++) {
+	$ws_str = "";
+	for($c=0; $c<6; $c++) {
+		if($c > 0) $ws_str .= "<br />";
+		$ws_str .= mb_substr($shop_list[$n]["short_name"], $c, 1, "UTF-8");
+	}
+	$shop_list[$n]["tate_name"] = $ws_str;
+}
+
+for($z=0; $z<$GP_shopGroupNums; $z++) {
+	$area_list[$z] = $ARRAY_shopGroup[$z]["area"];
+}
+
+//----日付情報設定
+$obj_Today = new refleToday();		//本日オブジェクト in ^common/include/const.php
+if(isset($_GET["Ymd"])) {
+	$obj_Today->set( $_GET["Ymd"] );		//該当日付セット
+} else {
+	$obj_Today->set( 0 );		//該当日付セット
+}
+$today_year = $obj_Today->get("year");
+$today_month = $obj_Today->get("month");
+$today_day = $obj_Today->get("day");
+$year = $today_year;
+$month = $today_month;
+$day = $today_day;
+
+if(isset($_GET["year"])==true) $year = $_GET["year"];
+if(isset($_GET["month"])==true) $month = $_GET["month"];
+if(isset($_GET["day"])==true) $day = $_GET["day"];
+
+$page_month = $month;
+
+//$last_day = get_month_last_day($year,$month);
+$last_day = date('t', mktime(0, 0, 0, $month, 1, $year));
+$last_day_sec = $last_day + 1;
+
+//----前月年月取得
+$w_prevYmd = mktime(0, 0, 0, ($month - 1), $day, $year);
+$w_PrevYm = array("y" => date("Y", $w_prevYmd), "m" => date("m", $w_prevYmd), "t" => date("t", $w_prevYmd));
+
+$obj_Week = new refleWeek();
+$obj_Week->set();
+
+for($i=0; $i<$last_day; $i++){
+	$day = $i + 1;
+	$week = $obj_Week->getWeekName($year, $month, $day);
+	$month_data[0][$i] = array("year" => $year, "month" => $month, "day" => $day, "week" => $week);
+}
+
+for($i=0; $i<$w_PrevYm["t"]; $i++){
+	$day = $i + 1;
+	$week = $obj_Week->getWeekName($w_PrevYm["y"], $w_PrevYm["m"], $day);
+	$month_data[1][$i] = array("year" => $w_PrevYm["y"], "month" => $w_PrevYm["m"], "day" => $day, "week" => $week);
+}
+//==================================================================================
+
+if(site_SERVER_name != "stg") {
+	//最初のアクセスで、必要なデータのインサート
+	PHP_insert_first_time_data_for_shop_report($w_PrevYm["y"], $w_PrevYm["m"], $shop_id_data, $shop_area_data, $w_PrevYm["t"]);	//前月
+	PHP_insert_first_time_data_for_shop_report($year, $month, $shop_id_data, $shop_area_data, $last_day);		//当月
+}
+//==================================================================================
+
+//----売上データの取得
+$sale_data = PHP_get_sale_data_for_shop_report($day, $month_data, $shop_list, $ARRAY_shopGroup);
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $today_year . "/" . $today_month . "<br />";
+
+//----稼働日数を取得(店舗別)
+for($n=0; $n<$shop_list_num; $n++) {
+	$z = -1;
+	for($x=0; $x<$GP_shopGroupNums; $x++) {
+		if($ARRAY_shopGroup[$x]["gropno"] == $shop_list[$n]["gropno"]) {
+			$z = $x;
+			break;
+		}
+	}
+	if($z < 0) continue;
+
+	for($m=0; $m<2; $m++) {
+		$ArWorkDays[$m][$n] = 0;
+		for($i=0; $i<count($month_data[$m]); $i++) {
+			if($m == 0 && ($year == $today_year && $month == $today_month) ) {
+				if($month_data[$m][$i]["day"] >= $today_day) break;
+			}
+			if($sale_data[$m][$i]["attendance_num"][$z]) $ArWorkDays[$m][$n]++;
+		}
+	}
+}
+
+//----稼働日数を取得(店舗グループ別)
+for($z=0; $z<$area_list_num; $z++) {
+	for($m=0; $m<2; $m++) {
+		$ArWorkDaysArea[$m][$z] = 0;
+		for($i=0; $i<count($month_data[$m]); $i++) {
+			if($m == 0 && ($year == $today_year && $month == $today_month)) {
+				if($month_data[$m][$i]["day"] >= $today_day) break;
+			}
+			if($sale_data[$m][$i]["attendance_num"][$z]) $ArWorkDaysArea[$m][$z]++;
+			//if($m == 0 && $z==3) echo $z . $area_list[$z] . "/" . $sale_data[$m][$i]["attendance_num"][$z] . " " . $ArWorkDaysArea[$m][$z] . "<br />";
+		}
+	}
+}
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . "<br />";
+//==================================================================================
+
+//----合計と一日の平均
+$target_data = PHP_get_target_data_by_month_for_shop_report($year, $month);		//目標値データ取得
+$sum_average_data = PHP_get_sum_average_data_for_shop_report($sale_data, $ArWorkDays, $year, $month, $shop_list, $area_list, $target_data);	//店舗別
+$sum_ave_area = PHP_get_sum_average_data_for_area($sale_data, $ArWorkDaysArea, $area_list, $target_data);	//店舗グループ別
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . "<br />";
+
+//----店舗別縦計（体制以外）
+for($m=0; $m<count($sum_average_data); $m++) {
+	$sum_data[$m]["price"]		= 0;
+	$sum_data[$m]["target_sum"]	= 0;
+	for($x=0; $x<$shop_list_num; $x++) {
+		$sum_data[$m]["price"] += $sum_average_data[$m][$x]["price"];
+		$sum_data[$m]["days"] += $ArWorkDays[$m][$x];	//延べ日数
+		if(!($shop_list[$x]["area"] == "tokyo_reraku" || $shop_list[$x]["area"] == "tokyo_bigao")) {
+			$sum_data[$m]["average"] += $sum_average_data[$m][$x]["average"];	//目標達成率の為単純合計に切替
+		}
+		if($m == 0) {
+			$sum_data[$m]["target_sum"] += $sum_average_data[$m][$x]["target"]["sale_price"];
+		}
+	}
+	//$sum_data[$m]["average"] = intval($sum_data[$m]["price"] / $sum_data[$m]["days"]);	//目標達成率の為単純合計に切替
+	//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $sum_data[$m]["average"] . " = intval(" . $sum_data[$m]["price"] . " / " . $sum_data[$m]["days"] . "<br />";
+}
+//$sum_data[0]["target_rate"] = intval($sum_data[0]["price"] * 100 / $sum_data[0]["target_sum"]);
+$sum_data[0]["target_rate"] = intval($sum_data[0]["average"] * 100 /  $sum_data[0]["target_sum"]);
+$sum_data[0]["prevMonRt"] = intval($sum_data[0]["average"] * 100 / $sum_data[1]["average"]);
+
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . "<br />";
+
+//----店舗グループ別縦計（体制）
+for($m=0; $m<count($sum_ave_area); $m++) {
+	for($z=0; $z<$area_list_num; $z++) {
+		$sum_data[$m]["attendance_num"]	+= $sum_ave_area[$m][$z]["attendance_num"];
+		$sum_data[$m]["operation_num"]	+= $sum_ave_area[$m][$z]["operation_num"];
+		$sum_data[$m]["attendance_ave"]	+= $sum_ave_area[$m][$z]["attendance_ave"];
+		$sum_data[$m]["operation_ave"]	+= $sum_ave_area[$m][$z]["operation_ave"];
+		$sum_data[$m]["daysArea"]		+= $ArWorkDaysArea[$m][$z];	//延べ日数
+	}
+	$sum_data[$m]["attendance_ave_area"] = PHP_kirisute($sum_data[$m]["attendance_num"], $sum_data[$m]["daysArea"]);
+	$sum_data[$m]["operation_ave_area"] = PHP_kirisute($sum_data[$m]["operation_num"], $sum_data[$m]["daysArea"]);
+}
+$sum_data[0]["prevMonRt_att"] = intval($sum_data[0]["attendance_ave"] * 100 / $sum_data[1]["attendance_ave"]);
+$sum_data[0]["prevMonRt_ope"] = intval($sum_data[0]["operation_ave"] * 100 / $sum_data[1]["operation_ave"]);
+
+//==================================================================================
+
+//----年月選択プルダウン編集
+$month_select_frm = PHP_get_sale_shop_month_select_frm("all", $year, $month);
+
+$day_disp = $month."月".$day."日";
+$page_name = "店舗別レポート";
+
+if( isset($_POST["send_csv"]) == true ) {
+	//----CSVファイル出力
+	header("Content-Type: application/octet-stream");
+	header("Content-Disposition: attachment; filename="."shop_report.csv");
+
+	$csv_file = PHP_get_csv_file_shop_report($page_month, $month_data, $sum_data, $sum_average_data, $sum_ave_area, $sale_data);
+	
+	// データの出力
+	echo($csv_file);
+	exit();
+}
+
+$time2 = time();
+
+$action_time = $time2 - $time1;
+$params['action_time'] = $action_time;
+
+//----テンプレートstyle用高さセット
+$w_ArHeight["uriage"] = ($shop_list_num + 1) * 21 - 1;		//($shop_list_num + 1) * 21;
+$w_ArHeight["taisei"] = ($GP_shopGroupNums * 2 + 2) * 21 - 1;	//(($shop_list_num - 5) * 2 + 2) * 21;
+$w_ArHeight["loss"] = ($shop_list_num + 3) * 21 - 1;	//($shop_list_num + 3) * 21;
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $GP_shopGroupNums . "<br />";
+
+//----Smarty
+$params['css_time'] = date("ymdHi");
+$params['win_flg'] = $win_flg;
+$params['page_name'] = $page_name;
+$params['time_line_data'] = $time_line_data;
+$params['attendance_data'] = $attendance_data;
+$params['area'] = $area;
+$params['reservation_state_list_new_day_list'] = $reservation_state_list_new_day_list;
+$params['month_select_frm'] = $month_select_frm;
+$params['page_month'] = $page_month;
+$params['last_day_sec'] = $last_day_sec;
+$params['month_data'] = $month_data;
+$params['sale_data'] = $sale_data;
+$params['average_data_pre'] = $average_data_pre;
+$params['average_data_sum_pre'] = $average_data_sum_pre;
+$params['hikaku_data_sale_average'] = $hikaku_data_sale_average;
+$params['sum_average_data'] = $sum_average_data;
+$params['sum_ave_area'] = $sum_ave_area;
+$params['sum_data'] = $sum_data;
+$params['sum_average_data_pre'] = $sum_average_data_pre;
+$params['sum_data_pre'] = $sum_data_pre;
+$params['hikaku_data_all'] = $hikaku_data_all;
+$params['year'] = $year;
+$params['month'] = $month;
+
+$smarty->assign( 'params', $params );
+$smarty->assign( 'shop_list', $shop_list );
+$smarty->assign( 'shop_list_num', $shop_list_num );
+$smarty->assign( 'area_list', $ARRAY_shopGroup );
+$smarty->assign( 'area_list_num', $GP_shopGroupNums );
+$smarty->assign( 'ArWorkDays', $ArWorkDays );
+$smarty->assign( 'height', $w_ArHeight );
+
+$smarty->display( 'man/shop_report.tpl' );
+exit;
+//==================================================================================
+
+function PHP_get_month_data_2($u_y, $u_m, &$obj_Today) {
+
+	if( $u_y == $obj_Today->get("year") && $u_m == $obj_Today->get("month") ) {
+		//----当月
+		$day_yesterday = $obj_Today->get("day") - 1;
+		$last_day = $day_yesterday;
+	} else {
+		//$last_day = get_month_last_day($u_year, $u_month);
+		$ws_Time = mktime(0, 0, 0, $u_m, 1, $u_y);
+		$last_day = date("t", $ws_Time);
+	}
+
+	$data = array();
+
+	for($d=1; $d<=$last_day; $d++){
+		$ws_Time = mktime(0, 0, 0, $u_m, $d, $u_y);
+		$ws_week = date("w", $ws_Time);
+		$data[($d-1)] = array("year" => $u_y, "month" => $u_m, "day" => $d, "week" => $ws_week);
+	}
+
+	return $data;
+}
+
+//----最初のアクセスで、必要なデータのインサート
+function PHP_insert_first_time_data_for_shop_report($u_year, $u_month, &$shop_id_data, $shop_area_data, $u_last_day) {
+
+	//----目的データの有無を確認
+	$ws_nums = PHP_getDataNums("shop_report_target", $u_year, $u_month);	//データ件数を取得
+	if( $ws_nums == 0) {	//目的データインポート
+		PHP_insert_first_data_to_shop_report_target_for_shop_report($u_year, $u_month, $shop_id_data);
+	}
+
+	//----機会ロスデータの有無を確認
+	$ws_nums = PHP_getDataNums("shop_report_loss", $u_year, $u_month);	//データ件数を取得
+	if( $ws_nums == 0) {	//機会ロスデータインポート
+		PHP_insert_first_data_to_shop_report_loss_for_shop_report($u_year, $u_month, $u_last_day, $shop_id_data, $shop_area_data);
+	}
+
+	//----受電数データの有無を確認
+	//$ws_nums = PHP_getDataNums("shop_report_call", $u_year, $u_month);	//データ件数を取得
+	//if( $ws_nums == 0) {//受電数データインポート
+	//	PHP_insert_first_data_to_shop_report_call_for_shop_report($u_year, $u_month, $u_last_day, $shop_id_data);
+	//}
+
+	return true;
+}
+
+//----データ件数を取得
+function PHP_getDataNums($u_table, $u_year, $u_month) {
+
+	$sql = sprintf("select count(*) from %s where delete_flg=0 and year='%s' and month='%s'", $u_table, $u_year, $u_onth);
+	$res = mysql_query($sql, DbCon);
+	if( $res == false ){
+		echo "error!(PHP_getDataNums)";
+		exit();
+	}
+	$ws_rows = 0;
+	if($row = mysql_fetch_assoc($res)) {
+		$ws_rows = $row[0];
+	}
+	return $ws_rows;
+}
+//ok
+//----目的データインポート
+function PHP_insert_first_data_to_shop_report_target_for_shop_report($u_year, $u_month, &$shop_id_data) {
+
+	mysql_query( "set autocommit = 0", DbCon );	//トランザクションをはじめる準備
+	mysql_query( "begin", DbCcon );				//トランザクション開始
+
+	$shop_id_data_num = count($shop_id_data);
+
+	for( $i=0; $i<$shop_id_data_num; $i++ ){
+
+		$shop_id = $shop_id_data[$i];
+
+		$sql = sprintf("insert into shop_report_target(shop_id,year,month) values('%s','%s','%s')", $shop_id, $u_year, $u_month);
+			$sql = sprintf("insert into shop_report_call(shop_id,year,month,day) values('%s','%s','%s','%s')",$shop_id,$year,$month,$day);
+		$res = mysql_query($sql, DbCon);
+		if($res == false){
+			mysql_query( "rollback", DbCon );		//ロールバック
+			echo "error!(insert_first_data_to_shop_report_target_for_shop_report)";
+			exit();
+		}
+	}
+
+	mysql_query( "commit", DbCon );		//コミット
+
+	return true;
+}
+
+//----機会ロスデータインポート
+function PHP_insert_first_data_to_shop_report_loss_for_shop_report($year,$month,$last_day,$shop_id_data,$shop_area_data){
+
+	mysql_query( "set autocommit = 0", DbCon );	//トランザクションをはじめる準備
+	mysql_query( "begin", DbCcon );				//トランザクション開始
+
+	for( $i=1; $i<=$last_day; $i++ ){
+
+		$day = $i;
+
+		$shop_area_data_num = count($shop_area_data);
+
+		for( $x=0; $x<$shop_area_data_num; $x++ ){
+
+			$area = $shop_area_data[$x];
+
+			$sql = sprintf("insert into shop_report_loss(year,month,day,area) values('%s','%s','%s','%s')",$year,$month,$day,$area);
+			$res = mysql_query($sql, DbCon);
+			if($res == false){
+				mysql_query( "rollback", DbCon );		//ロールバック
+				echo "error!(insert_first_data_to_shop_report_loss_for_shop_report)" . $sql;
+				exit();
+			}
+		}
+
+		$shop_id_data_num = count($shop_id_data);
+
+		for( $x=0; $x<$shop_id_data_num; $x++ ){
+
+			$shop_id = $shop_id_data[$x];
+
+			$sql = sprintf("insert into shop_report_loss(year,month,day,shop_id) values('%s','%s','%s','%s')",$year,$month,$day,$shop_id);
+			//echo $sql;echo "<br />";
+			$res = mysql_query($sql, DbCon);
+			if($res == false){
+				mysql_query( "rollback", DbCon );		//ロールバック
+				echo "error!(insert_first_data_to_shop_report_loss_for_shop_report)";
+				exit();
+			}
+		}
+	}
+
+	mysql_query( "commit", DbCon );		//コミット
+
+	return true;
+}
+/*
+//----受電数データインポート
+function PHP_insert_first_data_to_shop_report_call_for_shop_report($year,$month,$last_day,$shop_id_data){
+
+	mysql_query( "set autocommit = 0", DbCon );	//トランザクションをはじめる準備
+	mysql_query( "begin", DbCcon );				//トランザクション開始
+
+	for( $i=1; $i<=$last_day; $i++ ){
+
+		$day = $i;
+
+		$shop_id_data_num = count($shop_id_data);
+
+		for( $x=0; $x<$shop_id_data_num; $x++ ){
+
+			$shop_id = $shop_id_data[$x];
+
+			$sql = sprintf("insert into shop_report_call(shop_id,year,month,day) values('%s','%s','%s','%s')",$shop_id,$year,$month,$day);
+			$res = mysql_query($sql, DbCon);
+			if($res == false){
+				mysql_query( "rollback", DbCon );		//ロールバック
+				echo "error!(insert_first_data_to_shop_report_call_for_shop_report)";
+				exit();
+			}
+		}
+	}
+
+	mysql_query( "commit", DbCon );		//コミット
+
+	return true;
+}
+*/
+//----売上データの取得
+function PHP_get_sale_data_for_shop_report($u_day, &$month_data, &$shop_list, &$ARRAY_shopGroup) {
+
+	//----店舗グループ配列生成
+	for($n=0; $n<count($ARRAY_shopGroup); $n++) {
+		$area_list[$n] = $ARRAY_shopGroup[$n]["area"];
+		$area_ids[$n] = $ARRAY_shopGroup[$n]["gropno"];
+	}
+
+	$shop_list_num = count($shop_list);
+
+	//----店舗名配列生成
+	for($n=0; $n<$shop_list_num; $n++) {
+		$ws_ArShopIds[$n] = $shop_list[$n]["id"];
+		$ws_ArShopName[$n] = $shop_list[$n]["ja"];
+		$ws_ArShopGroup[$n] = $shop_list[$n]["gropno"];
+	}
+
+	$ws_toYm = $month_data[0][0]["year"] * 100 + $month_data[0][0]["month"];
+	$ws_fromYm = $month_data[1][0]["year"] * 100 + $month_data[1][0]["month"];
+
+	//$tp_now = mktime(12, 0, 0, $month_data[0][0]["month"], $u_day, $month_data[0][0]["year"]);
+	$tp_now = time();
+
+	$area_list_num = count($area_list);
+
+	for($m=0; $m<count($month_data); $m++) {
+	
+		for($i=0; $i<count($month_data[$m]); $i++) {
+			$data[$m][$i]["year"]	= $month_data[$m][$i]["year"];
+			$data[$m][$i]["month"]	= $month_data[$m][$i]["month"];
+			$data[$m][$i]["day"]	= $month_data[$m][$i]["day"];
+			$data[$m][$i]["tp"]	= mktime(12, 0, 0, $data[$m][$i]["month"], $data[$m][$i]["day"], $data[$m][$i]["year"]);
+			$data[$m][$i]["total_price"] = 0;
+
+			$data[$m][$i]["shop_data"]	= array();
+			for($x=0; $x<$shop_list_num; $x++) {		//売上、ロス（店舗単位）
+				$data[$m][$i]["shop_data"][$x]["shop_id"] = $shop_list[$x]["id"];
+				$data[$m][$i]["shop_data"][$x]["loss"] = 0;
+				$data[$m][$i]["shop_data"][$x]["loss_fusoku"] = 0;
+				$data[$m][$i]["shop_data"][$x]["loss_fuzai"] = 0;
+				$data[$m][$i]["shop_data"][$x]["loss_mae"] = 0;
+				$data[$m][$i]["shop_data"][$x]["call_num"] = 0;
+				$data[$m][$i]["shop_data"][$x]["operation_num"] = 0;
+				$data[$m][$i]["shop_data"][$x]["operation_new_num"] = 0;
+				$data[$m][$i]["shop_data"][$x]["operation_repeat_num"] = 0;
+				$data[$m][$i]["shop_data"][$x]["agreement_num_rate"] = 0;
+				$data[$m][$i]["shop_data"][$x]["operation_rate_new"] = 0;
+				$data[$m][$i]["shop_data"][$x]["operation_rate_repeat"] = 0;
+			}
+			$data[$m][$i]["loss_data"] = array();
+			for( $z=0; $z<$area_list_num; $z++ ) {		//体制（店舗グループ単位）
+				//$ws_Area = $shop_list[$z];
+				$data[$m][$i]["loss_data"][$z]["id"] = $ARRAY_shopGroup[$n]["id"];
+				$data[$m][$i]["loss_data"][$z]["loss"] = 0;
+				$data[$m][$i]["loss_data"][$z]["loss_fusoku"] = 0;
+				$data[$m][$i]["loss_data"][$z]["loss_fuzai"] = 0;
+				$data[$m][$i]["loss_data"][$z]["loss_mae"] = 0;
+				$data[$m][$i]["attendance_num"][$z] = 0;
+				$data[$m][$i]["operation_num"][$z] = 0;
+			}
+			$data[$m][$i]["attendance_num_all"] = 0;
+			$data[$m][$i]["operation_num_all"] = 0;
+		}
+	}
+
+	//----日別エリア別出勤数取得
+	$data = PHP_get_attendance_num_by_day_and_area($ws_toYm, $ws_fromYm, $data, $area_list);
+
+	//----機会ロス集計
+	$data = PHP_get_shop_report_loss_data_day_for_shop_report($ws_toYm, $ws_fromYm, $data, $shop_list, $ARRAY_shopGroup);
+
+	//----受電数の取得
+	//$data = PHP_get_call_num_day_for_shop_report($ws_toYm, $ws_fromYm, $data, $ws_ArShopIds);
+
+	//----予約状況データ取得
+	$ws_SQL = "select reservation_no,shop_name,year,month,day,new_flg,repeat_flg from reservation_for_board";
+	$ws_SQL .= " where (year*100+month)>='%s' and (year*100+month)<='%s' and delete_flg=0 and complete_flg='1'";
+	$ws_SQL .= " order by year,month,shop_name,day";
+	$sql = sprintf($ws_SQL, $ws_fromYm, $ws_toYm);
+	$res = mysql_query($sql, DbCon);
+	//echo "line:" . __LINE__. " time:" . date("H:i:s", time()) . " " . $res . "/" . $sql . "<br />";
+	if( $res == false ) {
+		echo "error!(PHP_getDataNums)" .$sql;
+		exit();
+	}
+
+	$n = 0;
+	$p = 0;
+	while($row = mysql_fetch_assoc($res)) {
+	//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $row["month"] . "/" . $row["day"] . "<br />";
+
+		if($row["month"] == $month_data[0][0]["month"]) {
+			$ArData[0][$n] = $row;
+			$ArData[0][$n]["price"] = 0;
+			$ws_ArKey[0][$n] = $row["reservation_no"];
+			$n++;
+		} else {
+			$ArData[1][$p] = $row;
+			$ArData[1][$p]["price"] = 0;
+			$ws_ArKey[1][$p] = $row["reservation_no"];
+			$p++;
+		}
+	}
+	//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . count($ArData[0]) . "<br />";
+//print_r($ws_ArKey[0]);
+
+	$ws_SQL = "select reservation_no,eigyou_year,eigyou_month,eigyou_day,price from sale_history";
+	$ws_SQL .= " where (eigyou_year*100+eigyou_month)>='%s' and (eigyou_year*100+eigyou_month)<='%s' and delete_flg=0";
+	$sql = sprintf($ws_SQL, $ws_fromYm, $ws_toYm);
+	$res = mysql_query($sql, DbCon);
+	//echo "line:" . __LINE__. " time:" . date("H:i:s", time()) . " " . $res . "/" . $sql . "<br />";
+	if( $res == false ) {
+		echo "error!(PHP_getDataNums)" .$sql;
+		exit();
+	}
+	$n = 0;
+	$p = 0;
+	while($row = mysql_fetch_assoc($res)) {
+		if($row["eigyou_month"] == $month_data[0][0]["month"]) {
+			$n = array_search($row["reservation_no"], $ws_ArKey[0]);
+			if($n === false) continue;
+			$ArData[0][$n]["price"] = $row["price"];
+		} else {
+			$p = array_search($row["reservation_no"], $ws_ArKey[1]);
+			if($p === false) continue;
+			$ArData[1][$p]["price"] = $row["price"];
+		}
+	}
+	//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . count($ArData) . "<br />";
+
+	for($m=0; $m<count($month_data); $m++) {
+	//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . count($ArData[$m]) . "<br />";
+
+		for($n=0; $n<count($ArData[$m]); $n++) {
+			$i = $ArData[$m][$n]["day"] - 1;
+			if($i < 0) {
+				print_r($ArData[$m][$n]);
+				echo "line:" . __LINE__ . " error:no date(" . $ArData[$m][$n]["day"] . ") " . $ArData[$m][$n]["day"] . "<br />";
+				exit;
+			}
+
+			$ArData[$m][$n]["shop_name"] = trim(mb_convert_kana($ArData[$m][$n]["shop_name"], "s", "UTF-8"));
+			$x = array_search($ArData[$m][$n]["shop_name"], $ws_ArShopName);	//店舗配列index取得
+			if($x === false) {
+				//echo "line:" . __LINE__ . " error:no data(" . $ArData[$m][$n]["shop_name"] . "," . mb_strlen($ArData[$m][$n]["shop_name"]) . "," . mb_strlen($ws_ArShopName[0]) . ")";
+				continue;
+			}
+			//if($ArData[$m][$n]["day"] == 1) echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $i . " " . $x . "<br />";
+			$price = 0;
+			$operation_num = 0;
+			$operation_new_num = 0;
+			//if($ArData[$m][$n]["day"] == 1) echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $i . " " . $x . " "  . $data[$m][$i]["tp"] . " < " . $tp_now . "<br />";
+			if($data[$m][$i]["tp"] < $tp_now) {
+				$price = $ArData[$m][$n]["price"];
+				$operation_num = 1;
+				if($ArData[$m][$n]["new_flg"] == 1) $operation_new_num = 1;
+				//if($ArData[$m][$n]["new_flg"] != 1 && $ArData[$m][$n]["repeat_flg"] == 1) $operation_new_num = $ArData[$m][$n]["operation_new_num"];
+			} else {
+				if($m==0 && $ArData[$m][$n]["day"] == 31) echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $i . " " . $x . " " . $data[$m][$i]["tp"] . " < " . $tp_now. "***<br />";
+			}
+			$operation_repeat_num = $operation_num - $operation_new_num;
+
+			$data[$m][$i]["shop_data"][$x]["price"] += $price;
+			$data[$m][$i]["shop_data"][$x]["operation_num"] += $operation_num;
+			$data[$m][$i]["shop_data"][$x]["operation_new_num"] += $operation_new_num;
+			$data[$m][$i]["shop_data"][$x]["operation_repeat_num"] += $operation_repeat_num;
+			//if($ArData[$m][$n]["day"] == 1) echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $i . " " . $x . " " . $data[$m][$i]["shop_data"][$x]["price"]. "<br />";
+			//if($m==0 && $ArData[$m][$n]["day"] == 31) echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $i . " " . $x . " " . $data[$m][$i]["shop_data"][$x]["price"]. "<br />";
+
+			$z = array_search($shop_list[$x]["gropno"], $area_ids);
+			if($z === false) {
+				echo "line:" . __LINE__ . " error:no data(" . $shop_list[$x]["gropno"] . ")";
+				continue;
+			}
+			$data[$m][$i]["operation_num"][$z] += $operation_num;
+
+			$data[$m][$i]["total_price"] += $price;
+			$data[$m][$i]["total_operation_num"] += $operation_num;
+		}
+	}
+
+	for($m=0; $m<count($month_data); $m++) {
+		for($i=0; $i<count($month_data[$m]); $i++) {
+			for($x=0; $x<$shop_list_num; $x++) {		//売上、ロス（店舗単位）
+				$data[$m][$i]["shop_data"][$x]["call_num"] = $data[$m][$i]["shop_data"][$x]["operation_num"] + $data[$m][$i]["shop_data"][$x]["loss"];
+				if($data[$m][$i]["shop_data"][$x]["operation_num"]) {
+					$data[$m][$i]["shop_data"][$x]["operation_rate_new"] = intval(($data[$m][$i]["shop_data"][$x]["operation_new_num"]/$data[$m][$i]["shop_data"][$x]["operation_num"])*100);
+					$data[$m][$i]["shop_data"][$x]["operation_rate_repeat"] = intval(($data[$m][$i]["shop_data"][$x]["operation_repeat_num"]/$data[$m][$i]["shop_data"][$x]["operation_num"])*100);
+					$data[$m][$i]["operation_num_all"] += $data[$m][$i]["shop_data"][$x]["operation_num"];
+				}
+				if($data[$m][$i]["shop_data"][$x]["call_num"]) {
+					$data[$m][$i]["call_num_all"] += $data[$m][$i]["shop_data"][$x]["call_num"];
+					$data[$m][$i]["shop_data"][$x]["agreement_num_rate"] = intval(($data[$m][$i]["shop_data"][$x]["operation_num"]/$data[$m][$i]["shop_data"][$x]["call_num"])*100);
+				}
+			}
+			for($z=0; $z<$area_list_num; $z++) {		//売上、ロス（店舗単位）
+				$data[$m][$i]["attendance_num_all"] += $data[$m][$i]["attendance_num"][$z];
+			}
+		}
+	}
+
+	return $data;
+}
+/*
+//----受電数の取得
+function PHP_get_call_num_day_for_shop_report($u_toYm, $u_fromYm, $data, &$shop_ids) {
+
+	$sql = sprintf("select * from shop_report_call where delete_flg='0' and (year*100+month)>='%s' and (year*100+month)<='%s' order by shop_id,year,month,day",$u_fromYm, $u_toYm);
+	$res = mysql_query($sql, DbCon);
+	echo "line:" . __LINE__. " time:" . date("H:i:s", time()) . " " . $res . "/" . $sql . "<br />";
+	if( $res == false ){
+		echo "error!(get_call_num_day_for_shop_report)";
+		exit();
+	}
+	$n =0;
+	while($row = mysql_fetch_assoc($res)) {
+		$i = $row["day"] - 1;
+		$x = array_search($row["shop_id"], $shop_ids);
+		if($x === false) {
+			//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $row["year"] . "/" . $row["month"] . "/" . $row["day"] . " shop_id:" . $row["shop_id"] . "<br />";
+			continue;
+		}
+		//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . " " . $row["year"] . "/" . $row["month"] . "/" . $row["day"] . " shop_id:" . $row["shop_id"] . " " . $row["call_num"] . "<br />";
+
+		$ws_Ym = $row["year"] * 100 + $row["month"];
+		if($ws_Ym == $u_toYm) $m = 0; else $m = 1;
+
+		$data[$m][$i]["shop_data"][$x]["call_num"] = $row["call_num"];
+		if($data[$m][$i]["shop_data"][$x]["call_num"] > 0 && $m == 0 && $i == 0) echo $m . "-" . $i . "-" . $x . " " . $data[$m][$i]["shop_data"][$x]["call_num"] . "<br />";
+	}
+echo $data[0][0]["shop_data"][0]["call_num"] . "&" . $data[0][0]["shop_data"][0]["call_num"]. "###<br />";
+
+	return $data;
+}
+*/
+//----機会ロス集計
+function PHP_get_shop_report_loss_data_day_for_shop_report($u_toYm, $u_fromYm, &$data, $shop_list, &$ARRAY_shopGroup) {
+
+	for($n=0; $n<$GP_shopGroupNums; $n++) {
+		$ws_area_ids[$n] = $ARRAY_shopGroup[$n]["id"];
+	}
+
+	$shop_list_num = count($shop_list);
+
+	//----店舗名配列生成
+	for($n=0; $n<$shop_list_num; $n++) {
+		$ws_ArShopIds[$n] = $shop_list[$n]["id"];
+	}
+
+	$sql = sprintf("select * from shop_report_loss where delete_flg='0' and (year*100+month)>='%s' and (year*100+month)<='%s' and (loss<>0 or loss_fusoku or loss_fuzai<>0 or loss_mae<>0) order by (year*10000+month*100+day)", $u_fromYm, $u_toYm);
+	$res = mysql_query($sql, DbCon);
+	if( $res == false ){
+		echo "error!(get_shop_report_loss_data_day_for_shop_report)";
+		exit();
+	}
+//echo $sql . "<br />";
+	$ws_qId = "";
+	while($row = mysql_fetch_assoc($res)) {
+		$ws_ymd = $row["year"] * 10000 + $row["month"] * 100 + $row["day"];
+		$i = $row["day"] - 1;
+		//----店舗id別
+		$x = array_search($row["shop_id"], $ws_ArShopIds);
+		if($x === false) {
+			//echo "line:" . __LINE__ . " " . $row["shop_id"] . "<br />";
+			continue;
+		}
+
+		$ws_Ym = $row["year"] * 100 + $row["month"];
+		if($ws_Ym == $u_toYm) $m = 0; else $m = 1;
+
+		$data[$m][$i]["shop_data"][$x]["loss"]			= $row["loss"];
+		$data[$m][$i]["shop_data"][$x]["loss_fusoku"]	= $row["loss_fusoku"];
+		$data[$m][$i]["shop_data"][$x]["loss_fuzai"]	= $row["loss_fuzai"];
+		$data[$m][$i]["shop_data"][$x]["loss_mae"]		= $row["loss_mae"];
+
+		//----エリア別
+		$z = array_search($ws_ArShopGroup[$x], $area_ids);
+		if($z === false) {
+			echo "line:" . __LINE__ . " error:no data(" . $ws_ArShopGroup[$x] . ")";
+			exit;
+		}
+		//$ws_area = $row["area"];
+		$data[$m][$i]["loss_data"][$z]["loss"]			= $row["loss"];
+		$data[$m][$i]["loss_data"][$z]["loss_fusoku"]	= $row["loss_fusoku"];
+		$data[$m][$i]["loss_data"][$z]["loss_fuzai"]	= $row["loss_fuzai"];
+		$data[$m][$i]["loss_data"][$z]["loss_mae"]		= $row["loss_mae"];
+	}
+
+	return $data;
+}
+
+//----日別エリア別出勤数取得
+function PHP_get_attendance_num_by_day_and_area($u_toYm, $u_fromYm, $data, &$area_list) {
+
+	$ws_thisYmd = date("Ymd");
+
+	$sql = sprintf("select year,month,day,area,count(*) as nums from attendance_new where today_absence='0' and kekkin_flg='0' and syounin_state='1' and (year*100+month)>='%s' and (year*100+month)<='%s' and (year*10000+month*100+day)<=%s group by year,month,day,area order by year,month,day,area", $u_fromYm, $u_toYm, $ws_thisYmd);
+	$res = mysql_query($sql, DbCon);
+	//echo $res . "/" . $sql;
+	if($res == false){
+		echo "クエリー実行で失敗しました(get_attendance_num_by_day_and_area_common)";
+		exit();
+	}
+	while($row = mysql_fetch_assoc($res)) {
+		$i = $row["day"] - 1;
+		$z = array_search($row["area"], $area_list);
+		if($z === false) {
+			//echo "line:" . __LINE__ . " " . $row["area"] . " " . strlen($row["area"]) . "<br />";
+			continue;
+		}
+		$ws_Ym = $row["year"] * 100 + $row["month"];
+		if($ws_Ym == $u_toYm) $m = 0; else $m = 1;
+		$data[$m][$i]["attendance_num"][$z] = $row["nums"];
+	}
+	return $data;
+}
+
+//----合計と一日の平均(店舗別)
+function PHP_get_sum_average_data_for_shop_report($sale_data, $ArWorkDays, $u_year, $u_month, &$shop_list, &$area_list, &$target_data) {
+
+	$shop_list_num = count($shop_list);
+
+	$shop_box = array();
+
+	for($m=0; $m<count($sale_data); $m++) {
+
+		$shop_box[$m] = array();
+
+		for($x=0; $x<$shop_list_num; $x++){
+			$shop_box[$m][$x]["price"] = 0;
+			$shop_box[$m][$x]["operation_num"] = 0;
+			$shop_box[$m][$x]["operation_new_num"] = 0;
+			$shop_box[$m][$x]["operation_repeat_num"] = 0;
+			$shop_box[$m][$x]["operation_rate_new"] = 0;
+			$shop_box[$m][$x]["operation_rate_repeat"] = 0;
+			$shop_box[$m][$x]["call_num"] = 0;
+			//$shop_box[$m][$x]["loss_data"] = array();
+			$shop_box[$m][$x]["loss"] = array("val" => 0, "ave" => 0, "prevMonRt" => 0);
+			$shop_box[$m][$x]["loss_fusoku"] = array("val" => 0, "ave" => 0, "prevMonRt" => 0);
+			$shop_box[$m][$x]["loss_fuzai"] = array("val" => 0, "ave" => 0, "prevMonRt" => 0);
+			$shop_box[$m][$x]["loss_mae"] = array("val" => 0, "ave" => 0, "prevMonRt" => 0);
+			$shop_box[$m][$x]["average"] = 0;
+			$shop_box[$m][$x]["ave_operation"] = 0;
+			$shop_box[$m][$x]["ave_operation_new"] = 0;
+			$shop_box[$m][$x]["ave_operation_repeat"] = 0;
+			$shop_box[$m][$x]["ave_operation_rate_new"] = 0;
+			$shop_box[$m][$x]["ave_operation_rate_repeat"] = 0;
+			$shop_box[$m][$x]["ave_operation_rate"]			= 0;
+			$shop_box[$m][$x]["ave_operation_new_rate"]		= 0;
+			$shop_box[$m][$x]["ave_operation_repeat_rate"]	= 0;
+			$shop_box[$m][$x]["ave_call"]			= 0;
+			$shop_box[$m][$x]["target"]				= array("sale_price" => 0, "call_num" => 0, "agreement_num" => 0, "customer_new" => 0, "repeater_num" => 0, "operation_num" => 0);
+			$shop_box[$m][$x]["target_rt"]			= array("sale_price" => 0, "call_num" => 0, "agreement_num" => 0, "customer_new" => 0, "repeater_num" => 0, "operation_num" => 0);
+		}
+	}
+
+	//----目標値セット
+	for($n=0; $n<count($target_data); $n++) {
+		$x = -1;
+		for($i=0; $i<$shop_list_num; $i++) {
+			if($target_data[$n]["shop_id"] == $shop_list[$i]["id"]) {
+				$x = $i;
+				break;
+			}
+		}
+		if($x < 0) continue;
+		$shop_box[0][$x]["target"]["sale_price"]	= $target_data[$n]["sale_price"];
+		$shop_box[0][$x]["target"]["call_num"]		= $target_data[$n]["call_num"];
+		$shop_box[0][$x]["target"]["agreement_num"]	= $target_data[$n]["agreement_num"];
+		$shop_box[0][$x]["target"]["customer_new"]	= $target_data[$n]["customer_new"];
+		$shop_box[0][$x]["target"]["repeater_num"]	= $target_data[$n]["repeater_num"];
+		$shop_box[0][$x]["target"]["operation_num"]	= $target_data[$n]["operation_num"];
+	}
+
+	for($m=0; $m<count($sale_data); $m++) {
+		//----店舗別月計部加算
+		for($i=0; $i<count($sale_data[$m]); $i++) {
+			for($x=0; $x<$shop_list_num; $x++){
+				$shop_box[$m][$x]["price"]					+= $sale_data[$m][$i]["shop_data"][$x]["price"];
+				$shop_box[$m][$x]["operation_num"]			+= $sale_data[$m][$i]["shop_data"][$x]["operation_num"];
+				$shop_box[$m][$x]["operation_new_num"]		+= $sale_data[$m][$i]["shop_data"][$x]["operation_new_num"];
+				$shop_box[$m][$x]["operation_repeat_num"]	+= $sale_data[$m][$i]["shop_data"][$x]["operation_repeat_num"];
+				$shop_box[$m][$x]["call_num"]				+= $sale_data[$m][$i]["shop_data"][$x]["call_num"];
+				$shop_box[$m][$x]["loss"]["val"]			+= $sale_data[$m][$i]["shop_data"][$x]["loss"];
+				$shop_box[$m][$x]["loss_fusoku"]["val"]		+= $sale_data[$m][$i]["shop_data"][$x]["loss_fusoku"];
+				$shop_box[$m][$x]["loss_fuzai"]["val"]		+= $sale_data[$m][$i]["shop_data"][$x]["loss_fuzai"];
+				$shop_box[$m][$x]["loss_mae"]["val"]		+= $sale_data[$m][$i]["shop_data"][$x]["loss_mae"];
+				//if($m == 0) echo $shop_box[$m][$x]["call_num"]	. " += " . $sale_data[$m][$i]["shop_data"][$x]["call_num"] . "<br />";
+			}
+		}
+
+		for($x=0; $x<$shop_list_num; $x++) {
+			if($ArWorkDays[$m][$x]) {
+				//----1日平均値
+				$shop_box[$m][$x]["average"]			= intval($shop_box[$m][$x]["price"] / $ArWorkDays[$m][$x]);
+				//echo $m . "-" . $x . " " . $shop_box[$m][$x]["average"]	. "		= intval(" . $shop_box[$m][$x]["price"] . " / " . $ArWorkDays[$m][$x] . ")<br />";
+				$shop_box[$m][$x]["call_ave"]			= PHP_kirisute($shop_box[$m][$x]["call_num"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["operation_ave"]		= PHP_kirisute($shop_box[$m][$x]["operation_num"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["operation_new_ave"]	= PHP_kirisute($shop_box[$m][$x]["operation_new_num"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["operation_repeat_ave"] = PHP_kirisute($shop_box[$m][$x]["operation_repeat_num"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["loss"]["ave"]		= PHP_kirisute($shop_box[$m][$x]["loss"]["val"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["loss_fusoku"]["ave"]	= PHP_kirisute($shop_box[$m][$x]["loss_fusoku"]["val"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["loss_fuzai"]["ave"]	= PHP_kirisute($shop_box[$m][$x]["loss_fuzai"]["val"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["loss_mae"]["ave"]	= PHP_kirisute($shop_box[$m][$x]["loss_mae"]["val"], $ArWorkDays[$m][$x]);
+				$shop_box[$m][$x]["operation_ave_rate"]	= intval($shop_box[$m][$x]["operation_ave"] * 100 / $shop_box[$m][$x]["call_ave"]);
+				$shop_box[$m][$x]["operation_new_ave_rate"]		= intval($shop_box[$m][$x]["operation_new_ave"] * 100 / $shop_box[$m][$x]["operation_ave"]);
+				$shop_box[$m][$x]["operation_repeat_ave_rate"]	= intval($shop_box[$m][$x]["operation_repeat_ave"] * 100 / $shop_box[$m][$x]["operation_ave"]);
+			}
+		}
+
+		if($m == 0) {
+			for($x=0; $x<$shop_list_num; $x++) {
+
+				//----目標達成率
+				if($shop_box[$m][$x]["target"]["sale_price"]) {
+					$shop_box[$m][$x]["target_rt"]["sale_price"] = intval($shop_box[$m][$x]["average"] * 100 / $shop_box[$m][$x]["target"]["sale_price"]);
+				}
+				if($shop_box[$m][$x]["target"]["call_num"]) {
+					$shop_box[$m][$x]["target_rt"]["call_num"] = intval($shop_box[$m][$x]["call_ave"] * 100 / $shop_box[$m][$x]["target"]["call_num"]);
+				}
+				if($shop_box[$m][$x]["target"]["agreement_num"]) {
+					$shop_box[$m][$x]["target_rt"]["agreement_num"] = intval($shop_box[$m][$x]["operation_ave"] * 100 / $shop_box[$m][$x]["target"]["agreement_num"]);
+				}
+				if($shop_box[$m][$x]["target"]["customer_new"]) {
+					$shop_box[$m][$x]["target_rt"]["customer_new"] = intval($shop_box[$m][$x]["operation_new_ave"] * 100 / $shop_box[$m][$x]["target"]["customer_new"]);
+				}
+				if($shop_box[$m][$x]["target"]["repeater_num"]) {
+					$shop_box[$m][$x]["target_rt"]["repeater_num"] = intval($shop_box[$m][$x]["operation_repeat_ave"] * 100 / $shop_box[$m][$x]["target"]["repeater_num"]);
+				}
+			}
+		}
+	}
+
+	for($x=0; $x<$shop_list_num; $x++) {
+		//----前月比
+		$shop_box[0][$x]["prevMonRt"] = intval($shop_box[0][$x]["average"] * 100 / $shop_box[1][$x]["average"]);
+		$shop_box[0][$x]["loss"]["prevMonRt"] = intval($shop_box[0][$x]["loss"]["ave"] * 100 / $shop_box[1][$x]["loss"]["ave"]);
+		$shop_box[0][$x]["loss_fusoku"]["prevMonRt"] = intval($shop_box[0][$x]["loss_fusoku"]["ave"] * 100 / $shop_box[1][$x]["loss_fusoku"]["ave"]);
+		$shop_box[0][$x]["loss_fuzai"]["prevMonRt"] = intval($shop_box[0][$x]["loss_fuzai"]["ave"] * 100 / $shop_box[1][$x]["loss_fuzai"]["ave"]);
+		$shop_box[0][$x]["loss_mae"]["prevMonRt"] = intval($shop_box[0][$x]["loss_mae"]["ave"] * 100 / $shop_box[1][$x]["loss_mae"]["ave"]);
+
+		$shop_box[0][$x]["prevMonRt_call_ave"] = intval($shop_box[0][$x]["call_ave"] * 100 / $shop_box[1][$x]["call_ave"]);
+		$shop_box[0][$x]["prevMonRt_ope_ave"] = intval($shop_box[0][$x]["operation_ave"] * 100 / $shop_box[1][$x]["operation_ave"]);
+		$shop_box[0][$x]["prevMonRt_ope_ave_rate"] = intval($shop_box[0][$x]["operation_ave_rate"] * 100 / $shop_box[1][$x]["operation_ave_rate"]);
+		$shop_box[0][$x]["prevMonRt_ope_new_ave"] = intval($shop_box[0][$x]["operation_new_ave"] * 100 / $shop_box[1][$x]["operation_new_ave"]);
+		$shop_box[0][$x]["prevMonRt_ope_new_ave_rate"] = intval($shop_box[0][$x]["operation_new_ave_rate"] * 100 / $shop_box[1][$x]["operation_new_ave_rate"]);
+		$shop_box[0][$x]["prevMonRt_ope_repeat_ave"] = intval($shop_box[0][$x]["operation_repeat_ave"] * 100 / $shop_box[1][$x]["operation_repeat_ave"]);
+		$shop_box[0][$x]["prevMonRt_ope_repeat_ave_rate"] = intval($shop_box[0][$x]["operation_repeat_ave_rate"] * 100 / $shop_box[1][$x]["operation_repeat_ave_rate"]);
+/*
+		$shop_box[1][$x]["operation_ave_rate"] = intval($shop_box[1][$x]["operation_ave"] * 100 / $shop_box[1][$x]["call_ave"]);					//成約率
+		$shop_box[1][$x]["operation_new_ave_rate"] = intval($shop_box[1][$x]["operation_new_ave"] * 100 / $shop_box[1][$x]["operation_ave"]);		//新規客率
+		$shop_box[1][$x]["operation_repeat_ave_rate"] = intval($shop_box[1][$x]["operation_repeat_ave"] * 100 / $shop_box[1][$x]["operation_ave"]);	//リピータ率
+*/
+	}
+
+	return $shop_box;
+}
+
+//----合計と一日の平均(店舗グループ別)
+function PHP_get_sum_average_data_for_area($sale_data, $ArWorkDaysArea, &$area_list, &$target_data) {
+
+	$area_list_num = count($area_list);
+
+	$area_box = array();
+
+	for($m=0; $m<count($sale_data); $m++) {
+
+		$area_box[$m] = array();
+
+		for($z=0; $z<$area_list_num; $z++){
+			$area_box[$m][$z]["attendance_num"] = 0;
+			$area_box[$m][$z]["operation_num"] = 0;
+			$area_box[$m][$z]["attendance_ave"] = 0;
+			$area_box[$m][$z]["operation_ave"] = 0;
+			$area_box[$m][$z]["loss_data"] = array();
+		}
+		for($i=0; $i<count($sale_data[$m]); $i++) {
+			for($z=0; $z<$area_list_num; $z++){
+				$area_box[$m][$z]["attendance_num"]	+= $sale_data[$m][$i]["attendance_num"][$z];
+				$area_box[$m][$z]["operation_num"]	+= $sale_data[$m][$i]["operation_num"][$z];
+				//if($m == 1) echo $m . "-" . $z . "-" . $i . " " . $area_box[$m][$z]["attendance_num"] . "	+= " . $sale_data[$m][$i]["attendance_num"][$z] . "<br />";
+			}
+		}
+
+		for($z=0; $z<$area_list_num; $z++) {
+			if($ArWorkDaysArea[$m][$z]) {
+				$area_box[$m][$z]["attendance_ave"]	= PHP_kirisute($area_box[$m][$z]["attendance_num"], $ArWorkDaysArea[$m][$z]);
+				$area_box[$m][$z]["operation_ave"]	= PHP_kirisute($area_box[$m][$z]["operation_num"], $ArWorkDaysArea[$m][$z]);
+			}
+		}
+	}
+
+	//----前月比
+	for($z=0; $z<$area_list_num; $z++) {
+		$area_box[0][$z]["prevMonRt_att"] = intval($area_box[0][$z]["attendance_ave"] * 100 / $area_box[1][$z]["attendance_ave"]);
+		$area_box[0][$z]["prevMonRt_ope"] = intval($area_box[0][$z]["operation_ave"] * 100 / $area_box[1][$z]["operation_ave"]);
+	}
+
+	return $area_box;
+}
+
+function PHP_loss_data_add_for_shop_report($loss_data_all,$loss_data){
+
+	if( $loss_data_all["loss"] == "" ){
+		$loss_data_all["loss"] = 0;
+	}
+	if( $loss_data_all["loss_fusoku"] == "" ){
+		$loss_data_all["loss_fusoku"] = 0;
+	}
+	if( $loss_data_all["loss_fuzai"] == "" ){
+		$loss_data_all["loss_fuzai"] = 0;
+	}
+	if( $loss_data_all["loss_mae"] == "" ){
+		$loss_data_all["loss_mae"] = 0;
+	}
+
+	if( $loss_data["loss"] == "" ){
+		$loss_data["loss"] = 0;
+	}
+	if( $loss_data["loss_fusoku"] == "" ){
+		$loss_data["loss_fusoku"] = 0;
+	}
+	if( $loss_data["loss_fuzai"] == "" ){
+		$loss_data["loss_fuzai"] = 0;
+	}
+	if( $loss_data["loss_mae"] == "" ){
+		$loss_data["loss_mae"] = 0;
+	}
+
+	$loss_data_all["loss"] = $loss_data_all["loss"] + $loss_data["loss"];
+	$loss_data_all["loss_fusoku"] = $loss_data_all["loss_fusoku"] + $loss_data["loss_fusoku"];
+	$loss_data_all["loss_fuzai"] = $loss_data_all["loss_fuzai"] + $loss_data["loss_fuzai"];
+	$loss_data_all["loss_mae"] = $loss_data_all["loss_mae"] + $loss_data["loss_mae"];
+
+	return $loss_data_all;
+	exit();
+
+}
+
+function PHP_get_int_per($value,$value_base){
+
+	if( ( $value == "0" ) || ( $value_base == "0" ) || ( $value == "" ) || ( $value_base == "" ) ) return 0;
+	return intval(($value/$value_base)*100);
+}
+
+function PHP_kirisute($value,$num){
+
+	if( ($value=="0") || ($value=="") || ($num=="0") || ($num=="") ) return 0;
+
+	$data = $value/$num;
+	$data = sprintf("%.2f", $data);
+	$data = intval($data*10);
+	return $data/10;
+}
+
+//----売上目標値取得
+function PHP_get_target_data_by_month_for_shop_report($u_y, $u_m) {
+
+	$ws_ArData = array();
+
+	$sql = sprintf("select * from shop_report_target where delete_flg='0' and year='%s' and month='%s' order by shop_id", $u_y, $u_m);
+	$res = mysql_query($sql, DbCon);
+	//echo $res . "/" . $sql . "<br />";
+	if( $res == false ){
+		echo "error!(get_target_data_by_month_for_shop_report)" . $sql;
+		exit();
+	}
+	$n = 0;
+	while($row = mysql_fetch_assoc($res)) {
+		$ws_ArData[$n] = $row;
+		$n++;
+	}
+	return $ws_ArData;
+}
+/*
+function PHP_get_sum_data_2_for_shop_report($data, &$shop_list) {
+
+	$shop_list_num = count($shop_list);
+
+	$return_data = array();
+
+	$data_tmp = array();
+	for($x=0; $x<$shop_list_num; $x++){
+		$data_tmp[$x] = $data[$x]["average"];
+	}
+	$return_data["average"] = PHP_get_sum_value_for_shop_report($data_tmp);
+
+	$data_tmp = array();
+	for($i=0;$i<$shop_list_num;$i++){
+		$name = $shop_list[$i]["name"];
+		$data_tmp[$name] = $data[$name]["price"];
+	}
+	$return_data["price"] = PHP_get_sum_value_for_shop_report($data_tmp);
+
+	$data_tmp = array();
+	for($i=0;$i<$shop_list_num;$i++){
+		$name = $shop_list[$i]["name"];
+		$data_tmp[$name] = $data[$name]["operation_num"]["value"];
+	}
+	$return_data["operation_num"]["value"] = PHP_get_sum_value_for_shop_report($data_tmp);
+
+	$data_tmp = array();
+	for($i=0;$i<$shop_list_num;$i++){
+		$name = $shop_list[$i]["name"];
+		$data_tmp[$name] = $data[$name]["target"]["sale_price"]["value"];
+	}
+	$return_data["target"]["sale"]["value"] = PHP_get_sum_value_for_shop_report($data_tmp);
+	$return_data["target"]["sale"]["rate"] = PHP_get_int_per($return_data["average"],$return_data["target"]["sale"]["value"]);
+
+	$data_tmp = array();
+	for($i=0;$i<$area_list_num;$i++){
+		$name = $area_list[$i];
+		$data_tmp[$name] = $data[$name]["attendance_num"]["value"];
+	}
+	$return_data["attendance_num"]["value"] = PHP_get_sum_value_2_for_shop_report($data_tmp);
+
+	$data_tmp = array();
+	for($i=0;$i<$area_list_num;$i++){
+		$name = $area_list[$i];
+		$data_tmp[$name] = $data[$name]["attendance_num"]["average"];
+	}
+	$return_data["attendance_num"]["average"] = PHP_get_sum_value_2_for_shop_report($data_tmp);
+
+	$data_tmp = array();
+	for($i=0;$i<$area_list_num;$i++){
+		$name = $area_list[$i];
+		$data_tmp[$name] = $data[$name]["operation_num"]["average"];
+	}
+	$return_data["operation_num"]["average"] = PHP_get_sum_value_2_for_shop_report($data_tmp);
+
+	return $return_data;
+}
+*/
+//ok
+//function PHP_get_sum_value_for_shop_report($data) {
+//	return ($data["tokyo_refle"] + $data["tokyo_aroma"] + $data["lymph_tokyo"] + $data["yokohama_refle"] + $data["sapporo_refle"] + $data["sendai_refle"] + $data["osaka_refle"] + $data["osaka_aroma"] + $data["tokyo_reraku"] + $data["tokyo_bigao"]);
+//}
+//function PHP_get_sum_value_2_for_shop_report($data){
+//	return ($data["tokyo"] + $data["yokohama"] + $data["sapporo"] + $data["sendai"] + $data["osaka"] + $data["tokyo_reraku"] + $data["tokyo_bigao"]);
+//}
+
+function PHP_get_loss_data_average_for_shop_report($loss_data,$work_num){
+
+	$data["loss"] = kirisute($loss_data["loss"],$work_num);
+	$data["loss_fusoku"] = kirisute($loss_data["loss_fusoku"],$work_num);
+	$data["loss_fuzai"] = kirisute($loss_data["loss_fuzai"],$work_num);
+	$data["loss_mae"] = kirisute($loss_data["loss_mae"],$work_num);
+
+	return $data;
+}
+//ok
+
+function PHP_get_pre_month_average_data_for_shop_report($u_y, $u_m, $u_d, $shop_id_data, $shop_list, &$area_list) {
+
+	$ws_Time = mktime(0, 0, 0, $u_m, $u_d, $u_y);
+	$last_day = date("t", $ws_Time);
+
+	//----最初のアクセスで、必要なデータのインサート
+	//insert_first_time_data_for_shop_report($year,$month,$shop_id_data,$shop_list);
+	PHP_insert_first_time_data_for_shop_report($u_y, $u_m, $shop_id_data, $shop_list, $last_day);
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . "<br />";
+
+	//$month_data = get_month_data($year,$month);
+	$obj_Week = new refleWeek();
+	$obj_Week->set();
+	for($i=0; $i<$last_day; $i++){
+		$ws_day = $i + 1;
+		$ws_week = $obj_Week->getWeek($u_y, $u_m, $ws_day);
+		$month_data[$m][$i] = array("year" => $u_y, "month" => $u_m, "day" => $ws_day, "week" => $ws_week);
+	}
+
+	//売上データの取得
+	$sale_data = PHP_get_sale_data_for_shop_report($u_y, $u_m, $u_d, $month_data, $shop_list, $area_list);
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . "<br />";
+
+	//稼働日数を取得
+	//$work_num = get_work_num_for_shop_report($year,$month);
+	$work_num = 0;
+	for($i=0; $i<count($sale_data); $i++) {
+		$work_num += $data[$i]["attendance_num_all"];
+	}
+
+	//合計と一日の平均
+	//$sum_average_data = get_sum_average_data_for_shop_report($sale_data,$work_num,$year,$month);
+	$sum_average_data = PHP_get_sum_average_data_for_shop_report($sale_data_2, $work_num, $u_y, $u_m, $shop_list, $shop_list);
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . "<br />";
+
+	return $sum_average_data;
+}
+//ok
+function PHP_get_hikaku_data_for_shop_report($data,$data_pre,$type, &$shop_list) {
+
+	//include(COMMON_INC."shop_area_list.php");
+	$shop_list_num = count($shop_list);
+
+	$hikaku_data = array();
+
+	for($i=0;$i<$shop_list_num;$i++){
+
+		$name = $shop_list[$i]["name"];
+
+		$hikaku_data["sale"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["average"],$data_pre[$name]["average"]);
+		$hikaku_data["operation_num"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["operation_num"]["average"],$data_pre[$name]["operation_num"]["average"]);
+		$hikaku_data["operation_new_num"]["average"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["operation_new_num"]["average"],$data_pre[$name]["operation_new_num"]["average"]);
+		$hikaku_data["operation_new_num"]["rate"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["operation_new_num"]["rate"],$data_pre[$name]["operation_new_num"]["rate"]);
+		$hikaku_data["operation_repeat_num"]["average"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["operation_repeat_num"]["average"],$data_pre[$name]["operation_repeat_num"]["average"]);
+		$hikaku_data["operation_repeat_num"]["rate"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["operation_repeat_num"]["rate"],$data_pre[$name]["operation_repeat_num"]["rate"]);
+		$hikaku_data["loss_data"][$name] = PHP_get_loss_data_hikaku_for_shop_report($data[$name]["loss_data"],$data_pre[$name]["loss_data"]);
+		$hikaku_data["call_num"][$name]["call_num"] = PHP_get_hikaku_value_for_shop_report($data[$name]["call_num"]["average"],$data_pre[$name]["call_num"]["average"]);
+		$hikaku_data["call_num"][$name]["agreement_num"] = PHP_get_hikaku_value_for_shop_report($data[$name]["operation_num"]["rate"],$data_pre[$name]["operation_num"]["rate"]);
+
+	}
+
+	for($i=0;$i<$area_list_num;$i++){
+
+		$name = $area_list[$i];
+
+		$hikaku_data["attendance_num"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["attendance_num"]["average"],$data_pre[$name]["attendance_num"]["average"]);
+		$hikaku_data["operation_num"][$name] = PHP_get_hikaku_value_for_shop_report($data[$name]["operation_num"]["average"],$data_pre[$name]["operation_num"]["average"]);
+		$hikaku_data["loss_data"][$name] = PHP_get_loss_data_hikaku_for_shop_report($data[$name]["loss_data"],$data_pre[$name]["loss_data"]);
+
+	}
+
+	return $hikaku_data;
+}
+//ok
+function PHP_get_hikaku_value_for_shop_report($data_new,$data_old) {
+
+	if( ($data_new=="0") || ($data_new=="") || ($data_old=="0") || ($data_old=="") ) return 0;
+
+	return intval(($data_new/$data_old)*100);
+}
+
+function PHP_get_loss_data_hikaku_for_shop_report($data_new,$data_old){
+
+	$data = array();
+
+	$data["loss"] = PHP_get_hikaku_value_for_shop_report($data_new["average"]["loss"],$data_old["average"]["loss"]);
+	$data["loss_fusoku"] = PHP_get_hikaku_value_for_shop_report($data_new["average"]["loss_fusoku"],$data_old["average"]["loss_fusoku"]);
+	$data["loss_fuzai"] = PHP_get_hikaku_value_for_shop_report($data_new["average"]["loss_fuzai"],$data_old["average"]["loss_fuzai"]);
+	$data["loss_mae"] = PHP_get_hikaku_value_for_shop_report($data_new["average"]["loss_mae"],$data_old["average"]["loss_mae"]);
+
+	return $data;
+}
+
+function PHP_get_hikaku_data_all_for_shop_report($data,$data_pre ){
+
+	$price_now = $data["price"];
+	$price_pre = $data_pre["price"];
+	$average_now = $data["average"];
+	$average_pre = $data_pre["average"];
+	$attendance_num_now = $data["attendance_num"]["average"];
+	$attendance_num_pre = $data_pre["attendance_num"]["average"];
+	$operation_num_now = $data["operation_num"]["average"];
+	$operation_num_pre = $data_pre["operation_num"]["average"];
+
+	$return_data["sale"] = PHP_get_hikaku_value_for_shop_report($average_now,$average_pre);
+	$return_data["attendance_num"] = PHP_get_hikaku_value_for_shop_report($attendance_num_now,$attendance_num_pre);
+	$return_data["operation_num"] = PHP_get_hikaku_value_for_shop_report($operation_num_now,$operation_num_pre);
+
+	return $return_data;
+}
+
+//----年月選択プルダウン編集
+function PHP_get_sale_shop_month_select_frm($area, $year_hiki, $month_hiki){
+
+	$min_year = "2014";
+
+	if($area == "all") {
+		$sql = sprintf("select year,month from reservation_for_board where year>=%s and delete_flg='0' group by year,month order by year,month", $min_year);
+	} else {
+		$sql = sprintf("select year,month from reservation_for_board where area='%s' and year>=%s and delete_flg='0' group by year,month order by year,month", $area, $min_year);
+	}
+	$res = mysql_query($sql, DbCon);
+	if($res == false){
+		echo "クエリー実行で失敗しました(check_reservation_for_board_exist_plus_day)";
+		exit();
+	}
+	$i = 0;
+	while($row = mysql_fetch_assoc($res)) {
+		$data[$i] = array("year" => $row["year"], "month" => $row["month"]);
+		$i++;
+	}
+
+	$data_num = count($data);
+
+	$html = '<select name="month" id="sale_driver_month_select">';
+	$html .= '<option value="-1" selected>月選択</option>';
+
+	for($i=($data_num-1); $i>=0; $i--){
+
+		$year = $data[$i]["year"];
+		$month = $data[$i]["month"];
+
+		$value_disp = $year."_".$month;
+		$word_disp = $year."年".$month."月";
+
+		if( ($year==$year_hiki) && ($month==$month_hiki) ){
+			$html .= sprintf('<option value="%s" selected>%s</option>',$value_disp,$word_disp);
+		}else{
+			$html .= sprintf('<option value="%s">%s</option>',$value_disp,$word_disp);
+		}
+	}
+
+	$html .= '</select>';
+
+	return $html;
+}
+
+//----CSVファイル出力
+function PHP_get_csv_file_shop_report($page_month, &$month_data, &$sum_data, &$sum_average_data, &$sum_ave_area, &$sale_data){
+global $shop_list, $ARRAY_shopGroup;
+
+	$title_yoko = array(
+		"0"=> $page_month . "月",
+		"1"=>"合計",
+		"2"=>"1日平均値",
+		"3"=>"前月値",
+		"4"=>"前月比",
+		"5"=>"目標値",
+		"6"=>"目標達成率"
+	);
+
+	$title_tate = array(
+		"0"=>"売上",
+		"1"=>"体制",
+		"2"=>"機会ロス"
+	);
+
+	$title_yoko_num = count($title_yoko);
+	$month_data_num = count($month_data[0]);
+	$sale_data_num = count($sale_data[0]);
+
+	$html = "";
+
+	$tmp = "";
+	$html .= "\"".$tmp."\"".",";
+
+	for($i=0;$i<$title_yoko_num;$i++){
+		$tmp = $title_yoko[$i];
+		$html .= "\"".$tmp."\"".",";
+	}
+
+	for($i=0; $i<$month_data_num; $i++){
+
+		$month = $month_data[0][$i]["month"];
+		$day = $month_data[0][$i]["day"];
+		$week = $month_data[0][$i]["week"];
+
+		$tmp = sprintf("%s月%s日(%s)",$month,$day,$week);
+
+		if( $i == ($month_data_num-1) ){
+			$html .= "\"".$tmp."\""."\n";
+		}else{
+			$html .= "\"".$tmp."\"".",";
+		}
+	}
+
+	$title = "売上";
+
+	$shop_list_num = count($shop_list);
+
+	for($x=0; $x<$shop_list_num; $x++) {
+		$shop_name = $shop_list[$x]["name"];
+		$shop_name_ja = $shop_list[$x]["short_name"];
+		$html .= PHP_get_uriage_for_csv($shop_name, $shop_name_ja, $title, $sum_average_data, $sum_average_data_pre, $hikaku_data_sale_average, $sale_data, $x, $sale_data_num);
+	}
+
+	$ja = "一日売上合計";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["price"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["average"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[1]["average"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["prevMonRt"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["target_sum"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["target_rate"]."％")."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$price = if_null_value($sale_data[0][$i]["total_price"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$price."\""."\n";
+		}else{
+			$html .= "\"".$price."\"".",";
+		}
+	}
+
+	$title = "体制";
+	//$html .= PHP_get_taisei_csv("tokyo","東京",$sum_average_data,$sum_average_data_pre,$hikaku_data_sale_average,$sale_data,$sale_data_num,$title);
+	//$html .= PHP_get_taisei_csv("yokohama","横浜",$sum_average_data,$sum_average_data_pre,$hikaku_data_sale_average,$sale_data,$sale_data_num,$title);
+	//$html .= PHP_get_taisei_csv("sapporo","札幌",$sum_average_data,$sum_average_data_pre,$hikaku_data_sale_average,$sale_data,$sale_data_num,$title);
+	//$html .= PHP_get_taisei_csv("sendai","仙台",$sum_average_data,$sum_average_data_pre,$hikaku_data_sale_average,$sale_data,$sale_data_num,$title);
+	//$html .= PHP_get_taisei_csv("osaka","大阪",$sum_average_data,$sum_average_data_pre,$hikaku_data_sale_average,$sale_data,$sale_data_num,$title);
+	for($z=0; $z<count($ARRAY_shopGroup); $z++) {
+		$html .= PHP_get_taisei_csv($z, $ARRAY_shopGroup[$z]["short_name_S"], $sum_ave_area, $sale_data, $sale_data_num, $title);
+	}
+
+	$ja = "合計セラピスト体制";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["attendance_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["attendance_ave_area"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[1]["attendance_ave_area"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["prevMonRt_att"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$value = if_null_value($sale_data[0][$i]["attendance_num_all"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = "総成約数（全店舗）";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["operation_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["operation_ave_area"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[1]["operation_ave_area"])."\"".",";
+	$html .= "\"".if_null_value($sum_data[0]["prevMonRt_ope"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$value = if_null_value($sale_data[0][$i]["operation_num_all"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$title = "機会ロス";
+
+	for($x=0; $x<$shop_list_num; $x++) {
+		$shop_name = $shop_list[$x]["name"];
+		$shop_name_ja = $shop_list[$x]["short_name"];
+		$ja = sprintf("取りこぼし（%s）", $shop_list[$x]["short_name"]);
+		$html .= PHP_get_kikai_loss_csv($x, $title, $sum_average_data, $sale_data, $sale_data_num, $ja, "loss");
+		if($shop_name == "tokyo_refle") {
+			$ja = "セラピスト不足(東京リフレ)";
+			$html .= PHP_get_kikai_loss_csv($x, $title, $sum_average_data, $sale_data, $sale_data_num, $ja, "loss_fusoku");
+
+			$ja = "指名セラピスト不在(東京リフレ)";
+			$html .= PHP_get_kikai_loss_csv($x, $title, $sum_average_data, $sale_data, $sale_data_num, $ja, "loss_fuzai");
+
+			$ja = "営業時間前(東京リフレ)";
+			$html .= PHP_get_kikai_loss_csv($x, $title, $sum_average_data, $sale_data, $sale_data_num, $ja, "loss_mae");
+		}
+	}
+//echo "line:" . __LINE__ . " time:" . date("H:i:s", time()) . "<br />";
+
+	for($x=0; $x<$shop_list_num; $x++) {
+		$shop_name = $shop_list[$n]["name"];
+		$html .= PHP_get_shop_csv($x, $shop_list[$x]["short_name"], $sum_average_data, $sale_data, $sale_data_num);
+	}
+	return $html;
+}
+
+function PHP_get_uriage_for_csv($shop_name,$shop_name_ja,$title,$sum_average_data,$sum_average_data_pre,$hikaku_data_sale_average,$sale_data,$x,$sale_data_num){
+
+	$html = "";
+
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$shop_name_ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["price"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["average"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["average"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target"]["sale_price"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target_rt"]["sale_price"]."％")."\"".",";
+
+	for($i=0; $i<$sale_data_num; $i++){
+		$shop_data_tmp = $sale_data[0][$i]["shop_data"];
+		$price = if_null_value($shop_data_tmp[$x]["price"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$price."\""."\n";
+		}else{
+			$html .= "\"".$price."\"".",";
+		}
+	}
+
+	return $html;
+}
+
+function PHP_get_taisei_csv($z, $area_ja, $sum_average_data, $sale_data, $sale_data_num, $title){
+
+	$ja = sprintf("セラピスト体制(%s）",$area_ja);
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$z]["attendance_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$z]["attendance_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$z]["attendance_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$z]["prevMonRt_att"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$value = if_null_value($sale_data[0][$i]["attendance_num"][$z]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = sprintf("施術数（%s）",$area_ja);
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$z]["operation_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$z]["operation_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$z]["operation_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$z]["prevMonRt_ope"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$value = if_null_value($sale_data[0][$i]["operation_num"][$z]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	return $html;
+}
+
+function PHP_get_kikai_loss_csv($x, $title, $sum_average_data, $sale_data, $sale_data_num, $ja, $loss_name){
+
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x][$loss_name]["val"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x][$loss_name]["ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x][$loss_name]["ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x][$loss_name]["prevMonRt"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x][$loss_name]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	return $html;
+}
+
+function PHP_get_shop_csv($x, $title, &$sum_average_data, &$sale_data, $sale_data_num){
+
+	$html = "";
+
+	$ja = "受電数(メール含む）";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["call_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["call_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["call_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt_call_ave"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target"]["call_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target_rt"]["call_num"]."％")."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x]["call_num"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = "成約数";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["operation_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt_ope_ave"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target"]["agreement_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target_rt"]["agreement_num"]."％")."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x]["operation_num"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = "成約率";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_ave_rate"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["operation_ave_rate"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt_ope_ave_rate"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x]["agreement_num_rate"]."％");
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = "新規客";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_new_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_new_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["operation_new_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt_ope_new_ave"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target"]["customer_new"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target_rt"]["customer_new"]."％")."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x]["operation_new_num"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = "新規客率";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_new_ave_rate"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["operation_new_ave_rate"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt_ope_new_ave_rate"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x]["operation_rate_new"]."％");
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = "リピーター客(2回以降）";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_repeat_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_repeat_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["operation_repeat_ave"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt_ope_repeat_ave"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target"]["repeater_num"])."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["target_rt"]["repeater_num"]."％")."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x]["operation_repeat_num"]);
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	$ja = "リピーター率";
+	$html .= "\"".$title."\"".",";
+	$html .= "\"".$ja."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["operation_repeat_ave_rate"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[1][$x]["operation_repeat_ave_rate"]."％")."\"".",";
+	$html .= "\"".if_null_value($sum_average_data[0][$x]["prevMonRt_ope_repeat_ave_rate"]."％")."\"".",";
+	$html .= "\""."---"."\"".",";
+	$html .= "\""."---"."\"".",";
+	for($i=0;$i<$sale_data_num;$i++){
+		$shop_data = $sale_data[0][$i]["shop_data"];
+		$value = if_null_value($shop_data[$x]["operation_rate_repeat"]."％");
+		if( $i == ($sale_data_num-1) ){
+			$html .= "\"".$value."\""."\n";
+		}else{
+			$html .= "\"".$value."\"".",";
+		}
+	}
+
+	return $html;
+	exit();
+}
+?>

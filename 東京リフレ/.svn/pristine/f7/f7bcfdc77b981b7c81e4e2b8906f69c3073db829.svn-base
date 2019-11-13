@@ -1,0 +1,17 @@
+<div class="inc_block">
+	<div class="title_bar">
+		今すぐのご利用に対応します
+	</div>
+	<div class="content">
+		<div class="image">
+			<div><img src="{{$params.url_root}}img/sp/hotel1.jpg" alt="ホテル" width="70" /></div>
+			
+		</div>
+		<div class="exp">
+			1分でも早く・正確にお伺いできるように日々努力しています。<br />
+			都心でしたら15分～30分ほどでお伺いいたします。
+			
+		</div>
+		<br style="clear:both" />
+	</div>
+</div>

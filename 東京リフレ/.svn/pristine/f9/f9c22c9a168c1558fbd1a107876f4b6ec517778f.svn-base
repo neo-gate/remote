@@ -1,0 +1,189 @@
+<?php
+
+include("../../../../include/common.php");
+
+include(ROOT_PATH."include/vip/auth_ssl.php");
+
+include(COMMON_INC."auth_ssl.php");
+
+
+
+$shop_area = "tokyo";
+
+$shop_id = $_SESSION["shop_id"];
+$year = $_SESSION["year"];
+$month = $_SESSION["month"];
+$day = $_SESSION["day"];
+$time = $_SESSION["time"];
+$therapist_id = $_SESSION["therapist_id"];
+$course = $_SESSION["course"];
+$free = $_SESSION["free"];
+$mail = $_SESSION["mail"];
+
+$customer_id = $_SESSION["customer_id"];
+$customer_name = $_SESSION["customer_name"];
+
+$week = date("w", mktime(0, 0, 0, $month, $day, $year));
+
+if($therapist_id == -2){
+	
+	$therapist_name = "指定セラピストなし";
+	
+	$img_therapist = sprintf('<img src="%simg/ssl/vip/calendar/icon_sample.gif" alt="セラピスト" width="35" />',WWW_URL);
+	
+}else{
+	
+	$therapist_name = get_therapist_name_by_therapist_id_common($therapist_id);
+	$img_url = get_img_url_m_by_therapist_id_common($therapist_id);
+	
+	if( $img_url != "" ){
+	
+		$img_therapist = sprintf('<img src="%s%s" alt="セラピスト" width="35" />',S3_URL,$img_url);
+	
+	}else{
+		
+		$img_therapist = sprintf('<img src="%simg/ssl/vip/calendar/icon_sample.gif" alt="セラピスト" width="35" />',WWW_URL);
+		
+	}
+	
+}
+
+if(isset($_POST["send"])==true){
+
+	$shop_id = $_SESSION["shop_id"];
+	$year = $_SESSION["year"];
+	$month = $_SESSION["month"];
+	$day = $_SESSION["day"];
+	$time = $_SESSION["time"];
+	$therapist_id = $_SESSION["therapist_id"];
+	$course = $_SESSION["course"];
+	$free = $_SESSION["free"];
+	$mail = $_SESSION["mail"];
+	
+	//顧客の電話番号を取得
+	$customer_tel = get_customer_tel_for_vip_page($customer_id);
+
+	//----仮予約データ出力
+	$data["ymd"] = $year * 10000 + $month * 100 + $day;
+	$data['customer_id'] = $customer_id;
+	$data['customer_name'] = $_SESSION['customer_name'];
+	$data['customer_tel'] = $customer_tel;
+	$data['mail'] = $mail;
+	$data['ward'] = "";
+	$data['address1'] = "";
+	$data['address2']= "";
+	$data['otherwise'] = $free;
+	$data['Name_db'] = "";
+	$data['hotel_id'] = 0;
+
+	$w_simei_flg = 0;
+	if($therapist_id) $w_simei_flg = 1;
+
+	$data['course'] = strtok($_SESSION['course'], "分");
+
+	$mail_hour = $time_array[$time]["hour"];
+	if( $mail_hour < 10 ) $mail_hour = $mail_hour + 24;
+	$data['start'] = $mail_hour * 100 + $time_array[$time]["minute"];
+	$data['shop_id'] = $_SESSION['shop_id'];
+	$data['therapist_id'] = $therapist_id;
+	$data['attendance_id'] = 0;
+	$data['vipflg'] = 1;	//VIP
+
+	//----メール発送
+	$res = PHP_insertReservationPre($data);		//仮予約データ登録
+	if($res != "ok") {
+		//echo "error:" . $res . "<br />";
+		echo "error<br />";
+		exit;
+	}
+	
+	$result = vip_page_confirm_action_2_common(
+$mail,$customer_id,$time_array,$time,$access_type,$customer_name,$year,$month,$day,$week_array,
+$week,$mail_hour,$minute,$course,$therapist_name,$customer_tel,$free,$shop_area);
+	
+	if( $result == true ){
+		
+		$url = sprintf("%sssl/%s/vip/reservation/complete.php",WWW_URL_SSL,$shop_area);
+		
+		header("Location: ".$url);
+		exit();
+		
+	}else{
+		
+		$error = "送信失敗しました。もうしわけありませんが再度送信をお願い致します。";
+		
+	}
+
+}else if(isset($_POST["back"])==true){
+
+	$url = sprintf("%sssl/%s/vip/reservation/input.php?back=true",WWW_URL_SSL,$shop_area);
+	
+	header("Location: ".$url);
+	exit();
+
+}
+
+$nichizi = "";
+if($time_array[$time]["minute"]=='0'){
+	$minute = "00";
+}else{
+	$minute = $time_array[$time]["minute"];
+}
+
+$hour = $time_array[$time]["hour"];
+
+if( $hour < 10 ){
+	
+	$hour = $hour + 24;
+	
+}
+	
+$nichizi .= $month."/".$day."(".$week_array[$week].")&nbsp;&nbsp;".$hour.":".$minute."～";
+
+$tmp = get_today_year_month_day_2_common();
+
+$year_today = $tmp["year"];
+$month_today = $tmp["month"];
+$day_today = $tmp["day"];
+
+if( ($year_today==$year) && ($month_today==$month) && ($day_today==$day) ){
+	
+	$nichizi = "本日　".$nichizi;
+	
+}
+
+$pankuzu = sprintf('　＞　<a href="%sssl/%s/vip/therapist_calendar.php">セラピスト出勤カレンダー</a>　＞　予約フォーム入力　＞　確認',
+WWW_URL_SSL,$shop_area);
+
+$page_title = "予約フォーム入力確認";
+//----Smarty
+$params['css_time'] = date("ymdHi");		//CSS等のキャッシュ回避用
+$params['page_title'] = $page_title;
+
+$params['pankuzu'] = $pankuzu;
+
+$params['customer_name'] = $customer_name;
+$params['nichizi'] = $nichizi;
+$params['course'] = $course;
+$params['therapist_name'] = $therapist_name;
+$params['img_therapist'] = $img_therapist;
+$params['therapist_id'] = $therapist_id;
+$params['free'] = $free;
+$params['mail'] = $mail;
+$params['error'] = $error;
+
+$smarty->assign( 'params', $params );
+
+if($access_type=="sp"){
+
+	$smarty->assign( 'content_tpl', 'sp/ssl/tokyo/vip/reservation/confirm.tpl' );
+	$smarty->display( 'sp/ssl/tokyo/template_vip.tpl' );
+
+}else{
+
+	$smarty->assign( 'content_tpl', 'pc/ssl/tokyo/vip/reservation/confirm.tpl' );
+	$smarty->display( 'pc/ssl/tokyo/template_vip_2.tpl' );
+
+}
+
+?>

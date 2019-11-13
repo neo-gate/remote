@@ -1,0 +1,132 @@
+<table width="320" border="1" cellpadding="2" cellspacing="0" bordercolor="#CCCCCC" class="table_menu">
+	<tr>
+		<th bgcolor="#E8FFD0" width="100">
+			<div style="font-size:10px">
+				コース
+			</div>
+		</th>
+		<td bgcolor="#E8FFD0" width="100">
+			<div align="center">
+				<div>
+					料金
+				</div>
+			</div>
+		</td>
+		<td bgcolor="#E8FFD0" width="120">
+			<div align="center">
+				<div>
+					ご新規様料金
+				</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th bgcolor="#FFFFFF">
+			<div>90分</div>
+		</th>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div><del>15,000円</del></div>
+			</div>
+		</td>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>14,000円</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th bgcolor="#FFFFFF">
+			<div>120分</div>
+		</th>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div><del>20,000円</del></div>
+			</div>
+		</td>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>19,000円</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th bgcolor="#FFFFFF">
+			<div>150分</div>
+		</th>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div><del>25,000円</del></div>
+			</div>
+		</td>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>23,000円</div>
+			</div>
+		</td>
+
+	</tr>
+	<tr>
+		<th bgcolor="#FFFFFF">
+			<div>180分</div>
+		</th>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div><del>30,000円</del></div>
+			</div>
+		</td>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>28,000円</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th bgcolor="#FFFFFF">
+			<div>210分</div>
+		</th>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div><del>35,000円</del></div>
+			</div>
+		</td>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>32,000円</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th bgcolor="#FFFFFF">
+			<div>240分</div>
+		</th>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div><del>40,000円</del></div>
+			</div>
+		</td>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>37,000円</div>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<th bgcolor="#FFFFFF">
+			<div>延長30分</div>
+		</th>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>5,000円</div>
+			</div>
+		</td>
+		<td bgcolor="#FFFFFF">
+			<div align="center">
+				<div>
+					セラピスト指名料<br />
+					&nbsp;1,000円
+				</div>
+			</div>
+		</td>
+	</tr>
+</table>

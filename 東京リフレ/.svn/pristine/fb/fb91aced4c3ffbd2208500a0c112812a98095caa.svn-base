@@ -1,0 +1,27 @@
+
+<?php
+
+$document_root = $_SERVER['DOCUMENT_ROOT'];
+define("ROOT_PATH", $document_root."/");
+define("MAN_ROOT_PATH", ROOT_PATH."man/");
+define("MAN_INC", MAN_ROOT_PATH."include/");
+include(MAN_INC."define.php");
+
+
+
+$id = $_POST["id"];
+
+$sql = sprintf("update repeater set delete_flg=1 where id='%s'",$id);
+
+//echo $sql;exit();
+
+$res = mysql_query($sql, $con);
+if($res == false){
+	echo "failure";
+	exit();
+}
+
+echo "success";
+exit();
+
+?>

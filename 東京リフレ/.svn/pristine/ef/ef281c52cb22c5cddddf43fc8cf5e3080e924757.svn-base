@@ -1,0 +1,178 @@
+<?php
+/* =================================================================================
+		Script Name	hearing.php(ヒアリングシート)
+		Author		murase
+		Create Date	2018/7/17~20	Created based on hearing.php
+		Update Date	----/--/--
+		IN/OUT		受信：GET・POST	送信:post
+		Back Script	***********
+		Prev Script	***********
+		Description	ヒアリングシート
+================================================================================= */
+//初期設定
+include("include/common.php");
+$area = $_GET["area"];
+$therapist_id = $_GET["id"];
+$ch = $_GET["ch"];
+$url = $_SERVER["REQUEST_URI"];
+$result = therapist_shift_page_access_check($therapist_id,$ch);//セラピストページチェック※必要？
+if( $result == false ){
+	echo "error!";
+	exit();
+}
+$error = "";
+//ヒアリング登録・メール送信部分開始
+//hearing.tplから
+//新規登録
+if( isset($_POST["send_hearing"]) == true ){
+	/*
+	echo "<pre>";
+	print_r($_POST);
+	echo "</pre>";
+	exit();
+	*/
+	$reservation_for_board_id = $_POST["reservation_for_board_id"];
+	$hearing_content = $_POST["hearing_content"];
+	$customer_tel = $_POST["customer_tel"];
+	$customer_id = $_POST["customer_id"];
+		if( $hearing_content == "" ){
+			$error = '<span style="color:red;">未入力です。</span>';
+		}
+		if( $error == "" ){
+			$result = check_exist_therapist_hearing_common($reservation_for_board_id,$therapist_id);//ヒアリングデータの有無をチェック
+			if( $result == false ){
+				insert_therapist_hearing_common($reservation_for_board_id,$hearing_content,$therapist_id,$customer_tel,$customer_id);//ヒアリングデータ登録
+				send_mail_customer_hearing_therapist_common($reservation_for_board_id,$hearing_content,$therapist_id,$url);//メール送信
+					$error = '<span style="color:blue;">ヒアリングを送信しました。</span>';
+			}
+		}
+	//ヒアリング編集・メール送信部分開始
+	//hearing.tplから
+	//編集
+	}else if( isset($_POST["send_hearing_edit"]) == true ){
+		$reservation_for_board_id = $_POST["reservation_for_board_id"];
+		$hearing_content = $_POST["hearing_content"];
+		$customer_tel = $_POST["customer_tel"];
+		$customer_id = $_POST["customer_id"];
+		/*
+		echo "<pre>";
+		print_r($_POST);
+		echo "</pre>";
+		exit();
+		*/
+		$therapist_hearing_id = $_POST["therapist_hearing_id"];
+			if( $hearing_content == "" ){
+				$error = '<span style="color:red;">未入力です。</span>';
+			}
+			if( $error == "" ){
+				update_therapist_hearing_common($hearing_content,$customer_id,$therapist_hearing_id);//ヒアリングデータ編集
+				//メール送信
+				send_mail_customer_hearing_therapist_common($reservation_for_board_id,$hearing_content,$therapist_id,$url);//メール送信
+				$error = '<span style="color:blue;">ヒアリングを更新しました。</span>';
+			}
+	}
+
+$all_data_num = get_rsv_for_board_data_by_tp_id_and_ymd_for_shift_ctm_voice_cnt_common($therapist_id);//予約状況データ数取得
+$disp_num = 20;
+$selected_num = 1;
+if( isset($_GET["selected_num"]) == true ){
+	$selected_num = $_GET["selected_num"];
+	$start_num = (($selected_num-1)*$disp_num)+1;
+	$temp_num = $start_num+($disp_num-1);
+	if($all_data_num < $temp_num){
+		$end_num = $all_data_num;
+	}else{
+		$end_num = $temp_num;
+	}
+}else{
+	if( $all_data_num == "0" ){
+		$start_num = 0;
+		$end_num = 0;
+	}else if( $all_data_num < $disp_num ){
+		$start_num = 1;
+		$end_num = $all_data_num;
+	}else{
+		$start_num = 1;
+		$end_num = $disp_num;
+	}
+}
+$list_data = get_rsv_for_board_data_by_tp_id_and_ymd_for_shift_ctm_voice_common($therapist_id,$selected_num);//予約状況データ取得
+$paging_max_num = ceil($all_data_num/$disp_num);
+$file_name = sprintf("hearing.php?area=%s&id=%s&ch=%s&",$area,$therapist_id,$ch);
+$paging_html = get_paging_html_sp_2_common($file_name,$start_num,$end_num,$paging_max_num,$selected_num,$all_data_num);
+$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+$top_url = get_top_url($area,$therapist_id,$ch);
+$page_title = "ヒアリング";
+/*
+echo "<pre>";
+print_r($list_data);
+echo "</pre>";
+exit();
+*/
+$params['top_url'] = $top_url;
+$params['therapist_name'] = $therapist_name;
+$params['therapist_id'] = $therapist_id;
+$params['area'] = $area;
+$params['page_title'] = $page_title;
+$params['ch'] = $ch;
+$params['paging_html'] = $paging_html;
+$params['list_data'] = $list_data;
+$params['error'] = $error;
+$smarty->assign( 'params', $params );
+$smarty->assign( 'content_tpl', 'sp/hearing.tpl' );
+$smarty->display( 'sp/template.tpl' );
+
+//----予約状況データの総数取得
+function get_rsv_for_board_data_by_tp_id_and_ymd_for_shift_ctm_voice_cnt_common($therapist_id){
+
+	$ws_SQL = " select count(*) as num from reservation_for_board A";
+	$ws_SQL .= " inner join attendance_new B on B.id=A.attendance_id";
+	$ws_SQL .= " left join (select * from therapist_hearing where therapist_id='%s') as C on C.reservation_for_board_id=A.id";
+	$ws_SQL .= " where A.delete_flg='0' and A.complete_flg='1' and B.therapist_id='%s'";
+
+	$sql = sprintf($ws_SQL, $therapist_id, $therapist_id);
+	$res = mysql_query($sql, DbCon);
+	if($res == false){
+		echo "error!(get_rsv_for_board_data_by_tp_id_and_ymd_for_shift_ctm_voice_cnt_common)";
+		exit();
+	}
+
+	$row = mysql_fetch_assoc($res);
+	$cnt = $row['num'];
+
+	return $cnt;
+	exit();
+}
+
+//----予約状況データ取得(20件ずつ)
+function get_rsv_for_board_data_by_tp_id_and_ymd_for_shift_ctm_voice_common($therapist_id,$page){
+
+	$offset = ($page-1)*20;
+
+	$ws_SQL = " select A.*,C.id AS th_id, C.content from reservation_for_board A";
+	$ws_SQL .= " inner join attendance_new B on B.id=A.attendance_id";
+	$ws_SQL .= " left join (select * from therapist_hearing where therapist_id='%s') as C on C.reservation_for_board_id=A.id";
+	$ws_SQL .= " where A.delete_flg='0' and A.complete_flg='1' and B.therapist_id='%s'";
+	//$ws_SQL .= " and A.year*10000+A.month*100+A.day>='%s'";
+	$ws_SQL .= " order by A.id desc";
+	$ws_SQL .= " limit %s, 20";
+
+	$sql = sprintf($ws_SQL, $therapist_id, $therapist_id, $offset);
+	$res = mysql_query($sql, DbCon);
+	if($res == false){
+		echo "error!(get_rsv_for_board_data_by_tp_id_and_ymd_for_shift_ctm_voice_common)";
+		exit();
+	}
+
+	$i=0;
+	$list_data = array();
+
+	while($row = mysql_fetch_assoc($res)){
+		$list_data[$i++] = $row;
+	}
+
+	return $list_data;
+	exit();
+}
+
+?>

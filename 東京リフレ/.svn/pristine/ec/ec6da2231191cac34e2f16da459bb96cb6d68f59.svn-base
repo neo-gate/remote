@@ -1,0 +1,129 @@
+<?php
+
+include("include/common.php");
+include("include/auth.php");
+
+$area_name = "不明";
+
+$disp_flg = false;
+
+$error = "";
+
+if( isset($_POST["send"]) == true ){
+	
+	$area = $_POST["area"];
+	$page_year = $_POST["page_year"];
+	$page_month = $_POST["page_month"];
+	$page_day = $_POST["page_day"];
+	$naiyou = $_POST["naiyou"];
+	
+	if($naiyou==""){
+		
+		$error = '<div style="color:red;">未入力です</div>';
+		
+	}
+	
+	if($error == ""){
+		
+		regist_shift_common_comment_data($area,$page_year,$page_month,$page_day,$naiyou);
+		
+		$error = '<div style="color:blue;">更新しました</div>';
+		
+	}
+	
+	
+}else if( isset($_GET["area"]) == true ){
+	
+	$area = $_GET["area"];
+	$page_year = $_GET["year"];
+	$page_month = $_GET["month"];
+	$page_day = $_GET["day"];
+	
+	$naiyou = get_shift_common_comment_data($page_year,$page_month,$page_day,$area);
+	
+}else{
+	
+	echo "error!";
+	exit();
+	
+}
+
+if( ($page_year != "") && ($page_month != "") && ($page_day != "") ){
+
+	$disp_flg = true;
+
+	$page_week_name = get_week_name_new($page_year,$page_month,$page_day);
+
+	$page_day_disp = $page_month."/".$page_day."(".$page_week_name.")";
+
+}
+
+$area_name = get_area_name_by_area($area);
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title><?php echo $area_name;?> | 共通コメント入力</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+	<div style="width:1200px;margin:0px auto 0px auto;">
+	
+		<div>
+			<a href="index.php">トップ</a> &gt; <a href="staff_calendar_new.php?area=<?php echo $area;?>">スタッフ出勤カレンダー(<?php echo $area_name;?>)</a> &gt; 共通コメント入力(<?php echo $area_name;?>)
+		</div>
+		<div style="padding:0px 0px 100px 0px;">
+		
+			<div id="page_html_menu">
+<?php
+for($i=0;$i<$day_array_2_num;$i++){
+	
+	$year = $day_array_2[$i]["year"];
+	$month = $day_array_2[$i]["month"];
+	$day = $day_array_2[$i]["day"];
+	$week = $day_array_2[$i]["week"];
+	$week_name = get_week_name($week);
+	
+	$day_disp = $month."/".$day."(".$week_name.")";
+	$url = sprintf("shift_common_comment.php?area=%s&year=%s&month=%s&day=%s",$area,$year,$month,$day);
+	
+	echo '<a href="'.$url.'">'.$day_disp.'</a>　';
+	
+}
+?>
+			</div>
+<?php if($disp_flg == true){ ?>
+			<div style="padding:10px 0px 10px 0px;">
+				<?php echo $area_name."　".$page_day_disp;?>
+			</div>
+			<div><?php echo $error;?></div>
+			<form action="" method="post">
+				<div>
+					<input type="hidden" name="area" value="<?php echo $area;?>" />
+					<input type="hidden" name="page_year" value="<?php echo $page_year;?>" />
+					<input type="hidden" name="page_month" value="<?php echo $page_month;?>" />
+					<input type="hidden" name="page_day" value="<?php echo $page_day;?>" />
+				</div>
+				<div>
+					<textarea name="naiyou" style="width:500px;height:200px;"><?php echo $naiyou;?></textarea>
+				</div>
+				<div style="padding:20px 0px 20px 0px;">
+					<input type="submit" name="send" value="登録" style="padding:10px;" />
+				</div>
+			</form>
+			
+<?php } ?>
+			
+		</div>
+	
+	</div>
+
+</body>
+</html>

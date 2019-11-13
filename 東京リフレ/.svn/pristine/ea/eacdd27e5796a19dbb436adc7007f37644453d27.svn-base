@@ -1,0 +1,528 @@
+
+<div id="pate_top_therapist_name">
+{{$params.therapist_name}}さん
+</div>
+{{if ($params.area == "tokyo_reraku")||($params.area == "tokyo_refresh")||($params.area == "yokohama2_refresh")}}
+	{{include file="top_menu_reraku.tpl"}}
+{{else}}
+	{{include file="top_menu.tpl"}}
+{{/if}}
+
+{{if $params.error_list != ""}}
+<div style="text-align:center;padding-top:5px;">{{$params.error_list}}</div>
+{{/if}}
+
+{{if $params.message_board_data_num != "0"}}
+<div>
+	<div class="title_bar4">
+		<img src="{{$params.url_root_site}}img/shift/title/02_heading.gif" width="75" />
+	</div>
+	<div>
+
+{{if $params.shift_notice_flg == true}}
+<div class="top_shift_request">
+<div class="left_1">
+<img src="{{$params.url_root_site}}img/shift/icon/02_icon.gif" width="30" />
+</div>
+<div class="left_2">
+シフトの入力をお願いします
+</div>
+<br class="clear" />
+</div>
+{{/if}}
+
+		<div id="top_message_board_box">
+{{section name=cnt loop=$params.message_board_data}}
+{{math equation=a%b a=$smarty.section.cnt.index b=2 assign=gyou_type}}
+
+{{if $gyou_type == "1"}}
+<div class="one_2">
+{{else}}
+<div class="one_1">
+{{/if}}
+
+<div style="font-size:12px;">
+{{$params.message_board_data[cnt].day_disp}}
+</div>
+<div style="padding-top:3px;">
+<a href="message_board.php?area={{$params.area}}&ch={{$params.ch}}&id={{$params.therapist_id}}#page_{{$params.message_board_data[cnt].id}}">{{$params.message_board_data[cnt].title}}</a>
+</div>
+
+{{if $gyou_type == "1"}}
+</div>
+{{else}}
+</div>
+{{/if}}
+
+{{/section}}
+		</div>
+	</div>
+</div>
+{{/if}}
+
+<div>
+	<div class="title_bar4">
+		<img src="{{$params.url_root_site}}img/shift/title/03_heading.gif" width="100" />
+	</div>
+	<div>
+		<div id="top_message_disp">
+			{{section name=cnt loop=$params.shift_message_data}}
+				<div style="position:relative;">
+					{{if ($params.shift_message_data[cnt].type == "1") || ($params.shift_message_data[cnt].type == "11")}}
+						<div class="honbu_message_fuki">
+							<img src="{{$params.url_root_site}}img/shift/fukidashi/2.gif" width="20" />
+						</div>
+						<div class="honbu_message_box_2">
+							{{$params.shift_message_data[cnt].time_disp}}<br />
+							{{$params.shift_message_data[cnt].content}}
+						</div>
+					{{else}}
+						<div class="therapist_message_fuki">
+							<img src="{{$params.url_root_site}}img/shift/fukidashi/1.gif" width="20" />
+						</div>
+						<div class="therapist_message_box_2">
+							{{$params.shift_message_data[cnt].time_disp}}<br />
+							{{$params.shift_message_data[cnt].content}}
+						</div>
+					{{/if}}
+					<br class="clear" />
+				</div>
+			{{sectionelse}}
+				メッセージはありません
+			{{/section}}
+		</div>
+		<div style="margin:10px 0px 0px 0px;">
+			<div>{{$params.error}}</div>
+			<form action="" method="post">
+				<div style="padding:0px 0px 0px 7px;">
+					<input type="hidden" name="send_message" value="1" />
+					<input type="hidden" name="area" value="{{$params.area}}" />
+					<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+					<input type="hidden" name="year" value="{{$params.year}}" />
+					<input type="hidden" name="month" value="{{$params.month}}" />
+					<input type="hidden" name="ch" value="{{$params.ch}}" />
+					<textarea name="message_content" style="width:300px;height:70px;"></textarea>
+				</div>
+				<div style="padding:10px 0px 0px 7px;">
+					<div style="float:left;margin-left:10px;">
+
+						<a href="message_history.php?area={{$params.area}}&id={{$params.therapist_id}}&ch={{$params.ch}}">
+							<img src="{{$params.url_root_site}}img/shift/btn/03_button_01.gif" width="135" />
+						</a>
+
+					</div>
+					<div style="float:left;margin-left:20px;">
+						<input type="image" src="{{$params.url_root_site}}img/shift/btn/03_button_02.gif" alt="メッセージ送信" width="135" />
+					</div>
+					<br class="clear" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="title_bar4">
+	<img src="{{$params.url_root_site}}img/shift/title/04_heading.gif" width="110" />
+</div>
+
+<form action="" method="post" id="work_start_end_frm">
+
+<input type="hidden" name="attendance_id" value="{{$params.attendance_id}}" />
+
+<div id="top_work_start_end">
+
+{{if $params.today_attendance_flg == true}}
+
+<div class="left_1">
+{{if $params.work_start_flg == true}}
+<img src="{{$params.url_root_site}}img/shift/btn/04_button_01_on.gif" width="135" />
+{{else}}
+<img src="{{$params.url_root_site}}img/shift/btn/04_button_01_off.gif" width="135" class="image_btn" onclick="push_btn_work_start();" />
+{{/if}}
+</div>
+<div class="left_2">
+{{if ($params.work_end_flg == true) || ($params.work_start_flg != true)}}
+<img src="{{$params.url_root_site}}img/shift/btn/04_button_02_on.gif" width="135" />
+{{else}}
+<img src="{{$params.url_root_site}}img/shift/btn/04_button_02_off.gif" width="135" class="image_btn" onclick="push_btn_work_end();" />
+{{/if}}
+</div>
+
+{{else}}
+
+<div class="left_1">
+<img src="{{$params.url_root_site}}img/shift/btn/04_button_01_on.gif" width="135" />
+</div>
+<div class="left_2">
+<img src="{{$params.url_root_site}}img/shift/btn/04_button_02_on.gif" width="135" />
+</div>
+
+{{/if}}
+
+<br class="clear" />
+
+</div>
+
+<div style="text-align:center;margin-top:10px;">
+<a href="movement_cost_list.php?area={{$params.area}}&therapist_id={{$params.therapist_id}}&ch={{$params.ch}}" style="color:blue;">移動実費</a>
+</div>
+
+</form>
+
+<div style="color:red;">{{$params.error_mail}}</div>
+
+<div>
+	<div class="title_bar4">
+<img src="{{$params.url_root_site}}img/shift/title/05_heading.gif" width="150" />
+	</div>
+	<div id="top_reserve_history">
+		{{section name=cnt loop=$params.reservation_data}}
+		{{math equation=a+b a=$smarty.section.cnt.index b=1 assign=reserve_number}}
+
+{{if $params.reservation_data[cnt].start_real_time == "0"}}
+	{{assign var="end_flg" value="0"}}
+{{else}}
+	{{if $params.reservation_data[cnt].end_real_time == "0"}}
+{{assign var="end_flg" value="0"}}
+	{{else}}
+{{assign var="end_flg" value="1"}}
+	{{/if}}
+{{/if}}
+
+{{if $end_flg == "1"}}
+<div class="one_sumi">
+{{else}}
+<div class="one" style="margin-top: 0px;">
+{{/if}}
+<form action="hearing_history.php" method="post">
+	<input type="hidden" name="customer_tel" value="{{$params.reservation_data[cnt].customer_tel}}" />
+	<input type="hidden" name="area" value="{{$params.area}}" />
+	<input type="hidden" name="ch" value="{{$params.ch}}" />
+	<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+<div class="content_1">
+
+<div class="left_1">
+{{if $end_flg == "1"}}
+<img src="{{$params.url_root_site}}img/shift/top/number/sumi.gif" width="30" />
+{{else}}
+<img src="{{$params.url_root_site}}img/shift/top/number/{{$reserve_number}}.gif" width="30" />
+{{/if}}
+</div>
+
+<div class="left_2" style="float: left;margin: 12px 20px 20px 20px;">
+
+<div class="content_1">
+	{{$params.reservation_data[cnt].start_hour}}:{{$params.reservation_data[cnt].start_minute}}
+</div>
+<div class="content_2">
+	↓
+</div>
+<div class="content_3">
+	{{$params.reservation_data[cnt].end_hour}}:{{$params.reservation_data[cnt].end_minute}}
+</div>
+
+</div>
+
+<div class="left_3">
+
+<div class="content_1">
+	{{$params.reservation_data[cnt].customer_name}}({{$params.reservation_data[cnt].area_name}})
+</div>
+<div class="content_2">
+	{{$params.reservation_data[cnt].course_var}}
+	{{if $params.reservation_data[cnt].extension != "0"}}
+		+{{$params.reservation_data[cnt].extension}}分
+	{{/if}}
+	&nbsp;/&nbsp;{{$params.reservation_data[cnt].price|number_format}}円
+</div>
+<div class="content_3">
+決済：
+{{if $params.reservation_data[cnt].card_flg == "1"}}
+	<span class="one_1">カード決済</span>
+{{else}}
+	<span class="one_2">現金支払い</span>
+{{/if}}
+</div>
+
+</div>
+<input type = "submit" value ="ヒアリング履歴"/>
+<br class="clear" />
+
+</div>
+</form>
+<div class="content_2">
+
+<div class="left_1">
+{{if $end_flg == "1"}}
+<img src="{{$params.url_root_site}}img/shift/top/05_subhead_sumi_01.gif" width="25" />
+{{else}}
+<img src="{{$params.url_root_site}}img/shift/top/05_subhead_01.gif" width="25" />
+{{/if}}
+</div>
+
+<div class="left_2">
+{{if $params.reservation_data[cnt].okuri_driver_name == "TAXI"}}
+タクシー
+{{elseif $params.reservation_data[cnt].okuri_driver_name == "未定"}}
+未定
+{{else}}
+<a href="tel:{{$params.reservation_data[cnt].okuri_driver_tel}}">
+{{$params.reservation_data[cnt].okuri_driver_name}}
+</a>
+{{/if}}
+</div>
+
+<br class="clear" />
+
+</div>
+
+<div class="content_3">
+
+<div class="left_1">
+{{if $end_flg == "1"}}
+<img src="{{$params.url_root_site}}img/shift/top/05_subhead_sumi_02.gif" width="25" />
+{{else}}
+<img src="{{$params.url_root_site}}img/shift/top/05_subhead_02.gif" width="25" />
+{{/if}}
+</div>
+
+<div class="left_2">
+
+{{if $params.reservation_data[cnt].start_btn_state == false}}
+
+<img src="{{$params.url_root_site}}img/shift/btn/start_off.gif" width="90" />
+
+{{elseif $params.reservation_data[cnt].start_real_time == "0"}}
+
+<form action="" method="post" id="start_frm_{{$params.reservation_data[cnt].id}}">
+<input type="hidden" name="send_start" value="1" />
+<input type="hidden" name="reservation_for_board_id" value="{{$params.reservation_data[cnt].id}}" />
+<input type="hidden" name="area" value="{{$params.area}}" />
+<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+<input type="hidden" name="year" value="{{$params.year}}" />
+<input type="hidden" name="month" value="{{$params.month}}" />
+<input type="hidden" name="ch" value="{{$params.ch}}" />
+<input type="hidden" name="course" value="{{$params.reservation_data[cnt].course}}" />
+<input type="hidden" name="course_var" value="{{$params.reservation_data[cnt].course_var}}" />
+<input type="hidden" name="extension" value="{{$params.reservation_data[cnt].extension}}" />
+<img src="{{$params.url_root_site}}img/shift/btn/start_on.gif" width="90" onclick="reservation_start('{{$params.reservation_data[cnt].id}}');" class="image_btn" />
+</form>
+
+{{else}}
+
+<img src="{{$params.url_root_site}}img/shift/btn/start_off.gif" width="90" />
+
+{{/if}}
+
+</div>
+
+<div class="left_3">
+
+{{if $params.reservation_data[cnt].start_real_time == "0"}}
+
+	<img src="{{$params.url_root_site}}img/shift/btn/end_off.gif" width="90" />
+
+{{else}}
+
+	{{if $params.reservation_data[cnt].end_real_time == "0"}}
+
+<form action="" method="post" id="end_frm_{{$params.reservation_data[cnt].id}}">
+<input type="hidden" name="send_end" value="1" />
+<input type="hidden" name="reservation_for_board_id" value="{{$params.reservation_data[cnt].id}}" />
+<input type="hidden" name="area" value="{{$params.area}}" />
+<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+<input type="hidden" name="year" value="{{$params.year}}" />
+<input type="hidden" name="month" value="{{$params.month}}" />
+<input type="hidden" name="ch" value="{{$params.ch}}" />
+<input type="hidden" name="course" value="{{$params.reservation_data[cnt].course}}" />
+<input type="hidden" name="course_var" value="{{$params.reservation_data[cnt].course_var}}" />
+<input type="hidden" name="extension" value="{{$params.reservation_data[cnt].extension}}" />
+<img src="{{$params.url_root_site}}img/shift/btn/end_on.gif" width="90" onclick="reservation_end('{{$params.reservation_data[cnt].id}}');" class="image_btn" />
+</form>
+
+	{{else}}
+		<img src="{{$params.url_root_site}}img/shift/btn/end_off.gif" width="90" />
+	{{/if}}
+
+{{/if}}
+
+</div>
+
+<div class="left_4">
+
+{{if $params.reservation_data[cnt].start_real_time == "0"}}
+
+<form action="reservation_edit.php" method="post">
+<input type="hidden" name="send_list_reservation_edit" value="1" />
+<input type="hidden" name="reservation_for_board_id" value="{{$params.reservation_data[cnt].id}}" />
+<input type="hidden" name="area" value="{{$params.area}}" />
+<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+<input type="hidden" name="ch" value="{{$params.ch}}" />
+<input type="hidden" name="course" value="{{$params.reservation_data[cnt].course}}" />
+<input type="hidden" name="course_var" value="{{$params.reservation_data[cnt].course_var}}" />
+<input type="hidden" name="extension" value="{{$params.reservation_data[cnt].extension}}" />
+<input type="image" src="{{$params.url_root_site}}img/shift/btn/change_on.gif" alt="変更" width="45" />
+</form>
+
+{{else}}
+
+<img src="{{$params.url_root_site}}img/shift/btn/change_off.gif" width="45" />
+
+{{/if}}
+
+</div>
+
+<br class="clear" />
+
+</div>
+
+<div class="content_4">
+
+<div class="left_1">
+{{if $end_flg == "1"}}
+<img src="{{$params.url_root_site}}img/shift/top/05_subhead_sumi_03.gif" width="25" />
+{{else}}
+<img src="{{$params.url_root_site}}img/shift/top/05_subhead_03.gif" width="25" />
+{{/if}}
+</div>
+
+<div class="left_2">
+{{if $params.reservation_data[cnt].mukae_driver_name == "TAXI"}}
+タクシー
+{{elseif $params.reservation_data[cnt].mukae_driver_name == "未定"}}
+未定
+{{else}}
+<a href="tel:{{$params.reservation_data[cnt].mukae_driver_tel}}">
+{{$params.reservation_data[cnt].mukae_driver_name}}
+</a>
+{{/if}}
+</div>
+
+<br class="clear" />
+
+</div>
+
+{{if $end_flg == "1"}}
+</div>
+{{else}}
+</div>
+{{/if}}
+
+		{{sectionelse}}
+			予約はありません
+		{{/section}}
+	</div>
+</div>
+
+<div class="title_bar4">
+<img src="{{$params.url_root_site}}img/shift/title/06_heading.gif" width="100" />
+</div>
+
+<div style="padding:0px 0px 100px 0px;">
+
+{{if $params.shift_notice_flg == true}}
+<div class="top_shift_request">
+<div class="left_1">
+<img src="{{$params.url_root_site}}img/shift/icon/02_icon.gif" width="30" />
+</div>
+<div class="left_2">
+シフトの入力をお願いします
+</div>
+<br class="clear" />
+</div>
+{{/if}}
+
+	<div class="title_bar5">
+
+		{{if $params.today_month == $params.month}}
+			<div class="one">{{$params.today_month}}月</div>
+		{{else}}
+			<a href="index.php?area={{$params.area}}&id={{$params.therapist_id}}&year={{$params.today_year}}&month={{$params.today_month}}&ch={{$params.ch}}">
+				{{$params.today_month}}月
+			</a>
+		{{/if}}
+		<div class="sepa">｜</div>
+		{{if $params.next_month == $params.month}}
+			<div class="one">{{$params.next_month}}月</div>
+		{{else}}
+			<a href="index.php?area={{$params.area}}&id={{$params.therapist_id}}&year={{$params.next_year}}&month={{$params.next_month}}&ch={{$params.ch}}">
+				{{$params.next_month}}月
+			</a>
+		{{/if}}
+		<div class="sepa">｜</div>
+		{{if $params.month_3 == $params.month}}
+			<div class="one">{{$params.month_3}}月</div>
+		{{else}}
+			<a href="index.php?area={{$params.area}}&id={{$params.therapist_id}}&year={{$params.year_3}}&month={{$params.month_3}}&ch={{$params.ch}}">
+				{{$params.month_3}}月
+			</a>
+		{{/if}}
+
+		{{if $params.kensyuu_flg == "1" }}
+			<div class="sepa">｜</div>
+			<a href="index_kensyuu.php?area={{$params.area}}&id={{$params.therapist_id}}&ch={{$params.ch}}">
+				研修日
+			</a>
+		{{/if}}
+
+		<br class="clear" />
+
+	</div>
+
+	<form action="" method="post" id="edit_frm">
+
+	<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+	<input type="hidden" name="area" value="{{$params.area}}" />
+	<input type="hidden" name="year" value="{{$params.year}}" />
+	<input type="hidden" name="month" value="{{$params.month}}" />
+	<input type="hidden" name="ch" value="{{$params.ch}}" />
+	<input type="hidden" name="send" value="1" />
+
+	<div id="shift_regist_check_all">
+		<div class="content_1">チェックした日付に、以下のシフトを一括コピー</div>
+		<div class="content_2">
+			<div class="left_1">
+			<select name="start_time_check_all">
+			{{$params.start_time_check_all_option}}
+			</select>
+			</div>
+			<div class="left_2">
+			<select name="end_time_check_all">
+			{{$params.end_time_check_all_option}}
+			</select>
+			</div>
+			<br class="clear" />
+		</div>
+	</div>
+
+	<div>
+
+		{{section name=cnt loop=$params.list_data}}
+
+		{{math equation=a%b a=$smarty.section.cnt.index b=2 assign=gyou_type}}
+
+{{if $gyou_type == "1"}}
+<div class="top_list_gyou_1">
+{{else}}
+<div class="top_list_gyou_2">
+{{/if}}
+
+{{$params.list_data[cnt]}}
+
+{{if $gyou_type == "1"}}
+</div>
+{{else}}
+</div>
+{{/if}}
+
+		{{/section}}
+
+		<div style="text-align:center;padding:30px 0px 0px 0px;">
+			<input type="image" src="{{$params.url_root_site}}img/shift/btn/06_button_02.gif" alt="登録" width="140" />
+		</div>
+
+	</div>
+
+	</form>
+
+</div>

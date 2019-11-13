@@ -1,0 +1,257 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>{{$params.page_title}}</title>
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_FRONT}}js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="{{$smarty.const.WWW_URL_MAN}}js/staff_message_board.js"></script>
+<link href="{{$smarty.const.WWW_URL_MAN}}css/driver.css" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+
+<div id="driver_instruction">
+
+<div class="content_1">
+
+<div class="left_1">
+ドライバー
+</div>
+
+<div class="left_2">
+{{$params.select_frm_staff}}
+</div>
+
+<div class="left_3">
+{{$params.car_color}}/{{$params.car_number}}
+</div>
+
+<div class="left_4">
+{{$params.tel}}
+</div>
+
+<br class="clear" />
+
+</div>
+
+<div class="content_2">
+
+<div class="left_1">
+{{if $params.attendance_id != ""}}
+{{$params.work_time_disp}}
+{{else}}
+---
+{{/if}}
+</div>
+
+<div class="left_2">
+状況ボード表示
+</div>
+
+<div class="left_3">
+<form action="" method="post">
+<input type="hidden" name="staff_id" value="{{$params.staff_id}}" />
+<input type="hidden" name="attendance_id" value="{{$params.attendance_id}}" />
+
+{{if $params.not_board_display_flg === "1"}}
+<input type="hidden" name="not_board_display_flg" value="0" />
+<input type="submit" name="send_board_disp" value="表示する" />
+{{elseif $params.not_board_display_flg === "0"}}
+<input type="hidden" name="not_board_display_flg" value="1" />
+<input type="submit" name="send_board_disp" value="非表示にする" />
+{{else}}
+本日の出勤なし
+{{/if}}
+</form>
+</div>
+
+<br class="clear" />
+
+</div>
+
+<div class="content_3">
+
+<div>{{$params.error}}</div>
+
+<form action="" method="post">
+<input type="hidden" name="staff_id" value="{{$params.staff_id}}" />
+
+<div class="content_0">
+<div class="left_1">
+件名：
+</div>
+<div class="left_2">
+<input type="text" name="send_title" value="{{$params.send_title}}" style="width:400px;" />
+</div>
+<br class="clear" />
+</div>
+
+<div class="content_1">
+<div class="left_1">
+本文：
+</div>
+<div class="left_2">
+<textarea name="send_content" style="width:400px;height:100px;">{{$params.send_content}}</textarea>
+</div>
+<br class="clear" />
+</div>
+
+<div class="content_2">
+<input type="submit" name="send" style="padding:5px 10px 5px 10px;" />
+</div>
+
+</form>
+
+</div>
+
+<div class="content_4">
+
+<div class="left_1">
+{{section name=cnt loop=$params.list}}
+
+{{if $params.list[cnt].type == "1"}}
+<div class="one_2">
+{{else}}
+<div class="one">
+{{/if}}
+
+<div class="left_1">
+{{$params.list[cnt].created|date_format:"%m/%d %H:%M"}}
+</div>
+<div class="left_2">
+{{$params.list[cnt].content}}
+</div>
+<br class="clear" />
+
+{{if $params.list[cnt].type == "1"}}
+</div>
+{{else}}
+</div>
+{{/if}}
+
+{{/section}}
+
+&nbsp;
+
+</div>
+
+<div class="left_2">
+
+{{if $params.attendance_id != ""}}
+<div class="back_plans">
+<div class="left_1">
+事務所戻り
+</div>
+<div class="left_2">
+{{$params.back_plans_disp}}
+</div>
+<br class="clear" />
+</div>
+<hr />
+{{/if}}
+
+{{section name=cnt loop=$params.board_data}}
+<div class="one">
+{{if $params.board_data[cnt].data_type == "okuri"}}
+
+<div class="content_1">
+
+<div class="left_1">
+【送り】
+</div>
+
+<div class="left_2">
+{{$params.board_data[cnt].therapist_name}}
+</div>
+
+<div class="left_3">
+{{$params.board_data[cnt].start_hour}}:{{$params.board_data[cnt].start_minute}}
+</div>
+
+<div class="left_4">
+開始予定
+</div>
+
+<br class="clear" />
+
+</div>
+
+<div class="content_2">
+出発　{{$params.board_data[cnt].okuri_time_disp}}
+</div>
+
+<div class="content_3">
+状態　{{$params.board_data[cnt].driver_state_disp}}
+</div>
+
+<div class="content_4">
+コメント
+</div>
+
+<div class="content_5">
+{{$params.board_data[cnt].okuri_driver_comment|nl2br}}
+</div>
+
+<hr />
+
+{{elseif $params.board_data[cnt].data_type == "mukae"}}
+
+<div class="content_1">
+
+<div class="left_1">
+【迎え】
+</div>
+
+<div class="left_2">
+{{$params.board_data[cnt].therapist_name}}
+</div>
+
+<div class="left_3">
+{{$params.board_data[cnt].end_hour}}:{{$params.board_data[cnt].end_minute}}
+</div>
+
+<div class="left_4">
+終了予定
+</div>
+
+<br class="clear" />
+
+</div>
+
+<div class="content_2">
+到着　{{$params.board_data[cnt].mukae_time_disp}}
+</div>
+
+<div class="content_3">
+状態　{{$params.board_data[cnt].driver_state_disp}}
+</div>
+
+<div class="content_4">
+コメント
+</div>
+
+<div class="content_5">
+{{$params.board_data[cnt].mukae_driver_comment|nl2br}}
+</div>
+
+<hr />
+
+{{/if}}
+</div>
+{{/section}}
+
+&nbsp;
+
+</div>
+
+<br class="clear" />
+
+</div>
+
+</div>
+
+</body>
+</html>
+

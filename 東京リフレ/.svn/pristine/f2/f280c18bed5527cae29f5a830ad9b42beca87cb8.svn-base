@@ -1,0 +1,275 @@
+
+<div style="padding-top:10px;">
+	<div style="float:left;">
+		<div>
+			セラピスト：{{$params.therapist_name}}さん　({{$params.therapist_age}})　
+			<span id="therapist_tel_disp">{{$params.therapist_tel}}</span>
+		</div>
+		<div id="man_shift_content_1">
+			{{if $params.meeting_place_disp_flg == true}}
+				<div class="title">自宅待機合流場所：</div>
+				{{section name=cnt loop=$params.meeting_place}}
+					<div class="content">{{$params.meeting_place[cnt].content}}</div>
+				{{/section}}
+			{{/if}}
+			<div class="title">自宅住所：</div>
+			<div class="content">{{$params.therapist_address}}</div>
+			<div class="title" style="float: left;">VIP表示順キー：</div>
+			<div class="content" style="padding-top: 5px;">
+				<form action="" method="post">
+					<input type="hidden" name="area" value="{{$params.area}}" />
+					<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+					<select name="vip_order_key">
+						{{if $params.vip_order_key == 0}}
+							<option value="-1">なし</option>
+							<option value="0" selected>新人</option>
+							<option value="1">おすすめ</option>
+						{{elseif $params.vip_order_key == 1}}
+							<option value="-1">なし</option>
+							<option value="0">新人</option>
+							<option value="1" selected>おすすめ</option>
+						{{else}}
+							<option value="-1" selected>なし</option>
+							<option value="0">新人</option>
+							<option value="1">おすすめ</option>
+						{{/if}}
+					</select>
+					<input type="submit" name="vip_order_send" value="更新" />
+				</form>
+			</div>
+		</div>
+	</div>
+	<div style="float:right;">
+		<div>
+		{{if $params.therapist_page_id != ""}}
+			<input type="button" value="セラピストページ編集" onclick="location.href='{{$params.therapist_page_url}}'" />
+		{{/if}}
+		</div>
+		<div style="padding:15px 0px 0px 0px;">
+			<input type="button" value="セラピスト成績表" onclick="location.href='{{$params.therapist_reportcard_url}}'" />
+		</div>
+		<div style="padding:15px 0px 0px 0px;">
+			<form action="{{$params.therapist_edit_url}}" method="post">
+			<input type="hidden" name="area" value="{{$params.area}}" />
+			<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+			<input type="submit" name="edit_send" value="個人情報編集" />
+			</form>
+		</div>
+	</div>
+	<br class="clear" />
+</div>
+
+{{if $params.error_4 != ""}}
+<div>{{$params.error_4}}</div>
+{{/if}}
+
+<div style="padding:5px;border:solid 1px #eee;margin:20px 0px 0px 0px;">
+	{{section name=cnt loop=$params.shift_message_data}}
+		<div {{if $params.shift_message_data[cnt].type == "1"}} style="color:red;"{{/if}}>
+			<div style="float:left;width:40px;font-size:12px;">
+				{{if $params.shift_message_data[cnt].type == "1"}}
+					本部
+				{{else}}
+					{{$params.therapist_name|mb_strimwidth:0:4:"":'UTF-8'}}
+				{{/if}}
+			</div>
+			<div style="float:left;width:70px;font-size:12px;">
+				{{$params.shift_message_data[cnt].created|date_format:"%m/%d %H:%M"}}
+			</div>
+			<div style="float:left;width:450px;font-size:12px;">
+				{{$params.shift_message_data[cnt].content}}
+			</div>
+			<br class="clear" />
+		</div>
+	{{/section}}
+	<div id="shift_more_disp">
+	<a href="{{$params.more_link_url}}">さらに読み込む・・・</a>
+	</div>
+</div>
+
+<div style="padding:20px 0px 0px 0px;text-align:center;">
+{{if $params.error_3 != ""}}
+<div style="padding:0px 0px 5px 0px;">{{$params.error_3}}</div>
+{{/if}}
+<form action="" method="post">
+<input type="hidden" name="area" value="{{$params.area}}" />
+<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+<div>
+<textarea name="naiyou" style="width:500px;height:100px;">{{$params.mail_naiyou}}</textarea>
+</div>
+<div style="padding:10px 0px 0px 0px;">
+<input type="submit" name="send_mail" value="メール送信" style="padding:10px;" />　　　　　　　　　
+<input type="submit" name="send_mail_shijutsu" value="施術連絡" style="padding:10px;" />
+</div>
+</form>
+</div>
+
+<div style="padding:20px 0px 20px 0px;">
+	<div style="padding:0px 0px 0px 20px;">○シフト登録</div>
+	<div style="padding:10px 0px 20px 20px;border-bottom:solid 1px blue;">
+		
+	</div>
+	{{if $params.error != ""}}
+		<div style="padding:5px 0px 0px 0px;">{{$params.error}}</div>
+	{{/if}}
+	<div style="padding:10px 0px 10px 10px;">
+		<div style="float:left;width:50px;">
+			日付
+		</div>
+		<div style="float:left;width:60px;">
+			入り
+		</div>
+		<div style="float:left;width:20px;">
+			&nbsp;
+		</div>
+		<div style="float:left;width:90px;">
+			ラスト
+		</div>
+		<div style="float:left;width:30px;">
+			&nbsp;
+		</div>
+		<div style="float:left;width:60px;">
+			承認
+		</div>
+		<div style="float:left;width:60px;">
+			不承認
+		</div>
+		<div style="float:left;width:60px;">
+			締切
+		</div>
+		<br class="clear" />
+	</div>
+	<div>
+		<form action="" method="post">
+		<input type="hidden" name="area" value="{{$params.area}}" />
+		<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+		{{section name=cnt loop=$params.list_data}}
+			<div style="border-top:dotted 1px #000;padding:15px 10px 15px 10px;">
+				{{$params.list_data[cnt]}}
+			</div>
+		{{sectionelse}}
+			<div style="padding:20px 0px 20px 0px;text-align:center;">未確認のシフト登録はありません</div>
+		{{/section}}
+		<div style="border-top:dotted 1px #000;"></div>
+		{{if $params.list_data != null}}
+			<div style="text-align:center;padding:30px 0px 10px 0px;">
+				<input type="submit" name="send_regist" value="登録" style="padding:10px;" />
+			</div>
+		{{/if}}
+		</form>
+	</div>
+</div>
+
+<div style="padding:20px 0px 0px 0px;">
+	<div style="padding:0px 0px 0px 20px;">○シフト変更依頼</div>
+	{{if $params.error_2 != ""}}
+		<div style="padding:5px 0px 0px 0px;">{{$params.error_2}}</div>
+	{{/if}}
+	<div style="padding:10px 0px 10px 10px;">
+		<div style="float:left;width:50px;">
+			&nbsp;
+		</div>
+		<div style="float:left;width:60px;">
+			&nbsp;
+		</div>
+		<div style="float:left;width:20px;">
+			&nbsp;
+		</div>
+		<div style="float:left;width:120px;">
+			&nbsp;
+		</div>
+		<div style="float:left;width:120px;">
+			承認
+		</div>
+		<div style="float:left;width:120px;">
+			不承認
+		</div>
+		<br class="clear" />
+	</div>
+	<div>
+		<form action="" method="post">
+		<input type="hidden" name="area" value="{{$params.area}}" />
+		<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+		{{section name=cnt loop=$params.list_data_edit}}
+			<div style="border-top:dotted 1px #000;padding:15px 10px 15px 10px;">
+				{{$params.list_data_edit[cnt]}}
+			</div>
+		{{sectionelse}}
+			<div style="padding:20px 0px 20px 0px;text-align:center;">未確認のシフト変更依頼はありません</div>
+		{{/section}}
+		<div style="border-top:dotted 1px #000;"></div>
+		{{if $params.list_data_edit != null}}
+			<div style="text-align:center;padding:30px 0px 10px 0px;">
+				<input type="submit" name="send_edit" value="登録" style="padding:10px;" />
+			</div>
+		{{/if}}
+		</form>
+	</div>
+</div>
+
+{{if $params.therapist_page_tmp_flg==true}}
+<div id="shift_hp_approval">
+<div style="color:green;font-weight:bold;margin-bottom:10px;">HP変更の承認待ちです</div>
+<table border="1">
+<tr>
+<td class="shift_hp_approval_td">PR</td>
+<td class="shift_hp_approval_td">{{$params.pr|nl2br}}</td>
+</tr>
+<tr>
+<td class="shift_hp_approval_td">資格</td>
+<td class="shift_hp_approval_td">{{$params.shikaku}}</td>
+</tr>
+<tr>
+<td class="shift_hp_approval_td">一押しメニュー</td>
+<td class="shift_hp_approval_td">{{$params.disp_skill_2}}</td>
+</tr>
+<tr>
+<td class="shift_hp_approval_td">施術可能メニュー</td>
+<td class="shift_hp_approval_td">{{$params.disp_skill}}</td>
+</tr>
+</table>
+<div style="margin:10px 0px 0px 0px;">
+<form action="" method="post">
+<input type="hidden" name="area" value="{{$params.area}}" />
+<input type="hidden" name="therapist_id" value="{{$params.therapist_id}}" />
+<div><input type="submit" name="send_hp" value="HP承認" style="padding:10px;" /></div>
+</form>
+</div>
+</div>
+{{/if}}
+
+<div style="padding:5px;border:solid 1px #eee;margin:30px 0px 100px 0px;">
+	{{section name=cnt loop=$params.history_data}}
+		<div {{if $params.history_data[cnt].staff_type == "1"}} style="color:red;"{{/if}}>
+			<div style="float:left;width:40px;font-size:12px;">
+				{{if $params.history_data[cnt].staff_type == "1"}}
+					本部
+				{{else}}
+					{{$params.history_data[cnt].name|mb_strimwidth:0:4:"":'UTF-8'}}
+				{{/if}}
+			</div>
+			<div style="float:left;width:40px;font-size:12px;">
+				{{$params.history_data[cnt].created|date_format:"%m/%d"}}
+			</div>
+			<div style="float:left;width:400px;font-size:12px;">
+				{{$params.history_data[cnt].message}}
+			</div>
+			<br class="clear" />
+		</div>
+	{{/section}}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

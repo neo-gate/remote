@@ -1,0 +1,91 @@
+if(window.location.port == 443) {
+	var url_root = "https://"+location.hostname+"/";
+} else {
+	var url_root = "http://"+location.hostname+"/";
+}
+var url_root_man = url_root + "man/";
+
+$(function() {
+
+	$(".title").click(function(){
+		var idname = $(this).attr("id");
+		var id = idname.replace("title_", "");
+		$("#content_"+id).toggle();
+
+	});
+
+	$('label').click(function(){
+
+		var classname = $(this).attr("class");
+		var id = classname.replace("lavel_", "");
+		var frm_id = "staff_read_frm_"+id;
+		var $checked = $('#'+frm_id+' [name=staff_read]:checked');
+		var $output = $checked.map(function(index, el) {
+		    return $(this).val();
+		}).get().join(",");
+		//alert($output);
+		var indicator_id = "staff_read_img_"+id;
+		var indicator_url = url_root+"img/indicator.gif";
+		var indicator_img = '<img src="'+indicator_url+'" width="20" />';
+		$("#"+indicator_id).html(indicator_img);
+
+		$.ajax({
+			type:'post',
+			url:url_root_man+'ajax/staff_read.php',
+			data:{
+				'staff_read':$output,
+				'id':id
+			},
+			success:function(data){
+				$("#"+indicator_id).html(data);
+			}
+		});
+
+	});
+
+	$('.complete_flg_checkbox').click(function(){
+
+		var id_name = $(this).attr("id");
+		var id_value = $('#'+id_name).val();
+		var id_name_2 = '#'+id_name;
+		var check_value = "";
+
+		var data_id = id_name.replace("complete_flg_checkbox_", "");
+
+		if($(id_name_2+":checked").val()){
+			check_value = "1";
+		}else{
+			check_value = "0";
+		}
+
+		var indicator_id = "staff_read_img_"+data_id;
+		var indicator_url = url_root+"img/indicator.gif";
+		var indicator_img = '<img src="'+indicator_url+'" width="20" />';
+		$("#"+indicator_id).html(indicator_img);
+
+		//alert(id_name);
+		//alert(id_value);
+		//alert(check_value);
+		//alert(data_id);
+
+		$.ajax({
+			type:'post',
+			url:url_root_man+'ajax/update_message_check_value.php',
+			data:{
+				'check_value':check_value,
+				'data_id':data_id
+			},
+			success:function(data){
+				$("#"+indicator_id).html(data);
+			}
+		});
+
+	});
+
+	$("#staff_id_select").change(function() {
+		var staff_id = $(this).val();
+		var url = url_root_man+"driver/instruction.php?id="+staff_id;
+		location.href = url;
+		exit;
+	});
+});

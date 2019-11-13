@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<title>施術別売上({{$pm.area_name}}) | 管理</title>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1/i18n/jquery.ui.datepicker-ja.min.js"></script>
+		<link type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+		<script type="text/javascript" src="js/sale_operation.js"></script>
+		<link href="style.css" rel="stylesheet" type="text/css" />
+		<style>
+			*{
+				font-size:14px;
+			}
+			table {
+				background-color:#ffffff table-layout: fixed; border-collapse: collapse; border-spacing: 1px; empty-cells: show; border: 1px solid #666666;
+			}
+			table tr th{
+				background-color:#c9caca;
+				padding:5px 5px 5px 5px;
+				border: 1px solid #666666;
+				font-size: 10pt;
+			}
+			table tr td{
+				padding:2px 5px 2px 5px;
+				border: 1px solid #666666;
+			}
+			body{
+			}
+		</style>
+		<script>
+			$(function() {
+			$("#datepicker").datepicker();
+			});
+		</script>
+	</head>
+	<body>
+		<div style="margin:0px 0px 0px 0px;">
+			{{if $pm.all_page_flg == true}}
+			<div>
+				<div style="float:left;"><a href="index.php">管理トップ</a> &gt; <a href="sale.php">売上・ポイント</a> &gt; <a href="sale_operation_top.php">施術別売上</a> &gt; {{$pm.area_name}}</div>
+				<div style="float:right;"><a href="logout.php">ログアウト</a></div>
+				<br style="clear:both" />
+			</div>
+			<div style="padding:0px 0px 0px 30px;">
+				{{include file="man/sale_menu.tpl" params=$pm}}
+			</div>
+			{{else}}
+				{{$pm.$w_staff_menue}}
+			{{/if}}
+		</div>
+		<div style="padding:0px 0px 100px 30px;">
+			<div><input type="hidden" name="area" value="{{$pm.area}}" id="sale_driver_area_val" /></div>
+			<div style="padding:10px 0px 0px 0px;">
+				<div id="sale_driver_day_select_area" style="float:left;">
+					<form action="" method="get">
+						<input type="hidden" name="area" value="{{$pm.area}}" />
+						<input type="hidden" name="year" value="{{$pm.year}}" />
+						<input type="hidden" name="month" value="{{$pm.month}}" />
+						<input type="hidden" name="day" value="{{$pm.day}}" />
+						<input type="text" id="datepicker" name="selected_time" value="{{$smarty.request.selected_time}}" />
+						<input type="submit" name="send_selected_time" value="日付選択" />
+					</form>
+				</div>
+				{{if $pm.all_page_flg == true}}
+				<div style="float:left;padding-left:30px;">○<a href="sale_change_history.php?type=operation&{{$pm.url_para_add}}">修正履歴</a></div>
+				{{/if}}
+				<br class="clear" />
+			</div>
+			<div style="padding:20px 0px 0px 0px;">
+				<div style="float:left;">{{$pm.day_disp}}</div>
+				<div style="float:left;padding-left:30px;">
+					{{if $pm.all_page_flg == true}}
+						{{if $pm.area == "all"}}
+							<b>全体</b>　
+						{{else}}
+							<a href="{{$smarty.server.SCRIPT_NAM}}?area=all{{$pm.url_para}}">全体</a>　
+						{{/if}}
+						{{$pm.ShopMenue}}
+					{{/if}}
+				</div>
+				<div style="float:right;margin-right:350px;">
+					<div style="float:left;">
+						{{if $pm.type == "not_confirm"}}
+							<b>未確認({{$ArConFirm.not_confirm_num}})</b>
+						{{else}}
+							<a href="{{$pm.link_not_confirm}}">未確認({{$ArConFirm.not_confirm_num}})</a>
+						{{/if}}
+					</div>
+					<div style="float:left;padding-left:20px;">
+						{{if $pm.type == "confirm"}}
+							<b>確認済({{$ArConFirm.confirm_num}})</b>
+						{{else}}
+							<a href="{{$pm.link_confirm}}">確認済({{$ArConFirm.confirm_num}})</a>
+						{{/if}}
+					</div>
+					<div style="float:left;padding-left:20px;">
+						{{if $pm.type == "all"}}
+							<b>全て({{$ArConFirm.all_num}})</b>
+						{{else}}
+							<a href="{{$pm.link_all}}">全て({{$ArConFirm.all_num}})</a>
+						{{/if}}
+					</div>
+					<br class="clear" />
+				</div>
+				<br class="clear" />
+			</div>
+			<div style="padding:20px 0px 0px 0px;">
+			<div>{{$pm.error}}</div>
+			{{if $pm.all_page_flg == true}}
+			<table width="1458">
+			{{else}}
+			<table width="1388">
+			{{/if}}
+				<tr>
+					<th align="center" width="30" rowspan="2">エリア</th>
+					<th align="center" width="40" rowspan="2">店舗</th>
+					<th align="center" width="50" rowspan="2">担当</th>
+					<th align="center" width="20" rowspan="2">売上</th>
+					<th align="center" width="10" rowspan="2">区分</th>
+					<th align="center" width="40" colspan="2">回数券</th>
+					<th align="center" width="10" rowspan="2">指名</th>
+					<th align="center" width="20" rowspan="2">交通費</th>
+					<th align="center" width="20" rowspan="2">報酬</th>
+					<th align="center" width="20" rowspan="2">保険料</th>
+					<th align="center" width="20" rowspan="2">支払額</th>
+					<th align="center" width="35" rowspan="2">顧客名</th>
+					<th align="center" width="20" rowspan="2">コース</th>
+					<th align="center" width="20" rowspan="2">スタート</th>
+					{{if $pm.all_page_flg == true}}
+					<th align="center"width="60" rowspan="2">&nbsp;</th>
+					{{/if}}
+					<th align="center" width="50" rowspan="2">確認者</th>
+					<th align="center" width="50" rowspan="2">承認者</th>
+				</tr>
+				<tr>
+					<th align="center" width="20">90分</th>
+					<th align="center" width="20">延長</th>
+				</tr>
+				{{section name=n loop=$ArData}}
+				<tr>
+					<td align="center">{{$ArData[n].shop_area_name}}</td>
+					<td align="center">{{$ArData[n].shop_name}}</td>
+					<td align="left">{{$ArData[n].therapist_name_disp}}</td>
+					<td align="right">{{$ArData[n].price|number_format}}</td>
+					<td align="center" style="font-size:10pt;">{{$ArData[n].kubun_disp}}</td>
+					<td align="center">{{$ArData[n].coupon90_disp}}</td>
+					<td align="center">{{$ArData[n].couponex_disp}}</td>
+					<td align="center">{{$ArData[n].shimei_disp}}</td>
+					<td align="right">{{$ArData[n].transportation|number_format}}</td>
+					<td align="right">{{$ArData[n].remuneration|number_format}}</td>
+					<td align="right">{{$ArData[n].insurance_price_disp|number_format}}</td>
+					<td align="right">{{$ArData[n].remuneration_shiharai|number_format}}</td>
+					<td align="left">{{$ArData[n].customer_name|mb_substr:0:5:'utf-8'|escape}}</td>
+					<td align="right">{{$ArData[n].course_disp}}</td>
+					<td align="center">{{$ArData[n].start_time}}</td>
+					{{if $pm.all_page_flg == true}}
+					<td align="center">
+						{{if $pm.sale_not_edit_flg == false}}
+						<div>編集不可</div>
+						{{else}}
+						<div>
+							<form action="sale_operation_edit.php" method="post">
+								<input type="hidden" name="file_name" value="sale_operation.php" />
+								<input type="hidden" name="reservation_for_board_id" value="{{$ArData[n].id}}" />
+								<input type="hidden" name="area" value="{{$pm.area}}" />
+								<input type="submit" name="send_list" value="編集" style="padding:2px 5px 2px 5px;" />
+							</form>
+						</div>
+						{{/if}}
+					</td>
+					{{/if}}
+					<td>
+						<div>
+							{{if $ArData[n].staff_id_confirm != -1 && $ArData[n].staff_id_confirm != $pm.login_staff_id}}
+							{{$ArData[n].info_confirm.staff_name}}
+							{{else}}
+							<form action="{{$smarty.server.SCRIPT_NAME}}" method="post">
+								<input type="hidden" name="year" value="{{$pm.year}}" />
+								<input type="hidden" name="month" value="{{$pm.month}}" />
+								<input type="hidden" name="day" value="{{$pm.day}}" />
+								<input type="hidden" name="area" value="{{$pm.area}}" />
+								<input type="hidden" name="reservation_for_board_id" value="{{$ArData[n].id}}" />
+								<input type="hidden" name="attendance_id" value="{{$pm.attendance_id}}" />
+								<select name="staff_id">
+									<option value="-1"{{$ArData[n].info_confirm.selected_0}}>未選択</option>
+									<option value="{{$ArData[n].info_confirm.login_id}}"{{$ArData[n].info_confirm.selected_1}}>{{$ArData[n].info_confirm.login_name}}</option>
+								</select>
+								<input type="submit" name="send_staff_id_confirm" value="設定" />
+							</form>
+							{{/if}}
+						</div>
+					</td>
+					<td>
+						<div>
+							{{if $ArData[n].staff_id_approve != -1 && $ArData[n].staff_id_approve != $pm.login_staff_id}}
+							{{$ArData[n].info_approve.staff_name}}
+							{{else}}
+							<form action="{{$smarty.server.SCRIPT_NAME}}" method="post">
+								<input type="hidden" name="year" value="{{$pm.year}}" />
+								<input type="hidden" name="month" value="{{$pm.month}}" />
+								<input type="hidden" name="day" value="{{$pm.day}}" />
+								<input type="hidden" name="area" value="{{$pm.area}}" />
+								<input type="hidden" name="reservation_for_board_id" value="{{$ArData[n].id}}" />
+								<input type="hidden" name="attendance_id" value="{{$pm.attendance_id}}" />
+								<select name="staff_id">
+									<option value="-1"{{$ArData[n].info_approve.selected_0}}>未選択</option>
+									<option value="{{$ArData[n].info_approve.login_id}}"{{$ArData[n].info_approve.selected_1}}>{{$ArData[n].info_approve.login_name}}</option>
+								</select>
+								<input type="submit" name="send_staff_id_approve" value="設定" />
+							</form>
+							{{/if}}
+						</div>
+					</td>
+				</tr>
+				{{/section}}
+			</table>
+			</div>
+		</div>
+	</body>
+</html>

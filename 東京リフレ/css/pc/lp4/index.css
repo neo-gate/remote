@@ -1,0 +1,495 @@
+
+@charset "utf-8";
+
+* {
+	padding:0;
+	margin: 0;
+	font-family: "メイリオ", "Meiryo", arial, "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", Osaka, "ＭＳ Ｐゴシック", "MS PGothic", Sans-Serif;
+}
+
+#wrapper{
+	
+	width:960px;
+	margin:0px auto 0px auto;
+	
+}
+
+.clear{
+	
+	clear:both;
+	
+}
+
+.image_btn{
+	
+	cursor: pointer;
+	
+}
+
+li {
+	list-style-type: none;
+}
+
+.span_link{
+	
+	text-decoration: underline;
+	cursor: pointer;
+	
+}
+
+#site_bottom_copy_right{
+	
+	color:#505050;
+	text-align:center;
+	font-size:12px;
+	margin:3px 0px 0px 0px;
+	
+}
+
+/*----------------*/
+
+#wrapper > .error{
+	
+	color:red;
+	text-align:center;
+	
+}
+
+#top_error_message{
+	
+	color:red;
+	text-align:center;
+	
+}
+
+/*----------------*/
+
+#lp4_voice{
+	
+	display:none;
+	
+	background-image: url(../../../img/lp4/pc/voice.jpg);
+	background-repeat: no-repeat;
+	width:960px;
+	height:1439px;
+	
+}
+
+#lp4_voice > .btn{
+	
+	height:40px;
+	width:175px;
+	margin:1370px 0px 0px 392px;
+	cursor:pointer;
+	
+}
+
+/*----------------*/
+
+#lp4_voice_title{
+	
+	background-image: url(../../../img/lp4/pc/title_1.jpg);
+	background-repeat: no-repeat;
+	width:960px;
+	height:112px;
+	
+}
+
+#lp4_voice_title > .btn{
+	
+	height:37px;
+	width:175px;
+	margin:50px 0px 0px 392px;
+	cursor:pointer;
+	
+}
+
+/*----------------*/
+
+#lp4_qa{
+	
+	display:none;
+	
+	background-image: url(../../../img/lp4/pc/qa.jpg);
+	background-repeat: no-repeat;
+	width:960px;
+	height:818px;
+	
+}
+
+#lp4_qa > .btn{
+	
+	height:40px;
+	width:175px;
+	margin:745px 0px 0px 392px;
+	cursor:pointer;
+	
+}
+
+/*----------------*/
+
+#lp4_qa_title{
+	
+	background-image: url(../../../img/lp4/pc/title_2.jpg);
+	background-repeat: no-repeat;
+	width:960px;
+	height:113px;
+	
+}
+
+#lp4_qa_title > .btn{
+	
+	height:37px;
+	width:175px;
+	margin:50px 0px 0px 392px;
+	cursor:pointer;
+	
+}
+
+/*----------------*/
+
+#lp4_top_fix{
+	
+	background-image: url(../../../img/lp4/pc/bottom.jpg);
+	background-repeat: no-repeat;
+	width:960px;
+	height:106px;
+	
+	position:fixed;
+	top:0px;
+	
+}
+
+#lp4_top_fix > .left_1{
+	
+	float:left;
+	margin:20px 0px 0px 430px;
+	
+}
+
+#lp4_top_fix > .left_2{
+	
+	float:left;
+	margin:20px 0px 0px 20px;
+	
+}
+
+#lp4_top_fix > .left_2 > .content_1{
+	
+	color:#fff;
+	background:#6a6a6a;
+	border:solid 2px #6a6a6a;
+	text-align:center;
+	font-size:12px;
+	
+}
+
+#lp4_top_fix > .left_2 > .content_2{
+	
+	color:#fff;
+	border-left:solid 2px #6a6a6a;
+	border-right:solid 2px #6a6a6a;
+	border-bottom:solid 2px #6a6a6a;
+	
+	font-size:12px;
+	padding:5px 10px 5px 10px;
+	
+}
+
+#lp4_top_fix > .left_2 > .content_2 > span{
+	
+	color:#fe7701;
+	
+	font-size:12px;
+	
+}
+
+/*----------------*/
+
+#site_copyright{
+	
+	color:#505050;
+	text-align:center;
+	font-size:12px;
+	background:#000;
+	padding:10px 0px 10px 0px;
+	
+}
+
+/*----------------*/
+
+#lp4_mail{
+	
+	margin:0px 0px 160px 0px;
+	
+}
+
+#lp4_mail > .title{
+	
+	border-left:solid 5px #beab71;
+	padding:2px 0px 2px 10px;
+	
+	margin:20px 0px 10px 170px;
+	
+}
+
+#lp4_mail > .title > span{
+	
+	color:red;
+	font-size:10px;
+	
+}
+
+#lp4_mail > .title_2{
+	
+	margin:20px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .title_2 > .left_1{
+	
+	border-left:solid 5px #beab71;
+	padding:2px 0px 2px 10px;
+	margin:0px 0px 0px 0px;
+	
+	float:left;
+	width:270px;
+	
+}
+
+#lp4_mail > .title_2 > .left_1 > span{
+	
+	color:red;
+	font-size:10px;
+	
+}
+
+#lp4_mail > .title_2 > .left_2{
+	
+	float:left;
+	margin:10px 0px 0px 0px;
+	
+}
+
+#lp4_mail > .message{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .message > span{
+	
+	color:red;
+	font-size:10px;
+	
+}
+
+#lp4_mail > .error{
+	
+	color:red;
+	text-align:center;
+	
+}
+
+#lp4_mail > .content_1{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_1 > .left_1{
+	
+	float:left;
+	width:280px;
+	
+}
+
+#lp4_mail > .content_1 > .left_2{
+	
+	float:left;
+	margin:0px 0px 0px 0px;
+	
+}
+
+#lp4_mail > .content_2{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_3{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_3 > .left_1{
+	
+	float:left;
+	width:280px;
+	
+}
+
+#lp4_mail > .content_3 > .left_2{
+	
+	float:left;
+	margin:0px 0px 0px 0px;
+	
+}
+
+#lp4_mail > .content_4{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_5{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_5 > .left_1{
+	
+	float:left;
+	width:280px;
+	
+}
+
+#lp4_mail > .content_5 > .left_2{
+	
+	float:left;
+	
+}
+
+#lp4_mail > .content_6{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_7{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_8{
+	
+	margin:0px 0px 10px 170px;
+	
+}
+
+#lp4_mail > .content_9{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_10{
+	
+	margin:0px 0px 0px 170px;
+	
+}
+
+#lp4_mail > .content_11{
+	
+	text-align:center;
+	margin:20px 0px 0px 0px;
+	
+}
+
+/*----------------*/
+
+#lp4_bottom{
+	
+	background-image: url(../../../img/lp4/pc/bottom.jpg);
+	background-repeat: no-repeat;
+	width:960px;
+	height:123px;
+	
+	position:fixed;
+	bottom:0px;
+	
+}
+
+#lp4_bottom > .left_1{
+	
+	float:left;
+	margin:20px 0px 0px 430px;
+	
+}
+
+#lp4_bottom > .left_2{
+	
+	float:left;
+	margin:20px 0px 0px 20px;
+	
+}
+
+#lp4_bottom > .left_2 > .content_1{
+	
+	color:#fff;
+	background:#6a6a6a;
+	border:solid 2px #6a6a6a;
+	text-align:center;
+	font-size:12px;
+	
+}
+
+#lp4_bottom > .left_2 > .content_2{
+	
+	color:#fff;
+	border-left:solid 2px #6a6a6a;
+	border-right:solid 2px #6a6a6a;
+	border-bottom:solid 2px #6a6a6a;
+	
+	font-size:12px;
+	padding:5px 10px 5px 10px;
+	
+}
+
+#lp4_bottom > .left_2 > .content_2 > span{
+	
+	color:#fe7701;
+	
+	font-size:12px;
+	
+}
+
+#lp4_bottom > .copy_right{
+	
+	color:#505050;
+	text-align:center;
+	font-size:12px;
+	margin:3px 0px 0px 0px;
+	
+}
+
+/*----------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

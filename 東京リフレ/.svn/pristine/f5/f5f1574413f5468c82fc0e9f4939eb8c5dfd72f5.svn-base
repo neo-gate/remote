@@ -1,0 +1,179 @@
+<a name="question"></a>
+<div id="voice2">
+
+	<div class="title_bar">よくあるご質問</div>
+	
+	<div class="content">
+	
+		<div class="block">
+			<div class="question">
+				1.出張マッサージは初めてなのですが…
+			</div>
+			<div class="answer">
+				当店では接客・マナー・技術について厳しい研修を実施しております。<br />
+				研修を修了した女性セラピストのみを派遣しますので、どうぞご安心してご利用ください。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				2.自宅でも利用できますか？
+			</div>
+			<div class="answer">
+				東京23区内のご自宅、ホテルでご利用可能です。<br />
+				ベッド、お布団など身体を横たわれるスペースがありましたら施術可能です。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				3.ホテルでの利用方法は？
+			</div>
+			<div class="answer">
+				シティホテルでは問題なくご利用できます。<br />
+				一部のビジネスホテルではセラピストが入室できない可能性もございます。<br />
+				ご予約の際に派遣可能か確認をさせて頂きます。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				4.女性でも利用できますか？
+			</div>
+			<div class="answer">
+				もちろんご利用いただけます。当店は多くの女性のお客様にもご利用頂いております。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				5.二人同時にマッサージしてもらえますか？
+			</div>
+			<div class="answer">
+				カップル、ご夫婦での同時ご利用も歓迎いたします。<br />
+				お友達同士など男性お二人でのご利用の場合、施術場所が別室であれば施術可能です。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				6.どこまで出張してくれますか？交通費はいくらですか？
+			</div>
+			<div class="answer">
+				東京23区内に出張いたします。 その他のエリアはご相談ください。<br />
+				⇒<a href="area2.php">出張エリア</a>
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				7.何時まで出張してくれますか？
+			</div>
+			<div class="answer">
+				午前4時までにご注文いただけましたら出張いたします。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				8.英国式リフレクソロジーって何ですか？
+			</div>
+			<div class="answer">
+				パウダーを使った足裏マッサージです。<br />
+				オイルを使用した東洋式リフレクソロジーよりも痛みが少なく「心地良い刺激」が特徴です。<br />
+				深いリラクゼーション効果があるので、就寝前に最適です。<br />
+				冷え症や足のお疲れの解消に効果的です。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				9.リンパマッサージって何ですか？
+			</div>
+			<div class="answer">
+				身体中を流れるリンパ管の中で特にリンパ管が集中している「リンパ節」を手技により流します。<br />
+				リンパを流すことで老廃物の排泄を促します。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				10.指圧を中心にやって欲しいのですが…
+			</div>
+			<div class="answer">
+				当店では、お客様のリクエストには極力お応えするようにしております。<br />
+				セラピストにお気軽にお申し付けください。<br />
+				「腰を中心にやって欲しい」<br />
+				「アロママッサージ中心で」<br />
+				「強めで」<br />
+				「ヘッドマッサージをしたい」など
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				11.予約してから何分くらいで来れますか？
+			</div>
+			<div class="answer">
+				都心エリアですと15分～30分程度でお伺いします。<br />
+				お電話を頂いた際に最短でのお伺い時間をお知らせいたします。<br />
+				また、「23時に来てほしい」などの時間指定も可能です。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				12.前日の予約も可能ですか？
+			</div>
+			<div class="answer">
+				翌日以降の日時を指定してのご予約も可能です。<br />
+				お電話もしくはメールよりご予約ください。<br />
+				⇒<a href="mailto:order@tokyo-refle.com?subject=ReservationMail(TokyoRefle)&amp;body=" style="text-decoration:underline;">
+				予約メール
+				</a>
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				13.クレジットカードは使えますか？
+			</div>
+			<div class="answer">
+				VISA・MASTER・AMEXの3ブランドがご利用可能です。<br />
+				ご予約時にカード利用とお申し付けください。<br />
+				決済端末を持ってお伺いします。<br />
+				手数料は当店にて負担させて頂きます。<br />
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				14.延長はできますか？
+			</div>
+			<div class="answer">
+				はい、延長は可能です。30分5000円にて承っております。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				15.セラピストの指名はできますか？
+			</div>
+			<div class="answer">
+				はい、指名は可能です。指名料1000円にて承っております。
+			</div>
+		</div>
+
+		<div class="block">
+			<div class="question">
+				16.料金表以外に料金が掛かりませんか？
+			</div>
+			<div class="answer">
+				施術料+交通費が総額のご料金となります。<br />
+				ご予約時にご案内した料金以外は一切掛かりません。
+			</div>
+		</div>
+
+	</div>
+
+</div>

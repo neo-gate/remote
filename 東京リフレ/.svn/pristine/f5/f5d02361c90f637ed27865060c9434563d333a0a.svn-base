@@ -1,0 +1,16 @@
+<!--
+<div style="padding:10px 0px 0px 0px;">
+	<a href="reservation_state_list.php">東京</a>　
+	<a href="reservation_state_list_new.php?area=yokohama">横浜</a>　
+	<a href="reservation_state_list_sapporo.php">札幌</a>　
+	<a href="reservation_state_list_new.php?area=sendai">仙台</a>　
+</div>
+-->
+
+<div style="padding:10px 0px 0px 0px;">
+	<a href="reservation_state_list_new.php?area=tokyo">東京</a>　
+	<a href="reservation_state_list_new.php?area=yokohama">横浜</a>　
+	<a href="reservation_state_list_new.php?area=sapporo">札幌</a>　
+	<a href="reservation_state_list_new.php?area=sendai">仙台</a>　
+	<a href="reservation_state_list_new.php?area=fukuoka">福岡</a>　
+</div>

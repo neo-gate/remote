@@ -1,0 +1,39 @@
+<?php
+
+include("include/common.php");
+
+
+
+if( (isset($_GET["therapist_id"]) == true) && (isset($_GET["area"]) == true) ){
+	
+	$therapist_id = $_GET["therapist_id"];
+	$area = $_GET["area"];
+	$ch = $_GET["ch"];
+	$delete_flg = $_GET["delete_flg"];
+	
+}else{
+	
+	echo "error!";
+	exit();
+	
+}
+
+$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+$top_url = get_top_url($area,$therapist_id,$ch);
+$params['top_url'] = $top_url;
+
+$params['therapist_name'] = $therapist_name;
+$params['therapist_id'] = $therapist_id;
+$params['area'] = $area;
+$params['ch'] = $ch;
+$params['page_title'] = "移動実費登録・編集完了";
+
+$params['delete_flg'] = $delete_flg;
+
+$smarty->assign( 'params', $params );
+
+$smarty->assign( 'content_tpl', 'sp/movement_cost_edit_complete.tpl' );
+$smarty->display( 'sp/template.tpl' );
+
+?>

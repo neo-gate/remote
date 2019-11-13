@@ -1,0 +1,301 @@
+
+
+
+/*----以下、VIP用セラピストカレンダ用----*/
+
+#calendar_display_therapist_name_title{
+	
+	width:64px;
+	background-color:#4f81bd;
+	color:#fff;
+	padding-top:5px;
+	padding-bottom:0px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:34px;
+	
+	font-size:10px;
+	
+	position:absolute;
+	top:0px;
+	left:0px;
+	z-index:999;
+	
+}
+
+.table_title{
+	
+	float:left;
+	width:100px;
+	background-color:#4f81bd;
+	color:#fff;
+	text-align:center;
+	padding-top:5px;
+	padding-bottom:0px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:34px;
+	
+	font-size:10px;
+	
+}
+
+.ichiretsu1_new{
+	
+	width:64px;
+	background-color:#e9edf4;
+	padding-top:5px;
+	padding-bottom:0px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+	font-size:10px;
+	
+}
+
+.ichiretsu2_new{
+	
+	width:64px;
+	background-color:#d0d8e8;
+	padding-top:5px;
+	padding-bottom:0px;
+	padding-left:5px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+	font-size:10px;
+	
+}
+
+.batsu1{
+	
+	float:left;
+	width:100px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:5px;
+	padding-bottom:0px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+	font-size:10px;
+	
+}
+
+.batsu2{
+	
+	float:left;
+	width:100px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:5px;
+	padding-bottom:0px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+	font-size:10px;
+	
+}
+
+.maru1{
+	
+	float:left;
+	width:100px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:5px;
+	padding-bottom:0px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+	font-size:10px;
+	
+}
+
+.maru2{
+	
+	float:left;
+	width:100px;
+	background-color:#ffc000;
+	text-align:center;
+	padding-top:5px;
+	padding-bottom:0px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+	font-size:10px;
+	
+}
+
+.kuuran1{
+	
+	float:left;
+	width:100px;
+	background-color:#e9edf4;
+	padding-top:5px;
+	padding-bottom:0px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+}
+
+.kuuran2{
+	
+	float:left;
+	width:100px;
+	background-color:#d0d8e8;
+	padding-top:5px;
+	padding-bottom:0px;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	height:50px;
+	
+}
+
+.gyou_new{
+	
+	width:2400px;
+	
+}
+
+#gyou_nichiji{
+	
+	width:2400px;
+	position:absolute;
+	left:70px;
+	
+	
+}
+
+#calendar_display_therapist_name{
+	
+	position:absolute;
+	top:40px;
+	
+}
+
+#calendar_display_new{
+	
+	padding:0px 0px 0px 0px;
+	position:relative;
+	
+	width:1100px;
+	height:540px;
+	overflow-x:hidden;
+	overflow-y:hidden;
+	
+}
+
+#calendar_display_content{
+	
+	width:1030px;
+	height:500px;
+	overflow-x:scroll;
+	overflow-y:scroll;
+	padding:40px 0px 0px 70px;
+	
+}
+
+#calendar_display_left{
+	
+	float:left;
+	width:70px;
+	
+}
+
+#calendar_display_right{
+	
+	float:left;
+	
+}
+
+/*----以上、VIP用セラピストカレンダ用----*/
+
+.state1{
+	
+	background-color:#fde8d0;
+	height:50px;
+	width:100px;
+	text-align:center;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	padding-top:5px;
+	float:left;
+
+}
+
+.state2{
+	
+	background-color:#a7d28d;
+	height:50px;
+	width:100px;
+	text-align:center;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	padding-top:5px;
+	float:left;
+
+}
+
+.state3{
+	background-color:#e9edf4;
+	height:50px;
+	width:100px;
+	text-align:center;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	padding-top:5px;
+	float:left;
+	
+}
+
+.state4{
+	height:40px;
+	width:100px;
+	padding:10px 0px 0px 0px;
+	text-align:center;
+	border-right:solid 1px #fff;
+	border-bottom:solid 1px #fff;
+	float:left;
+}
+
+#reservation_state_list_new_day_list{
+	font-size:12px;
+	padding:0px 0px 20px 0px;
+	line-height:160%;
+}
+
+#reservation_state_list_new_day_list > a{
+	font-size:12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

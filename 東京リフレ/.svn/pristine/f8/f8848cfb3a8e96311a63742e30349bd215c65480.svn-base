@@ -1,0 +1,31 @@
+<?php
+
+	// 各ページ共通の処理
+	require_once("../../../include/common.php");
+	
+	include(COMMON_INC."auth_ssl.php");
+	
+	
+	
+	$page_title = "VIPログインエラー";
+	$params['page_title'] = $page_title;
+	
+	$pankuzu = "　＞　VIPログインエラー";
+	
+	$params['pankuzu'] = $pankuzu;
+	
+	$smarty->assign( 'params', $params );
+	
+	if( $access_type == "sp" ){
+	
+		$smarty->assign( 'content_tpl', 'sp/ssl/tokyo/vip/error.tpl' );
+		$smarty->display( 'sp/ssl/tokyo/template.tpl' );
+	
+	}else{
+	
+		$smarty->assign( 'content_tpl', 'pc/ssl/tokyo/vip/error.tpl' );
+		$smarty->display( 'pc/ssl/tokyo/template_vip.tpl' );
+	
+	}
+
+?>

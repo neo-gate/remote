@@ -1,0 +1,33 @@
+
+<div style="text-align:center;margin:5px 0px 0px 0px;">
+	<img src="{{$params.url_root}}img/sp/201503/top_catch_copy.jpg" alt="キャッチコピー" width="300" />
+</div>
+
+<div style="margin:10px 0px 10px 0px;">
+{{include file="sp/content/reservation.tpl"}}
+</div>
+
+{{include file="sp/content/menu1.tpl"}}
+
+{{include file="sp/content/menu2.tpl"}}
+
+{{include file="sp/content/menu3.tpl"}}
+
+{{include file="sp/content/menu4.tpl"}}
+
+{{include file="sp/content/menu5.tpl"}}
+
+{{include file="sp/content/menu7.tpl"}}
+
+{{include file="sp/content/menu6.tpl"}}
+
+{{include file="sp/content/douga.tpl"}}
+
+{{include file="sp/content/info_menu_price2.tpl"}}
+
+{{include file="sp/content/area_tokyo.tpl"}}
+
+<div style="margin:30px 0px 10px 0px;">
+{{include file="sp/content/reservation.tpl"}}
+</div>
+

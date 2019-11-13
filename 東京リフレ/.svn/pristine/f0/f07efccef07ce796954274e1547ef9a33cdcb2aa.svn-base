@@ -1,0 +1,131 @@
+
+<?php
+
+header("Content-type: text/html; charset=UTF-8");
+
+include("include/common.php");
+include("include/auth.php");
+
+if(isset($_GET["area"])==true){
+
+	$area = $_GET["area"];
+
+}else{
+
+	echo "エリアが指定されていません。";
+	exit();
+
+}
+
+$area_name = get_area_name_by_area($area);
+if($area_name!="東京リラク"){
+	$area_name = $area_name."リフレ";
+}
+
+// 一覧に表示させる顧客データを取得するためのSQL文
+$sql = sprintf("select * from therapist_new where leave_flg=1 and delete_flg=0 and area='%s'",$area);
+
+$res = mysql_query($sql, $con);
+
+if($res == false){
+	
+	echo "クエリ実行に失敗しました";
+	exit();
+	
+}
+
+$therapist_data = array();
+
+$i=0;
+while($row = mysql_fetch_assoc($res)){
+	
+	$therapist_data[$i++] = $row;
+	
+}
+
+$therapist_data_num = count($therapist_data);
+
+/*
+echo "<pre>";
+print_r($therapist_data);
+echo "</pre>";
+exit();
+*/
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>セラピスト一覧(<?php echo $area_name;?>) | 管理ページ</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+
+<style>
+
+table tr th{
+	background-color:#c9caca;
+}
+
+table tr td{
+	padding:5px 0px 5px 5px;
+}
+
+a{
+font-size:12px;
+}
+
+</style>
+
+</head>
+<body>
+
+	<div style="width:1024px;margin:0px auto 0px auto;">
+		<div>
+			<div style="float:left;"><a href="index.php">トップ</a> &gt; セラピスト一覧(<?php echo $area_name;?>)</div>
+			<div style="float:right;"><a href="logout.php">ログアウト</a></div>
+			<br style="clear:both" />
+		</div>
+		<?php include("include/therapist_list_menu.php");?>
+		
+		<div style="padding:30px 0px 100px 0px;">
+			
+			<div style="padding:10px 0px 0px 0px;">
+				該当件数：<?php echo $therapist_data_num;?>件　<b><?php echo $area_name;?></b>
+			</div>
+			<div style="padding:10px 0px 10px 0px;">
+				<table border="1">
+					<tr>
+						<th width="130" align="left">セラピスト名<br /><span style="font-size:12px;">(本名)</span></th>
+						<th width="130" align="left">セラピスト名<br /><span style="font-size:12px;">(<?php echo $area_name;?>)</span></th>
+						<th align="left">メールアドレス</th>
+						<th width="60" align="left">&nbsp;</th>
+						<th width="60" align="left">&nbsp;</th>
+					</tr>
+					<?php
+						for($i=0;$i<$therapist_data_num;$i++){
+					?>
+							<tr>
+								<form action="therapist_edit_input_sapporo.php" method="post" name="therapist_edit_form">
+									<input type="hidden" name="therapist_id" value="<?php echo $therapist_data[$i]['id'];?>" />
+									<td><?php echo $therapist_data[$i]['name'];?></td>
+									<td><?php echo $therapist_data[$i]['name_site'];?></td>
+									<td><?php echo $therapist_data[$i]['mail'];?></td>
+									<td><input type="button" value="復帰" onclick="therapist_return_new('<?php echo $therapist_data[$i]['id'];?>','<?php echo $area;?>');" /></td>
+									<td><input type="button" value="削除" onclick="therapist_leave_delete_new('<?php echo $therapist_data[$i]['id'];?>','<?php echo $area;?>');" /></td>
+								</form>
+							</tr>
+					<?php
+						}
+					?>
+					
+					
+				</table>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

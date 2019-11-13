@@ -1,0 +1,780 @@
+
+@CHARSET "UTF-8";
+
+body{
+	
+	overflow-y:scroll;
+	
+	font-family: "ＭＳ Ｐゴシック",sans-serif;
+	
+}
+
+.menu:hover{
+	cursor:pointer;
+}
+
+.clear{
+	
+	clear:both;
+	
+}
+
+.selected_paging_num_box a{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:14px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#ddd;
+}
+
+.selected_paging_num_box a:hover{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:14px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#999;
+}
+
+.paging_num_box a{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:14px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+}
+
+.paging_num_box a:hover{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:14px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#999;
+}
+
+.paging_num_forward a{
+	display:block;
+	float:left;
+	margin-left:10px;
+	font-size:14px;
+	padding:5px 10px 5px 10px;
+	text-decoration:underline;
+}
+
+.paging_num_next a{
+	display:block;
+	float:left;
+	margin-left:10px;
+	font-size:14px;
+	padding:5px 10px 5px 10px;
+	text-decoration:underline;
+}
+
+.paging_num_dod {
+	display:block;
+	float:left;
+	font-size:14px;
+	font-weight:bold;
+	margin-left:10px;
+}
+
+/*------------------------------*/
+
+.error{
+	
+	
+	
+}
+
+.error > li{
+	
+	color:red;
+	
+}
+
+/*------------------------------*/
+
+#therapist_calendar_wrapper_wrapper{
+	
+	position:relative;
+	
+}
+
+#for_hidden{
+	
+	
+}
+
+#therapist_calendar_wrapper{
+	
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+	
+	width:1160px;
+	height:610px;
+	overflow-x:scroll;
+	overflow-y:scroll;
+	
+}
+
+#therapist_calendar_wrapper_top{
+	
+	
+	
+	
+}
+
+#therapist_calendar_wrapper_top_title{
+	
+	width:100px;
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+	background-color:#eee;
+	/*border-top:solid 1px #000;*/
+	/*border-bottom:solid 1px #000;*/
+	border-right:solid 1px #000;
+	border-left:solid 1px #000;
+	/*height:28px;*/
+	float:left;
+	position:absolute;
+	top:0px;
+	left:0px;
+	
+	z-index:9999;
+	
+}
+
+#therapist_calendar_wrapper_top_title > .one{
+	
+	height:24px;
+	font-size:10px;
+	border-bottom:solid 1px #000;
+	padding:5px 0px 0px 2px;
+}
+
+#therapist_calendar_wrapper_top_title > .one_2{
+	
+	height:28px;
+	font-size:10px;
+	border-top:solid 1px #000;
+	border-bottom:solid 1px #000;
+	
+	background-color:#008cb4;
+	
+}
+
+#therapist_calendar_wrapper_top_gyou_day{
+	
+	padding-left:102px;
+	
+}
+
+#therapist_calendar_wrapper_top_gyou_day > .one{
+	
+	height:30px;
+	
+}
+
+#therapist_calendar_wrapper_top_gyou_day > .one > .day{
+	
+	width:54px;
+	margin:0px 0px 0px 0px;
+	padding:5px 0px 0px 0px;
+	float:left;
+	border-right:solid 1px #000;
+	border-bottom:solid 1px #000;
+	height:24px;
+	text-align:center;
+	font-size:10px;
+	
+}
+
+#therapist_calendar_wrapper_top_gyou_day > .one > .day_2{
+	
+	width:54px;
+	margin:0px 0px 0px 0px;
+	padding:5px 0px 0px 0px;
+	float:left;
+	background-color:#008cb4;
+	color:#fff;
+	border-right:solid 1px #000;
+	border-top:solid 1px #000;
+	border-bottom:solid 1px #000;
+	height:23px;
+	text-align:center;
+	font-size:10px;
+	
+}
+
+#therapist_calendar_all{
+	
+	width:4000px;
+	
+}
+
+#therapist_calendar_therapist_name{
+	
+	width:100px;
+	float:left;
+	border-right:solid 1px #000;
+	border-left:solid 1px #000;
+	background-color:#fff;
+	
+	font-size:10px;
+	
+}
+
+#therapist_calendar_therapist_name > .one > .name{
+	
+	padding:10px 0px 0px 5px;
+	border-bottom:solid 1px #000;
+	height:20px;
+	
+}
+
+#therapist_calendar_content{
+	
+	width:3600px;
+	float:left;
+	
+}
+
+/*--------------------------*/
+
+#therapist_calendar_content_yotei{
+	
+}
+
+#therapist_calendar_content_yotei > .one > .one_1{
+	
+	width:54px;
+	background-color:#a7d28d;
+	text-align:center;
+	float:left;
+	border-right:solid 1px #000;
+	height:30px;
+	border-bottom:solid 1px #000;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .one_2{
+	
+	width:54px;
+	float:left;
+	border-right:solid 1px #000;
+	height:30px;
+	border-bottom:solid 1px #000;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .one_2 > a{
+	
+	display:block;
+	width:52px;
+	height:28px;
+	text-decoration:none;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .rank_a{
+	
+	background:#eaeea2;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .rank_b{
+	
+	background:#dbebc4;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .rank_c{
+	
+	background:#bbe2f1;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .rank_d{
+	
+	background:#e9dfe5;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .rank_n{
+	
+	background:#f5b2b2;
+	
+}
+
+
+#therapist_calendar_content_yotei > .one > .one_3{
+	
+	width:54px;
+	background-color:#fff;
+	float:left;
+	border-right:solid 1px #000;
+	height:25px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:5px 0px 0px 0px;
+}
+
+#therapist_calendar_content_yotei > .one > .one_4{
+	
+	width:54px;
+	text-align:center;
+	float:left;
+	border-right:solid 1px #000;
+	height:21px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:9px 0px 0px 0px;
+	font-size:10px;
+	display:block;
+	text-decoration:none;
+	color:#000;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .blue{
+	background:#a1d8e6;
+}
+
+#therapist_calendar_content_yotei > .one > .red{
+	background:#ef857d;
+}
+
+#therapist_calendar_content_yotei > .one > .green{
+	background:#a7d28d;
+}
+
+#therapist_calendar_content_yotei > .one > .gray{
+	background:#e6eae6;
+}
+
+#therapist_calendar_content_yotei > .one > .one_5{
+	
+	width:54px;
+	float:left;
+	border-right:solid 1px #000;
+	height:21px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:9px 0px 0px 0px;
+	font-size:12px;
+	
+}
+
+#therapist_calendar_content_yotei > .one > .one_6{
+	
+	width:54px;
+	background-color:#fff;
+	float:left;
+	border-right:solid 1px #000;
+	height:21px;
+	border-bottom:solid 1px #000;
+	text-align:center;
+	padding:9px 0px 0px 0px;
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+.hotel_add_menu{
+	
+	float:left;
+	padding-left:10px;
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+.hotel_search_menu{
+	
+	display:block;
+	width:300px;
+	text-align:center;
+	margin:20px auto 0px auto;
+	border:solid 1px #aaa;
+	padding:10px 10px 10px 10px;
+	background-color:#eee;
+	
+}
+
+/*--------------------------*/
+
+.hotel_search_area_menu{
+	
+	display:block;
+	float:left;
+	margin:5px 5px 5px 5px;
+	text-align:center;
+	border:solid 1px #aaa;
+	padding:10px 10px 10px 10px;
+	width:125px;
+	font-size:12px;
+	
+}
+
+#hotel_search_area{
+	
+	width:964px;
+	
+}
+
+#hotel_search_area_title{
+	
+	padding:10px 10px 10px 10px;
+	border:solid 1px #aaa;
+	background-color:#000;
+	color:#fff;
+	
+}
+
+#hotel_search_area_content{
+	
+	border-left:solid 1px #aaa;
+	border-right:solid 1px #aaa;
+	border-bottom:solid 1px #aaa;
+	padding:10px;
+	
+}
+
+/*--------------------------*/
+
+#hotel_search_list{
+	
+	
+	
+}
+
+#hotel_search_list_title{
+	
+	padding:10px 10px 10px 10px;
+	border:solid 1px #aaa;
+	background-color:#000;
+	color:#fff;
+	
+}
+
+#hotel_search_list_content{
+	
+	padding:20px 0px 0px 0px;
+	
+}
+
+#hotel_search_list_content .one{
+	
+	padding:10px 10px 10px 10px;
+	font-size:10px;
+	
+}
+
+#hotel_search_list_content .one .yoberu{
+	
+	background-color:green;
+	color:#fff;
+	float:left;
+	padding:5px;
+	
+}
+
+#hotel_search_list_content .one .yobenai{
+	
+	background-color:orange;
+	color:#fff;
+	float:left;
+	padding:5px;
+	
+}
+
+#hotel_search_list_content .one .num{
+	
+	float:left;
+	padding:5px;
+	
+}
+
+/*--------------------------*/
+
+.hotel_tbl_one{
+	
+	padding:5px 10px 5px 10px;
+	font-size:12px;
+	
+}
+
+.detal_yoberu{
+	
+	background-color:green;
+	color:#fff;
+	padding:5px 10px 5px 10px;
+	font-size:12px;
+	
+}
+
+.detail_yobenai{
+	
+	background-color:orange;
+	color:#fff;
+	padding:5px 10px 5px 10px;
+	font-size:12px;
+	
+}
+
+.hotel_tbl_content{
+	
+	padding:5px 10px 5px 10px;
+	font-size:12px;
+	width:500px;
+	
+}
+
+/*--------------------------*/
+
+.therapist_regist_sapporo_btn{
+	
+	display:block;
+	width:600px;
+	margin:30px auto 0px auto;
+	padding:5px 0px 5px 0px;
+	background-color:#4f81bd;
+	color:#fff;
+	border:solid 2px #385d8a;
+	text-align:center;
+	text-decoration:none;
+	
+}
+
+/*--------------------------*/
+
+#attendance_regist_sapporo_btn{
+	
+	display:block;
+	width:300px;
+	margin:0px auto 0px auto;
+	padding:5px 0px 5px 0px;
+	background-color:#4f81bd;
+	color:#fff;
+	border:solid 2px #385d8a;
+	text-align:center;
+	text-decoration:none;
+	
+}
+
+/*--------------------------*/
+
+.index_menu{
+	
+	display:block;
+	text-decoration:none;
+	width:600px;
+	margin:30px auto 0px auto;
+	padding:5px 0px 5px 0px;
+	background-color:#4f81bd;
+	color:#fff;
+	border:solid 2px #385d8a;
+	text-align:center;
+	
+}
+
+/*--------------------------*/
+
+.therapist_page_tbl_div{
+	
+	padding:5px 10px 5px 10px;
+	
+}
+
+.therapist_page_tbl_th{
+	
+	background-color:#ddd;
+	
+}
+
+/*--------------------------*/
+
+.pankuzu_menu_s{
+	
+	font-size:10px;
+	
+}
+
+/*--------------------------*/
+
+#staff_regist_btn{
+	
+	width:300px;
+	margin:10px auto 0px auto;
+	padding:5px 0px 5px 0px;
+	background-color:#4f81bd;
+	color:#fff;
+	border:solid 2px #385d8a;
+	text-align:center;
+	display:block;
+	text-decoration:none;
+	
+}
+
+/*--------------------------*/
+
+#attendance_regist_refle{
+	
+	width:180px;
+	margin:0px 0px 0px 30px;
+	padding:5px 0px 5px 0px;
+	background-color:#4f81bd;
+	color:#fff;
+	border:solid 2px #385d8a;
+	text-align:center;
+	display:block;
+	text-decoration:none;
+	float:left;
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+.name_rank_a{
+	
+	background:#eaeea2;
+	
+}
+
+.name_rank_b{
+	
+	background:#dbebc4;
+	
+}
+
+.name_rank_c{
+	
+	background:#bbe2f1;
+	
+}
+
+.name_rank_d{
+	
+	background:#e9dfe5;
+	
+}
+
+.name_rank_n{
+	
+	background:#f5b2b2;
+	
+}
+
+.bk_rank_a{
+	
+	background:#eaeea2;
+	
+}
+
+.bk_rank_b{
+	
+	background:#dbebc4;
+	
+}
+
+.bk_rank_c{
+	
+	background:#bbe2f1;
+	
+}
+
+.bk_rank_d{
+	
+	background:#e9dfe5;
+	
+}
+
+.bk_rank_n{
+	
+	background:#f5b2b2;
+	
+}
+
+/*--------------------------*/
+
+.staff_calendar_therapist_name{
+	
+	cursor:pointer;
+	
+}
+
+/*--------------------------*/
+
+#staff_man_menu{
+	
+	margin:0px 0px 10px 0px;
+	
+}
+
+#staff_man_menu > a{
+	
+	font-size:12px;
+	
+}
+
+/*--------------------------*/
+
+.team_bg_all{
+	
+	background-color:#93e9ff;
+	
+}
+
+.team_bg_1{
+	
+	background-color:#e0eecb;
+	
+}
+
+.team_bg_2{
+	
+	background-color:#f7bbbb;
+	
+}
+
+.team_bg_3{
+	
+	background-color:#fedc5e;
+	
+}
+
+.team_bg_4{
+	
+	background-color:#fff;
+	
+}
+
+/*--------------------------*/
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dth HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dth">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>スタッフ出勤カレンダー　|　管理ページ</title>
+<link href="style_new.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+
+<br />
+
+<div style="width:1160px;height:750px;margin:0px auto 0px auto;overflow:hidden;">
+	<div>
+		<div style="float:left;"><a href="./">トップ</a> &gt; スタッフ出勤カレンダー</div>
+		<div style="float:right;">
+			<a href="logout.php" style="font-size:12px;">ログアウト</a>
+		</div>
+		<br class="clear" />
+	</div>
+	
+	<div style="padding:10px 0px 0px 0px;">
+		{{section name=a loop=$ARRAY_Area}}
+			<a href="{{$smarty.server.SCRIPT_NAME}}?area={{$ARRAY_Area[a].area}}">{{$ARRAY_Area[a].area_name}}</a>&nbsp;&nbsp;
+		{{/section}}
+		<a href="{{$smarty.server.SCRIPT_NAME}}?area=kensyuu">研修</a>&nbsp;&nbsp;
+		<a href="{{$smarty.server.SCRIPT_NAME}}?area=team">チーム別</a>&nbsp;&nbsp;
+		<a href="{{$smarty.server.SCRIPT_NAME}}?area=wait">待機場所別</a>
+	</div>
+	
+	<div style="padding:0px 0px 100px 0px;">
+	</div>
+	
+</div>
+
+</body>
+</html>

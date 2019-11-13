@@ -1,0 +1,1628 @@
+
+.image_btn{
+	
+	cursor: pointer;
+	
+}
+
+#site_logo{
+	padding:10px 0px 0px 10px;
+	text-align:left;
+	float:left;
+}
+
+#content_tpl{
+	
+	border-bottom:solid 2px #9a9a9a;
+	
+}
+
+#to_page_top{
+	
+	text-align:center;
+	
+}
+
+/*---------------------------*/
+
+#vip_menu_2{
+	
+	border-top:solid 1px #e2e2e2;
+	border-bottom:solid 1px #e2e2e2;
+	padding:15px 0px 15px 0px;
+	text-align:center;
+	
+}
+
+/*---------------------------*/
+
+#vip_menu{
+	
+	border-top:solid 1px #e2e2e2;
+	margin:10px 0px 0px 0px;
+	
+}
+
+#vip_menu > .title{
+	
+	text-align:center;
+	padding:15px 0px 15px 0px;
+	
+}
+
+#vip_menu > .menu{
+	
+	margin:0px auto 0px auto;
+	width:312px;
+	
+}
+
+#vip_menu > .menu > .left_1{
+	
+	float:left;
+	
+}
+
+#vip_menu > .menu > .left_2{
+	
+	float:left;
+	
+}
+
+#vip_menu > .menu > .left_3{
+	
+	float:left;
+	
+}
+
+#vip_menu > .menu > .left_4{
+	
+	float:left;
+	
+}
+
+#vip_menu > .bar{
+	
+	margin:0px auto 0px auto;
+	width:312px;
+	
+}
+
+/*---------------------------*/
+
+#therapist_calendar_page{
+	
+	margin:0px 0px 20px 0px;
+	
+}
+
+#therapist_calendar_page > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/calendar/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+/*---------------------------*/
+
+#password_set{
+	
+	margin:0px 0px 20px 0px;
+	
+}
+
+#password_set > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/password/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#password_set > .complete{
+	
+	text-align:center;
+	margin:50px 0px 60px 0px;
+	font-size:14px;
+	
+}
+
+#password_set > .wrapper{
+	
+	font-size:14px;
+	
+}
+
+#password_set > .wrapper > .error{
+	
+	text-align:center;
+	padding:10px 0px 0px 0px;
+	
+}
+
+#password_set > .wrapper > .content_1{
+	
+	margin:10px 10px 0px 10px;
+	
+}
+
+#password_set > .wrapper > .content_2{
+	
+	margin:30px 0px 0px 0px;
+	
+}
+
+#password_set > .wrapper > .content_2 > .left_1{
+	
+	float:left;
+	width:80px;
+	margin:0px 0px 0px 30px;
+	
+}
+
+#password_set > .wrapper > .content_2 > .left_1_2{
+	
+	float:left;
+	width:110px;
+	margin:2px 0px 0px 10px;
+	
+}
+
+#password_set > .wrapper > .content_2 > .left_2{
+	
+	float:left;
+	width:190px;
+	
+}
+
+#password_set > .wrapper > .content_3{
+	
+	margin:20px 0px 0px 0px;
+	
+}
+
+#password_set > .wrapper > .content_3 > .left_1{
+	
+	float:left;
+	width:80px;
+	padding:20px 0px 0px 30px;
+	
+}
+
+#password_set > .wrapper > .content_3 > .left_1_2{
+	
+	float:left;
+	width:110px;
+	padding:2px 0px 0px 10px;
+	
+}
+
+#password_set > .wrapper > .content_3 > .left_2{
+	
+	float:left;
+	width:190px;
+	
+}
+
+#password_set > .wrapper > .content_3 > .left_2 > .one_1{
+	
+	padding:0px 0px 5px 0px;
+	font-size:10px;
+	
+}
+
+#password_set > .wrapper > .content_3 > .left_2 > .one_2{
+	
+	
+	
+}
+
+#password_set > .wrapper > .content_4{
+	
+	text-align:center;
+	margin:40px 0px 60px 0px;
+	
+}
+
+/*---------------------------*/
+
+.input_password{
+	
+	padding:1px 0px 1px 0px;
+	font-size:14px;
+	
+}
+
+/*---------------------------*/
+
+.selected_paging_num_box a{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#ddd;
+}
+
+.selected_paging_num_box a:hover{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#999;
+}
+
+.paging_num_wrapper{
+	margin:10px 0px 0px 10px;
+}
+
+.paging_num_box a{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+}
+
+.paging_num_box a:hover{
+	display:block;
+	text-decoration:none;
+	float:left;
+	margin-left:10px;
+	border:solid 2px #999;
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 10px 5px 10px;
+	background-color:#999;
+}
+
+.paging_num_forward a{
+	display:block;
+	float:left;
+	margin-left:0px;
+	font-size:12px;
+	padding:5px 0px 5px 0px;
+	text-decoration:underline;
+}
+
+.paging_num_next a{
+	display:block;
+	float:right;
+	margin-right:10px;
+	font-size:12px;
+	padding:5px 0px 5px 0px;
+	text-decoration:underline;
+}
+
+.paging_num_dod {
+	display:block;
+	float:left;
+	font-size:10px;
+	font-weight:bold;
+	margin-left:10px;
+}
+
+/*--------------------------------------*/
+
+#history{
+	
+	margin:0px 0px 20px 0px;
+	
+}
+
+#history > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/history/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#history > .message{
+	margin:10px 10px 0px 10px;
+	line-height:160%;
+	font-size:12px;
+}
+
+#history > .history_paging{
+	margin:0px 0px 50px 10px;
+}
+
+#history > .list{
+	margin:30px 0px 0px 0px;
+}
+
+#history > .list > .one{
+	border:solid 1px #e5e5e5;
+	margin:0px 10px 30px 10px;
+	padding:0px 0px 20px 0px;
+}
+
+#history > .list > .one > .content_1{
+	
+}
+
+#history > .list > .one > .content_1 > .left_1{
+	float:left;
+	padding:10px 0px 0px 10px;
+	font-size:14px;
+}
+
+#history > .list > .one > .content_1 > .left_2{
+	float:right;
+	margin:0px 10px 0px 0px;
+}
+
+#history > .list > .one > .content_1 > .left_2 > .banner_1{
+	float:left;
+	margin:-14px 0px 0px 0px;
+}
+
+#history > .list > .one > .content_1 > .left_2 > .banner_2{
+	float:left;
+	margin:-14px 0px 0px 0px;
+}
+
+
+
+.history_th{
+	
+	background:#f2f0f1;
+	padding:10px 0px 10px 10px;
+	width:70px;
+	font-size:10px;
+	
+}
+
+.history_th_2{
+	
+	background:#eae8e9;
+	padding:10px 0px 10px 10px;
+	width:70px;
+	font-size:10px;
+	
+}
+
+.history_td{
+	
+	border-bottom:solid 1px #f0f0f0;
+	width:160px;
+	padding:10px 10px 10px 10px;
+	margin:0px 0px 0px 10px;
+	
+}
+
+.history_td_2{
+	
+	width:160px;
+	padding:10px 10px 10px 10px;
+	margin:0px 0px 0px 10px;
+	line-height:160%;
+	
+}
+
+#history > .list > .one > .select_disp_not{
+	text-align:center;
+	margin:15px 0px 0px 0px;
+}
+
+#history > .list > .one > .select_disp{
+	display:none;
+}
+
+#history > .list > .one > .select_disp > .ue_image{
+	text-align:center;
+	margin:15px 0px 0px 0px;
+}
+
+#history > .list > .one > .select_disp > .content_3{
+	margin:20px 0px 0px 0px;
+}
+
+#history > .list > .one > .select_disp > .content_3 > .left_1{
+	float:left;
+}
+
+#history > .list > .one > .select_disp > .content_3 > .left_2{
+	float:left;
+	margin:30px 0px 0px 0px;
+}
+
+#history > .list > .one > .select_disp > .content_3 > .left_3{
+	float:left;
+	background:#fcf1f7;
+	padding:10px 10px 0px 10px;
+	width:180px;
+}
+
+#history > .list > .one > .select_disp > .content_3 > .left_3 > .one_1{
+	border-bottom:solid 1px #f0e1e8;
+	color:#db9bbd;
+	padding:0px 0px 10px 0px;
+	font-size:12px;
+}
+
+#history > .list > .one > .select_disp > .content_3 > .left_3 > .one_2{
+	padding:10px 0px 20px 0px;
+	line-height:160%;
+	font-size:12px;
+}
+
+#history > .list > .one > .select_disp > .content_4{
+	margin:20px 10px 0px 10px;
+	background:#fffdf0;
+	padding:10px 10px 10px 10px;
+}
+
+#history > .list > .one > .select_disp > .content_4 > .content_1{
+	border-bottom:solid 1px #f0e6b1;
+	color:#d2b60a;
+	font-size:14px;
+	font-weight:bold;
+	padding:0px 0px 10px 0px;
+}
+
+#history > .list > .one > .select_disp > .content_4 > .content_2{
+	line-height:160%;
+	margin:10px 0px 0px 0px;
+}
+
+.history_a_underline{
+	
+	text-decoration: underline;
+	color:#a13d71;
+}
+
+.history_to_voice_link{
+	
+	text-decoration: underline;
+	color:#a13d71;
+	display:block;
+	text-align:center;
+	padding:0px 0px 0px 0px;
+	
+}
+
+/*--------------------------------------*/
+
+#voice{
+	
+	margin:0px 0px 20px 0px;
+	
+}
+
+#voice > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/history/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#voice > .complete{
+	
+	text-align:center;
+	font-size:14px;
+	margin:40px 0px 60px 0px;
+	
+}
+
+#voice > .content_1{
+	
+	margin:10px 10px 15px 10px;
+	font-size:12px;
+	line-height:160%;
+	
+}
+
+#voice > .content_2{
+	
+	border:solid 1px #e4e4e4;
+	padding:10px 10px 10px 10px;
+	margin:0px 10px 0px 10px;
+	
+}
+
+#voice > .content_2 > .one_1{
+	
+	margin:0px 0px 10px 0px;
+	font-size:14px;
+	
+}
+
+#voice > .content_2 > .one_2{
+	
+	
+	
+}
+
+#voice > .content_2 > .one_2 > .left_1{
+	
+	float:left;
+	background:#f2f0f1;
+	border-bottom:solid 1px #f2f0f1;
+	width:80px;
+	padding:5px 0px 5px 5px;
+	
+}
+
+#voice > .content_2 > .one_2 > .left_2{
+	
+	float:left;
+	border-bottom:solid 1px #f2f2f2;
+	margin:0px 0px 0px 10px;
+	width:180px;
+	padding:5px 0px 5px 0px;
+	
+}
+
+#voice > .content_2 > .one_3{
+	
+	
+	
+}
+
+#voice > .content_2 > .one_3 > .left_1{
+	
+	float:left;
+	background:#eae8e9;
+	width:80px;
+	padding:5px 0px 5px 5px;
+	
+}
+
+#voice > .content_2 > .one_3 > .left_2{
+	
+	float:left;
+	margin:0px 0px 0px 10px;
+	width:180px;
+	padding:13px 0px 5px 0px;
+	
+}
+
+#voice > .content_3{
+	
+	text-align:center;
+	margin:20px 0px 10px 0px;
+	
+}
+
+#vip_voice_textarea{
+	
+	height:160px;
+	width:260px;
+	
+}
+
+#voice > .content_4{
+	
+	margin:0px auto 0px auto;
+	width:260px;
+	
+}
+
+#voice > .content_5{
+	
+	margin:15px 0px 0px 30px;
+	
+}
+
+#voice_publish_allow_therapist{
+	
+	float:left;
+	
+}
+
+#voice > .content_6{
+	
+	margin:20px 0px 0px 30px;
+	
+}
+
+#voice_publish_allow_site{
+	
+	float:left;
+	
+}
+
+#voice > .content_7{
+	
+	width:160px;
+	margin:30px auto 0px auto;
+	
+}
+
+#voice > .content_8{
+	
+	margin:30px 20px 30px 20px;
+	line-height:160%;
+	font-size:12px;
+	
+}
+
+#voice > .content_9{
+	
+	margin:10px 0px 0px 30px;
+	
+}
+
+#voice > .content_9 > .one_1{
+	
+	
+	
+}
+
+#voice > .content_9 > .one_2{
+	
+	margin:5px 0px 0px 0px;
+	
+}
+
+#voice > .content_9 > .one_3{
+	
+	margin:5px 0px 0px 0px;
+	
+}
+
+/*--------------------------------------*/
+
+#evaluation{
+	
+	margin:0px 0px 20px 0px;
+	
+}
+
+#evaluation > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/history/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#evaluation > .content_1{
+	
+	margin:10px 10px 15px 10px;
+	font-size:12px;
+	line-height:160%;
+	
+}
+
+#evaluation > .content_2{
+	
+	border:solid 1px #e4e4e4;
+	padding:10px 10px 10px 10px;
+	margin:0px 10px 0px 10px;
+	
+}
+
+#evaluation > .content_2 > .one_1{
+	
+	margin:0px 0px 10px 0px;
+	font-size:14px;
+	
+}
+
+#evaluation > .content_2 > .one_2{
+	
+	
+	
+}
+
+#evaluation > .content_2 > .one_2 > .left_1{
+	
+	float:left;
+	background:#f2f0f1;
+	border-bottom:solid 1px #f2f0f1;
+	width:80px;
+	padding:5px 0px 5px 5px;
+	
+}
+
+#evaluation > .content_2 > .one_2 > .left_2{
+	
+	float:left;
+	border-bottom:solid 1px #f2f2f2;
+	margin:0px 0px 0px 10px;
+	width:180px;
+	padding:5px 0px 5px 0px;
+	
+}
+
+#evaluation > .content_2 > .one_3{
+	
+	
+	
+}
+
+#evaluation > .content_2 > .one_3 > .left_1{
+	
+	float:left;
+	background:#eae8e9;
+	width:80px;
+	padding:5px 0px 5px 5px;
+	
+}
+
+#evaluation > .content_2 > .one_3 > .left_2{
+	
+	float:left;
+	margin:0px 0px 0px 10px;
+	width:180px;
+	padding:13px 0px 5px 0px;
+	
+}
+
+#evaluation > .content_3{
+	
+	text-align:center;
+	margin:20px 0px 10px 0px;
+	
+}
+
+#evaluation > .content_4{
+	
+	margin:20px 0px 0px 10px;
+	
+}
+
+#evaluation > .content_4 > .left_1{
+	
+	float:left;
+	font-size:12px;
+	margin:3px 10px 0px 0px;
+	font-weight:bold;
+	
+}
+
+#evaluation > .content_4 > .left_2{
+	
+	float:left;
+	
+}
+
+#evaluation > .content_4 > .left_2 > .star_skill{
+	
+	float:left;
+	margin:0px 5px 0px 0px;
+	
+}
+
+#evaluation > .content_4 > .left_2 > .star_service{
+	
+	float:left;
+	margin:0px 5px 0px 0px;
+	
+}
+
+#evaluation > .content_5{
+	
+	margin:30px 0px 0px 50px;
+	
+}
+
+#evaluation > .content_7{
+	
+	width:160px;
+	margin:20px auto 0px auto;
+	
+}
+
+#evaluation > .content_8{
+	
+	margin:30px 20px 30px 20px;
+	line-height:160%;
+	font-size:12px;
+	
+}
+
+#evaluation_therapist_publish{
+	
+	float:left;
+	
+}
+
+/*--------------------------------------*/
+
+#vip_reservation_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/calendar/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+/*--------------------------------------*/
+
+#clip{
+	
+	
+	
+}
+
+#clip > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/clip/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#clip > .message{
+	
+	margin:10px 10px 0px 10px;
+	line-height:160%;
+	font-size:12px;
+	
+}
+
+#clip > .paging{
+	
+	margin:0px 0px 20px 10px;
+	
+}
+
+#clip > .list{
+	
+	margin:0px 0px 20px 0px;
+	
+}
+
+#clip > .list > .no_data{
+	
+	text-align:center;
+	margin:20px 0px 0px 0px;
+	
+}
+
+#clip > .list > .one{
+	
+	width:300px;
+	margin:20px auto 0px auto;
+	border:solid 1px #e4e4e4;
+	
+}
+
+#clip > .list > .one > .content_1{
+	
+	
+	
+}
+
+#clip > .list > .one > .content_1 > .left_1{
+	
+	float:left;
+	width:120px;
+	text-align:center;
+	background:#f2f0f1;
+	height:32px;
+	padding:15px 0px 0px 0px;
+}
+
+#clip > .list > .one > .content_1 > .left_2{
+	
+	float:left;
+	width:110px;
+	text-align:center;
+	background:#eae8e9;
+	height:32px;
+	padding:15px 0px 0px 0px;
+	
+}
+
+#clip > .list > .one > .content_1 > .left_3{
+	
+	float:left;
+	width:70px;
+	text-align:center;
+	background:#f2f0f1;
+	line-height:140%;
+	height:42px;
+	padding:5px 0px 0px 0px;
+	
+}
+
+#clip > .list > .one > .content_2{
+	
+	height:55px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_1{
+	
+	float:left;
+	width:120px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_1 > .one_1{
+	
+	float:left;
+	height:35px;
+	overflow:hidden;
+	margin:10px 0px 0px 5px;
+	width:35px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_1 > .one_2{
+	
+	float:left;
+	width:70px;
+	height:28px;
+	overflow:hidden;
+	margin:17px 0px 0px 0px;
+	font-size:12px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_1 > .one_3{
+	
+	float:left;
+	width:10px;
+	margin:15px 0px 0px 0px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_2{
+	
+	float:left;
+	width:110px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_2 > .content{
+	
+	
+	
+}
+
+#clip > .list > .one > .content_2 > .left_2 > .content > .no_data{
+	
+	text-align:center;
+	margin:15px 0px 0px 0px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_2 > .content > .left_1{
+	
+	float:left;
+	margin:8px 0px 0px 10px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_2 > .content > .left_2{
+	
+	float:left;
+	margin:8px 0px 0px 0px;
+	width:38px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_2 > .content > .left_3{
+	
+	float:left;
+	margin:8px 0px 0px 0px;
+	
+}
+
+#clip > .list > .one > .content_2 > .left_3{
+	
+	float:left;
+	width:70px;
+	text-align:center;
+	margin:13px 0px 0px 0px;
+	
+}
+
+#clip > .list > .one > .content_3{
+	
+	text-align:center;
+	margin:0px 0px 10px 0px;
+	
+}
+
+/*--------------------------------------*/
+
+#reservation_page{
+	
+	
+	
+}
+
+#reservation_page > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/reservation/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#reservation_page > .error{
+	
+	margin:10px 0px 0px 0px;
+	text-align:center;
+	
+}
+
+#reservation_page > .message{
+	
+	margin:10px 10px 0px 10px;
+	font-size:12px;
+	
+}
+
+#reservation_page > .content_1{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_1 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page > .content_1 > .content{
+	
+	margin:10px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_1 > .content > .left_1{
+	
+	float:left;
+	
+}
+
+#reservation_page > .content_1 > .content > .left_2{
+	
+	float:left;
+	margin:0px 0px 0px 20px;
+	
+}
+
+#reservation_page > .content_2{
+	
+	margin:20px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_2 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	margin:0px 0px 0px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page > .content_2 > .message{
+	
+	margin:5px 0px 0px 10px;
+	
+}
+
+#reservation_page > .content_2 > .content{
+	
+	
+	
+}
+
+#reservation_page > .content_3{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_3 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page > .content_3 > .content{
+	
+	margin:10px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_4{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_4 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page > .content_4 > .message{
+	
+	margin:5px 0px 5px 0px;
+	
+}
+
+#reservation_page > .content_4 > .content{
+	
+	
+	
+}
+
+#reservation_page > .content_4 > .content_2{
+	
+	margin:10px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_5{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_5 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page > .content_5 > .content{
+	
+	margin:10px 0px 0px 0px;
+	
+}
+
+#reservation_page > .content_6{
+	
+	padding:40px 0px 50px 0px;
+	margin:0px auto 0px auto;
+	width:300px;
+	
+}
+
+#reservation_page > .content_6 > .left_1{
+	
+	float:left;
+	
+}
+
+#reservation_page > .content_6 > .left_2{
+	
+	float:left;
+	padding:0px 0px 0px 20px;
+	
+}
+
+#free_therapist{
+	
+	
+	
+}
+
+#free_therapist > .one{
+	
+	float:left;
+	margin:10px 0px 0px 3px;
+	width:152px;
+	height:45px;
+	
+}
+
+#free_therapist > .one > .left_1{
+	
+	float:left;
+	margin:10px 0px 0px 0px;
+	width:22px;
+	
+}
+
+#free_therapist > .one > .left_2{
+	
+	float:left;
+	height:45px;
+	overflow:hidden;
+	margin:0px 0px 0px 0px;
+	width:30px;
+	
+}
+
+#free_therapist > .one > .left_3{
+	
+	float:left;
+	margin:10px 0px 0px 5px;
+	width:95px;
+	overflow:hidden;
+	
+}
+
+/*--------------------------------------*/
+
+#reservation_page_confirm{
+	
+	
+	
+}
+
+#reservation_page_confirm > .page_title{
+	
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/reservation/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#reservation_page_confirm > .error{
+	
+	margin:10px 0px 0px 0px;
+	text-align:center;
+	
+}
+
+#reservation_page_confirm > .message{
+	
+	margin:10px 10px 0px 10px;
+	font-size:12px;
+	
+}
+
+#reservation_page_confirm > .content_1{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page_confirm > .content_1 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page_confirm > .content_1 > .content{
+	
+	margin:10px 0px 0px 10px;
+	
+}
+
+#reservation_page_confirm > .content_1 > .content > .left_1{
+	
+	float:left;
+	
+}
+
+#reservation_page_confirm > .content_1 > .content > .left_2{
+	
+	float:left;
+	margin:0px 0px 0px 20px;
+	
+}
+
+#reservation_page_confirm > .content_2{
+	
+	margin:20px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page_confirm > .content_2 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	margin:0px 0px 0px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page_confirm > .content_2 > .message{
+	
+	margin:5px 0px 5px 10px;
+	
+}
+
+#reservation_page_confirm > .content_2 > .content{
+	
+	
+	
+}
+
+#reservation_page_confirm > .content_2 > .content > .left_1{
+	
+	float:left;
+	margin:0px 0px 0px 10px;
+	
+}
+
+#reservation_page_confirm > .content_2 > .content > .left_2{
+	
+	float:left;
+	margin:10px 0px 0px 5px;
+	
+}
+
+#reservation_page_confirm > .content_3{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page_confirm > .content_3 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page_confirm > .content_3 > .content{
+	
+	margin:10px 0px 0px 10px;
+	
+}
+
+#reservation_page_confirm > .content_4{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page_confirm > .content_4 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page_confirm > .content_4 > .message{
+	
+	margin:5px 0px 5px 0px;
+	
+}
+
+#reservation_page_confirm > .content_4 > .content{
+	
+	margin:10px 0px 0px 10px;
+	
+}
+
+#reservation_page_confirm > .content_4 > .content_2{
+	
+	margin:10px 0px 0px 0px;
+	
+}
+
+#reservation_page_confirm > .content_5{
+	
+	margin:20px 0px 0px 10px;
+	padding:0px 0px 0px 0px;
+	
+}
+
+#reservation_page_confirm > .content_5 > .title{
+	
+	border-left:solid 5px #b0015e;
+	padding:3px 0px 3px 10px;
+	font-size:16px;
+	
+}
+
+#reservation_page_confirm > .content_5 > .content{
+	
+	margin:10px 0px 0px 10px;
+	
+}
+
+#reservation_page_confirm > .content_6{
+	
+	padding:40px 0px 50px 0px;
+	margin:0px auto 0px auto;
+	width:300px;
+	
+}
+
+#reservation_page_confirm > .content_6 > .left_1{
+	
+	float:left;
+	
+}
+
+#reservation_page_confirm > .content_6 > .left_2{
+	
+	float:left;
+	padding:0px 0px 0px 20px;
+	
+}
+
+/*--------------------------------------*/
+
+#vip_login_2{
+	
+	
+	
+}
+
+#vip_login_2 > .page_title{
+	
+	margin:20px 0px 0px 0px;
+	padding:10px 0px 10px 25px;
+	font-size:16px;
+	color:#fff;
+	background-image: url(../../img/ssl/vip/reservation/sp/title_bar.jpg);
+	background-repeat: no-repeat;
+	
+}
+
+#vip_login_2 > .error{
+	
+	text-align:center;
+	color:red;
+	margin:10px 0px 10px 0px;
+	
+}
+
+#vip_login_2 > .content_1{
+	
+	margin:10px 10px 0px 10px;
+	
+}
+
+#vip_login_2 > .content_2{
+	
+	margin:20px 10px 5px 75px;
+	font-size:10px;
+	
+}
+
+#vip_login_2 > .content_3{
+	
+	margin:0px 0px 0px 10px;
+	
+}
+
+#vip_login_2 > .content_3 > .left_1{
+	
+	float:left;
+	margin:5px 0px 0px 0px;
+	width:65px;
+	
+}
+
+#vip_login_2 > .content_3 > .left_1{
+	
+	float:left;
+	
+}
+
+#vip_login_2 > .content_4{
+	
+	margin:0px 0px 5px 75px;
+	font-size:10px;
+	
+}
+
+#vip_login_2 > .content_5{
+	
+	margin:0px 0px 5px 0px;
+	
+}
+
+#vip_login_2 > .content_5 > .left_1{
+	
+	float:left;
+	margin:5px 0px 0px 10px;
+	width:65px;
+	
+}
+
+#vip_login_2 > .content_5 > .left_1{
+	
+	float:left;
+	
+}
+
+#vip_login_2 > .content_6{
+	
+	margin:15px 0px 0px 80px;
+	
+}
+
+#vip_login_2 > .content_7{
+	
+	margin:20px 0px 0px 80px;
+	
+}
+
+#vip_login_2 > .content_7 > a{
+	
+	color:#bdbdbd;
+	text-decoration: underline;
+	
+}
+
+#vip_login_2 > .content_8{
+	
+	margin:20px 0px 5px 10px;
+	
+}
+
+#vip_login_2 > .content_9{
+	
+	background:#fafafa;
+	padding:15px 0px 15px 10px;
+	line-height:160%;
+	margin:0px 10px 10px 10px;
+	font-size:11px;
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

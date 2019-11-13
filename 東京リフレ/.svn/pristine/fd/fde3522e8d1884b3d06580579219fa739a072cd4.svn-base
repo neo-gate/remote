@@ -1,0 +1,52 @@
+<?php
+
+include("include/common.php");
+
+
+
+if( (isset($_GET["therapist_id"]) == true) && (isset($_GET["area"]) == true) ){
+	
+	$therapist_id = $_GET["therapist_id"];
+	$area = $_GET["area"];
+	$ch = $_GET["ch"];
+	
+	$today_year = intval(date("Y"));
+	$today_month = intval(date("m"));
+	
+}else{
+	
+	echo "error!";
+	exit();
+	
+}
+
+$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+$top_url = get_top_url($area,$therapist_id,$ch);
+$params['top_url'] = $top_url;
+
+
+
+$params['therapist_name'] = $therapist_name;
+$params['therapist_id'] = $therapist_id;
+$params['area'] = $area;
+$params['today_year'] = $today_year;
+$params['today_month'] = $today_month;
+$params['ch'] = $ch;
+$params['page_title'] = "シフト追加完了";
+
+$smarty->assign( 'params', $params );
+
+if( ( $access_type == "pc" ) || ( $access_type == "sp" ) ){
+	
+	$smarty->assign( 'content_tpl', 'sp/add_complete_kensyuu.tpl' );
+	$smarty->display( 'sp/template.tpl' );
+
+}else if( $access_type == "m" ){
+	
+	$smarty->assign( 'content_tpl', 'm/add_complete_kensyuu.tpl' );
+	$smarty->display( 'm/template.tpl' );
+
+}
+
+?>

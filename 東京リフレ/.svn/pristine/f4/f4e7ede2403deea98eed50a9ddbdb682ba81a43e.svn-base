@@ -1,0 +1,39 @@
+<?php
+
+include("include/common.php");
+
+
+
+$area = $_GET["area"];
+$therapist_id = $_GET["therapist_id"];
+$ch = $_GET["ch"];
+
+$result = therapist_shift_page_access_check($therapist_id,$ch);
+if( $result == false ){
+	echo "error!";
+	exit();
+}
+
+$therapist_name = get_therapist_name_by_therapist_id_honmyou($therapist_id, $area);
+
+$top_url = get_top_url($area,$therapist_id,$ch);
+
+$page_title = "お会計確認・完了";
+
+
+
+$params['top_url'] = $top_url;
+$params['therapist_name'] = $therapist_name;
+$params['therapist_id'] = $therapist_id;
+$params['area'] = $area;
+$params['page_title'] = $page_title;
+$params['ch'] = $ch;
+
+
+
+$smarty->assign( 'params', $params );
+
+$smarty->assign( 'content_tpl', 'sp/end_confirm_complete.tpl' );
+$smarty->display( 'sp/template.tpl' );
+
+?>

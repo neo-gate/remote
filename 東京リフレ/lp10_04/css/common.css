@@ -1,0 +1,1056 @@
+/* 
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com 
+Twitter: @rich_clark
+*/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+body {
+    color: #666;
+    font-family:"游ゴシック Medium",YuGothic,YuGothicM,"Hiragino Kaku Gothic ProN","Hiragino Kaku Gothic Pro",メイリオ,Meiryo,sans-serif;
+    line-height:1;
+}
+
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section { 
+    display:block;
+}
+
+nav ul {
+    list-style:none;
+}
+
+blockquote, q {
+    quotes:none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+/* change colours to suit your needs */
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+
+/* change colours to suit your needs */
+mark {
+    background-color:#ff9;
+    color:#000; 
+    font-style:italic;
+    font-weight:bold;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+    border-bottom:1px dotted;
+    cursor:help;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+/* change border colour to suit your needs */
+hr {
+    display:block;
+    height:1px;
+    border:0;   
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+    vertical-align:middle;
+}
+
+a:link { color: #a99e44; }
+a:visited { color: #a99e44; }
+a:hover { color: #a99e44; }
+a:active { color: #a99e44; }
+
+.clearfix::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+img{
+    display:block;
+}
+
+body > * {
+    width: 960px;
+    margin: 0 auto;
+    font-size: 14px;
+    -webkit-text-size-adjust: 100%;
+}
+
+header{
+    border-bottom: 1px solid #cacaca;
+    padding: 0 0 5px 0;
+}
+
+.logo{
+    float: left;
+    margin: 13px 13px 0 20px;
+}
+
+h1{
+    float: left;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 130%;
+    padding-top: 26px;
+}
+
+.time_box{
+    float: right;
+    background-color: #c9bf6f;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 12px 20px 0 0;;
+    padding: 11px 10px;
+}
+
+.time_box p:nth-last-child(n+2){
+    float: left;
+    margin-right: 10px;
+}
+
+.time_box p:last-child{
+    float: right;
+}
+
+.main_text{
+    background-color: #e7e7e7;
+    padding: 10px 20px;
+}
+
+h2{
+    font-weight: normal;
+    text-align: center;
+}
+
+.tp_text{
+    padding: 23px 0;
+}
+
+.tp_text p{
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 28px;
+    color: #000;
+    line-height: 130%;
+    background: linear-gradient(transparent 95%, #eddb93 95%);
+}
+
+.tp_text p:first-child{
+    width: 364px;
+    margin: 0 auto;
+}
+
+.tp_text p:last-child{
+    width: 308px;
+    margin: 0 auto;
+}
+
+.now_info{
+    background-color: #ff0;
+    text-align: center;
+    padding: 15px 0;
+    color: #000;
+}
+
+.now_info p:nth-child(1){
+    font-size: 39px;
+}
+
+.now_info p span{
+    color: #fe0000;
+}
+
+.now_info p strong{
+    font-size: 69px;
+}
+
+.now_info p:nth-child(2){
+    font-size: 29px;
+}
+
+.now_tp{
+    background-color: #818181;
+    height: 255px;
+    padding: 0 45px 0 45px;
+}
+
+.now_tp_box{
+    background-color: #fff;
+    margin: 40px 15px 0px 15px;
+    padding: 12px 15px 11px 15px;
+    height: 176px;
+}
+
+
+
+.now_tp_box img{
+    width: auto;
+    height: 60px;
+    margin: 0 10px 10px 0;
+    float: left;
+}
+
+.now_tp_box p:nth-child(9){
+    margin: 13px 0 0 0;
+    font-size: 22px;
+    color: #e02254;
+    font-weight: bold;
+}
+
+.now_tp_box p:nth-child(9) span{
+    font-size: 13px;
+}
+
+.now_tp_box p:nth-child(10){
+    margin: 10px 0 13px 0;
+    font-size: 12px;
+}
+
+.now_tp_box p:nth-child(11){
+    color: #fff;
+    background-color: #dc8a9f;
+    text-align: center;
+    border-radius: 5px;
+    width: 71px;
+    float: left;
+    margin: 0 8px 7px 0;
+    padding: 3px 0 3px 0;
+}
+
+.now_tp_box p:nth-child(12){
+    color: #fff;
+    background-color: #dc8a9f;
+    text-align: center;
+    border-radius: 5px;
+    width: 71px;
+    float: left;
+    margin: 0 8px 7px 0;
+    padding: 3px 0 3px 0;
+}
+
+.now_tp_box p:nth-child(13){
+    color: #fff;
+    background-color: #dc8a9f;
+    text-align: center;
+    border-radius: 5px;
+    width: 71px;
+    float: left;
+    margin: 0 0 7px 0;
+    padding: 3px 0 3px 0;
+}
+
+.now_tp_box p:nth-child(14){
+    line-height: 130%;
+}
+
+/* モーダルCSS */
+.modalArea {
+    display: none;
+    position: fixed;
+    z-index: 10; /*サイトによってここの数値は調整 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+.modalBg {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(30,30,30,0.9);
+}
+
+.modalWrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform:translate(-50%,-50%);
+    width: 460px;
+    max-width: 600px;
+    padding: 12px 20px 15px 20px;
+    background-color: #fff;
+    height : 80%;
+    overflow : auto;
+}
+
+.closeModal {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    cursor: pointer;
+}
+
+.result_box_1{
+    padding: 0 0 12px 120px;
+    border-bottom: 2px solid #e7e7e7;
+}
+
+.result_box_1 img{
+    width: auto;
+    height: 60px;
+    float: left;
+    margin: 0 10px 0 0;
+}
+
+.result_box_1 p:nth-child(2){
+    padding: 13px 0 0 0;
+    font-size: 27px;
+    color: #e02254;
+    font-weight: bold;
+}
+
+.result_box_1 p:nth-child(2) span{
+    font-size: 13px;
+}
+
+.result_box_1 p:nth-child(3){
+    margin: 9px 0 0 0;
+    font-size: 12px;
+}
+
+.result_box_2{
+    border-bottom: 2px solid #e7e7e7;
+}
+
+.menu_box_2{
+    padding: 16px 0 16px 0;
+    width: 233px;
+    margin: 0 auto;
+}
+
+.menu_box_2 p:nth-child(1){
+    color: #998b1c;
+    font-size: 22px;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.menu_2{
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 8px 0;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.menu_box_2 p:nth-child(3n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 8px 0;
+    text-align: center;
+    margin: 0 10px 0 10px;
+    border-radius: 5px;
+}
+
+.result_box_3{
+    border-bottom: 2px solid #e7e7e7;
+}
+
+.menu_box_3{
+    padding: 16px 0 10px 0;
+    width: 461px;
+    margin: 0 auto;
+}
+
+.menu_box_3 p:nth-child(1){
+    color: #998b1c;
+    font-size: 22px;
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.menu_3{
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 0 10px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(2n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(3n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(5n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(7n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(9n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(11n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(13n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(17n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(19n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(23n){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 7px 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(7){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 0 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(13){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 0 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(19){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 0 7px 0;
+    border-radius: 5px;
+}
+
+.menu_box_3 p:nth-child(25){
+    color: #fff;
+    float: left;
+    background-color: #dc8a9f;
+    width: 71px;
+    padding: 6px 0;
+    text-align: center;
+    margin: 0 0 7px 0;
+    border-radius: 5px;
+}
+
+
+.result_box_4 p:nth-child(1){
+    float: left;
+    margin: 15px 0 0 0;
+}
+/*
+.slick-slide {
+    transition: .3s ease;
+}
+
+.slick-slide:not(.slick-current) {
+    opacity: .5;
+}
+*/
+.massage_box{
+    float: left;
+    width:630px;
+}
+
+.massage_title{
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 27px;
+    color: #998b1c;
+    text-align: center;
+    margin: 37px 0 12px 0;
+}
+
+.massage_text_top{
+    width: 590px;
+    margin: 0 auto;
+    line-height: 130%;
+}
+
+.massage{
+    width: 591px;
+    margin: 0 auto;
+}
+
+.massage div{
+    width: 94px;
+    float: left;
+    margin: 18px 6px 0 0;
+}
+
+.massage div:last-child{
+    width: 91px;
+    float: left;
+    margin: 18px 0 0 0;
+}
+
+.massage div p{
+    font-size: 12px;
+    text-align: center;
+    margin: 6px 0 0 0;
+}
+
+.massage_text_btm p{
+    width: 590px;
+    margin: 17px auto;
+    line-height: 130%;
+}
+
+.omakase{
+    float: left;
+    background-image: url("../img/omakase.jpg");
+    width: 330px;
+    height: 304px;
+}
+
+.omakase p:first-child{
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 27px;
+    color: #998b1c;
+    text-align: center;
+    margin: 37px 0 12px 0;
+}
+
+.omakase p:last-child{
+    width: 160px;
+    margin-left: 20px;
+    line-height: 130%;
+}
+
+.manzokudo{
+    background-color: #818181;
+    clear: both;
+}
+
+.manzokudo img{
+    width: 392px;
+    margin: 0 auto;
+    padding: 27px 0 20px;
+}
+
+.voice_title{
+    background-color: #818181;
+}
+
+.voice_title p{
+    color: #fff;
+    text-align: center;
+}
+
+.voice_title p:first-child{
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 27px;
+    padding: 0 0 8px ;
+}
+
+.voice_title p:last-child{
+    padding-bottom: 18px;
+}
+
+.voice_list_1{
+    float: left;
+    background-color: #818181;
+    padding: 0 0 24px 20px;
+}
+
+.voice_list_2{
+    float: left;
+    background-color: #818181;
+    padding: 0 28px 24px 28px;
+}
+
+.voice_list_3{
+    float: left;
+    background-color: #818181;
+    padding: 0 20px 24px 0;
+}
+
+.voice_list_1 div{
+    line-height: 130%;
+    width: 288px;
+    margin: 0 auto;
+    height: 155px;
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.voice_list_1 div p:first-child{
+    padding: 18px 13px 0px;
+}
+
+.voice_list_1 div p:last-child{
+    color: #a99e44;
+    margin: 5px 0 0 85px;
+}
+
+.voice_list_1 img{
+    width: 41px;
+    margin: 0 auto;
+}
+
+.voice_list_2 div{
+    line-height: 130%;
+    width: 288px;
+    margin: 0 auto;
+    height: 155px;
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.voice_list_2 div p:first-child{
+    padding: 18px 13px 0px;
+}
+
+.voice_list_2 div p:last-child{
+    color: #a99e44;
+    margin: 24px 0 0 85px;
+}
+
+.voice_list_2 img{
+    width: 41px;
+    margin: 0 auto;
+}
+
+.voice_list_3 div{
+    line-height: 130%;
+    width: 288px;
+    margin: 0 auto;
+    height: 155px;
+    background-color: #fff;
+    border-radius: 20px;
+}
+
+.voice_list_3 div p:first-child{
+    padding: 18px 13px 0px;
+}
+
+.voice_list_3 div p:last-child{
+    color: #a99e44;
+    margin: 5px 0 0 85px;
+}
+
+.voice_list_3 img{
+    width: 41px;
+    margin: 0 auto;
+}
+
+.course_area{
+    clear: both;
+}
+
+.course{
+    width: 330px;
+    float: left;
+    clear: both;
+}
+
+.course_title{
+    clear: both;
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 27px;
+    color: #998b1c;
+    text-align: center;
+    padding: 37px 0 12px 0;
+    width: 330px;
+}
+
+.course_text{
+    width: 290px;
+    margin: 0 auto 12px;
+    
+}
+
+.price{
+    width: 292px;
+    margin: 0 auto;
+}
+
+.area{
+    float: left;
+    width: 630px;
+}
+
+.area_title{
+    background-color: #e7e7e7;
+    padding:37px 0 12px 0;
+}
+
+.area_title p{
+    padding: 0 23px;
+}
+
+.area_title p:first-child{
+    text-align: center;
+    color: #998b1c;
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 27px;
+    padding: 0 0 12px ;
+}
+
+.area_title_img{
+    float: left;
+    background-color: #e7e7e7;
+    padding: 0 0 27px 23px
+
+}
+
+.price_text{
+    background-color: #e7e7e7;
+    width: 288px;
+    float: left;
+    text-align: center;
+    padding: 0 0 8px 0;
+}
+
+.price_box_1{
+    float: left;
+    width: 288px;
+    background-color: #e7e7e7;
+}
+
+.price_box_1 p{
+    text-align: center;
+    padding: 10px 0 0;
+}
+
+.price_box_1 p:nth-child(1){
+    color: #fff;
+    background-color: #950000;
+    width: 250px;
+    margin: 0 auto;
+    padding: 10px 0 10px 0;
+}
+
+.price_box_1 p:nth-child(4){
+    padding: 10px 0 20px 0;
+}
+
+.price_box_2{
+    float: left;
+    width: 288px;
+    background-color: #e7e7e7;
+}
+
+.price_box_2 p{
+    text-align: center;
+    padding: 10px 0 0;
+}
+
+.price_box_2 p:nth-child(1){
+    color: #fff;
+    background-color: #c66a10;
+    width: 250px;
+    margin: 0 auto;
+    padding: 10px 0 10px 0;
+}
+
+.price_box_2 p:nth-child(2){
+    padding: 10px 0 20px 0;
+}
+
+.price_box_3{
+    float: left;
+    width: 288px;
+    background-color: #e7e7e7;
+    padding: 0 0 22px 0px;
+}
+
+.price_box_3 p{
+    text-align: center;
+    padding: 10px 0 0;
+}
+
+.price_box_3 p:nth-child(1){
+    color: #fff;
+    background-color: #a99e44;
+    width: 250px;
+    margin: 0 auto;
+    padding: 10px 0 10px 0;
+}
+
+.price_box_3 p:nth-child(3){
+    padding: 10px 0 20px 0;
+}
+
+.goriyou_title{
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 27px;
+    color: #998b1c;
+    text-align: center;
+    padding: 37px 0 18px 0;
+    clear: both;
+}
+
+.step_box{
+    float: left;
+    width: 200px;
+    margin: 0 20px 24px 20px;
+}
+
+.step_box img{
+    width: 109px;
+    margin: 0 auto;
+}
+
+.step_box p:nth-child(2){
+    line-height: 130%;
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+    padding: 8px 12px 12px 12px
+}
+
+.step_box p:nth-child(3){
+    line-height: 130%;
+    margin: 0 auto;
+}
+
+.question{
+    clear: both;
+    background-color: #e7e7e7;
+    padding: 0 0 0 6px;
+}
+
+.question_title{
+    font-family: 游明朝,"Yu Mincho",YuMincho,"Hiragino Mincho ProN","Hiragino Mincho Pro",HGS明朝E,メイリオ,Meiryo,serif;
+    font-size: 27px;
+    text-align: center;
+    padding: 37px 0 18px 0;
+}
+
+.question_box{
+    float: left;
+    width: 288px;
+    margin: 0 14px 24px 14px;
+}
+
+.question_box div{
+    line-height: 130%;
+    padding: 0 13px 12px 13px;
+    background-color: #fff;
+    margin: 0 auto;
+    height: 135px;
+}
+
+.question_box div p:nth-child(1){
+    display:table-cell;
+    vertical-align: middle;
+    font-size: 14px;
+    width: 252px;
+    height: 49px;
+    font-weight: bold;
+    color: #a99e44;
+    border-bottom: solid 1px #e7e7e7;
+}
+
+.question_box div p:nth-child(2){
+    margin: 16px 0 0 0;
+}
+
+.question_text{
+    clear: both;
+    background-color: #e7e7e7;
+    padding: 0 0 30px 0;
+}
+
+.question_text p{
+    text-align: center;
+}
+
+.chushaku{
+    margin: 12px 0 12px 0;
+    width: 641px;
+    margin: 12px auto 12px;
+}
+
+.chushaku p:nth-child(1){
+    float: left;
+    margin: 0 30px 0 0;
+}
+
+.chushaku p:nth-child(2){
+    
+}
+
+.link{
+    font-size: 14px;
+    color: #a99e44;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.copy_light{
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* ヘッダーの固定 */
+div#header-fixed
+{
+    position: fixed;            /* ヘッダーの固定 */
+    width: 960px;                /* 横幅100%　*/
+    height: 256px;              /* 縦幅140px */
+    margin: 0 auto;
+    padding: 0 0 0 960px;
+}
+ 
+ 
+div#header-bk { 
+	background-color:#000;     /* 背景色(黒) */
+    padding: 12px 12px 0 12px;/* 上10px、下20pxをあける */
+	height:100%;              /* 縦の高さ110px */
+	width:76px;                /* 横の幅を100% */
+}
+ 
+ 
+div#header { 
+	height: 100%;              /* 縦の表示領域はheader-bkと同じ */
+	margin: auto;              /* 中央揃え */
+}
+
+.web_button{
+    margin: 16px 0 0 0;
+}

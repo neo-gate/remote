@@ -1,0 +1,494 @@
+<?php
+header("Content-type: text/html; charset=UTF-8");
+
+include("include/common.php");
+include("include/auth.php");
+
+$error = "";
+
+if( isset($_POST["send_order"]) == true ){
+	
+	$therapist_page_id = $_POST["therapist_page_id"];
+	$order_value = $_POST["order_value"];
+	$area = $_POST["area"];
+	
+	$year = $_POST["year"];
+	$month = $_POST["month"];
+	$day = $_POST["day"];
+	
+	$rinpa = $_POST["rinpa"];
+	$tai = $_POST["tai"];
+	$stretch = $_POST["stretch"];
+	$strong = $_POST["strong"];
+	$order_type = $_POST["order_type"];
+	
+	if( $order_value == "" ){
+		
+		$error = '<span style="color:red;">表示優先度が未入力です</span>';
+		
+	}else if (!preg_match("/^[0-9]+$/", $order_value)) {
+		
+		$error = '<span style="color:red;">表示優先度は半角数字のみです</span>';
+		
+	}else{
+		
+		//表示優先度の更新
+		update_therapist_page_order_value($therapist_page_id,$order_value);
+		
+		$error = '<span style="color:blue;">表示優先度を更新しました</span>';
+		
+	}
+	
+	
+}else if( isset($_POST["send_edit"]) == true ){
+	
+	$therapist_page_id = $_POST["therapist_page_id"];
+	
+	$url = sprintf("%stherapist_page/edit.php?id=%s",WWW_URL_MAN,$therapist_page_id);
+	
+	header("Location: ".$url);
+	exit();
+	
+}else if( isset($_POST["send_set"]) == true ){
+	
+	$area = $_POST["area"];
+	$year = $_POST["year"];
+	$month = $_POST["month"];
+	$day = $_POST["day"];
+	$rinpa = $_POST["rinpa"];
+	$tai = $_POST["tai"];
+	$stretch = $_POST["stretch"];
+	$strong = $_POST["strong"];
+	$order_type = $_POST["order_type"];
+	
+	$order_value_set_flg = true;
+	
+}else if( isset($_POST["send_select"]) == true ){
+	
+	$area = $_POST["area"];
+	$year = $_POST["year"];
+	$month = $_POST["month"];
+	$day = $_POST["day"];
+	$rinpa = $_POST["rinpa"];
+	$tai = $_POST["tai"];
+	$stretch = $_POST["stretch"];
+	$strong = $_POST["strong"];
+	$order_type = $_POST["order_type"];
+	
+}else if( isset($_POST["send_update"]) == true ){
+	
+	$area = $_POST["area"];
+	$year = $_POST["year"];
+	$month = $_POST["month"];
+	$day = $_POST["day"];
+	$rinpa = $_POST["rinpa"];
+	$tai = $_POST["tai"];
+	$stretch = $_POST["stretch"];
+	$strong = $_POST["strong"];
+	$order_type = $_POST["order_type"];
+	
+	$order_value_string = $_POST["order_value_string"];
+	//echo $order_value_string;exit();
+	
+	update_therapist_page_order_value_all($order_value_string);
+	
+	$error = '<span style="color:blue;">表示優先度を更新しました(一括更新)</span>';
+	
+}else if(isset($_GET["area"])==true){
+	
+	$area = $_GET["area"];
+	$year = $_GET["year"];
+	$month = $_GET["month"];
+	$day = $_GET["day"];
+	$rinpa = $_GET["rinpa"];
+	$tai = $_GET["tai"];
+	$stretch = $_GET["stretch"];
+	$strong = $_GET["strong"];
+	$order_type = $_GET["order_type"];
+	
+}else{
+	
+	echo "URLにareaが含まれていません";
+	exit();
+	
+}
+
+$area_name = get_area_name_by_area_common($area);
+if($area=="tokyo_reraku"){
+    $area_name = "東京リラク";
+}
+else if($area=="tokyo_bigao"){
+    $area_name = "BIGAO";
+}
+
+$therapist_page = get_therapist_page_data($area);
+
+if( ($year != "") && ($month != "") && ($day != "") ){
+
+	//全件でない場合
+	$therapist_page = select_therapist_page_data_for_therapist_page($therapist_page,$year,$month,$day);
+
+}
+
+$therapist_page = add_info_therapist_page_data($therapist_page);
+
+$therapist_page = therapist_page_data_select_by_massage_type($therapist_page,$rinpa,$tai,$stretch,$strong);
+
+$order_type = if_null_is_zero_common($order_type);
+if( $order_type != "0" ){
+	$therapist_page = order_type_select_therapist_page($therapist_page,$order_type);
+}
+
+if( $order_value_set_flg == true ){
+	$therapist_page = therapist_page_order_value_set($therapist_page);
+}
+
+$order_value_string = get_order_value_string($therapist_page);
+
+$therapist_page_num = count($therapist_page);
+
+$day_link_disp = get_day_link_disp_for_therapist_page($year,$month,$day,$area,$rinpa,$tai,$stretch,$strong,$order_type);
+
+
+
+/*
+echo "<pre>";
+print_r($therapist_page);
+echo "</pre>";
+exit();
+*/
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>セラピストページ(<?php echo $area_name;?>)・管理ページ</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+
+<style>
+body{
+margin:0px;
+padding:0px;
+}
+</style>
+
+</head>
+<body>
+
+	<div style="width:1024px;margin:0px auto 0px auto;">
+		<div>
+			<div style="float:left;"><a href="index.php">トップ</a> &gt; セラピストページ一覧(<?php echo $area_name;?>)</div>
+			<div style="float:right;"><a href="logout.php">ログアウト</a></div>
+			<br style="clear:both" />
+		</div>
+		<div style="padding:10px 0px 0px 0px;">
+			<a href="therapist_page.php?area=tokyo">東京</a>　
+			<a href="therapist_page.php?area=yokohama">横浜</a>　
+			<a href="therapist_page.php?area=sapporo">札幌</a>　
+			<a href="therapist_page.php?area=sendai">仙台</a>　
+			<a href="therapist_page.php?area=fukuoka">福岡</a>　
+			<!--<a href="therapist_page.php?area=osaka">大阪</a>　-->
+			<a href="therapist_page.php?area=tokyo_reraku">東京リラク</a>　
+			<a href="therapist_page.php?area=tokyo_bigao">BIGAO</a>　
+		</div>
+		<a href="therapist_page_regist_input.php?area=<?php echo $area;?>" class="therapist_regist_sapporo_btn">
+			セラピストページ新規登録(<?php echo $area_name;?>)
+		</a>
+		<div style="padding:20px 0px 100px 0px;">
+			<div><?php echo $error;?></div>
+			<div style="padding:0px 0px 5px 0px;font-size:12px;">表示優先度が高い順にセラピストページに表示されます</div>
+			
+			<div style="padding:0px 0px 0px 0px;">
+			
+				<div style="float:left;width:223px;">
+				<?php echo $day_link_disp;?>
+				</div>
+				<div style="float:left;width:100px;">
+				<form action="" method="post">
+				
+<input type="hidden" name="area" value="<?php echo $area;?>" />
+<input type="hidden" name="year" value="<?php echo $year;?>" />
+<input type="hidden" name="month" value="<?php echo $month;?>" />
+<input type="hidden" name="day" value="<?php echo $day;?>" />
+<input type="hidden" name="rinpa" value="<?php echo $rinpa;?>" />
+<input type="hidden" name="tai" value="<?php echo $tai;?>" />
+<input type="hidden" name="stretch" value="<?php echo $stretch;?>" />
+<input type="hidden" name="strong" value="<?php echo $strong;?>" />
+<input type="hidden" name="order_type" value="<?php echo $order_type;?>" />
+
+				<input type="submit" name="send_set" value="自動採番" style="padding:5px;" />
+				</form>
+				</div>
+				<div style="float:left;width:100px;">
+				<form action="" method="post">
+				
+<input type="hidden" name="area" value="<?php echo $area;?>" />
+<input type="hidden" name="year" value="<?php echo $year;?>" />
+<input type="hidden" name="month" value="<?php echo $month;?>" />
+<input type="hidden" name="day" value="<?php echo $day;?>" />
+<input type="hidden" name="rinpa" value="<?php echo $rinpa;?>" />
+<input type="hidden" name="tai" value="<?php echo $tai;?>" />
+<input type="hidden" name="stretch" value="<?php echo $stretch;?>" />
+<input type="hidden" name="strong" value="<?php echo $strong;?>" />
+<input type="hidden" name="order_type" value="<?php echo $order_type;?>" />
+
+<input type="hidden" name="order_value_string" value="<?php echo $order_value_string;?>" />
+
+				<input type="submit" name="send_update" value="一括更新" style="padding:5px;" />
+				</form>
+				</div>
+				
+				<div style="float:left;width:103px;">
+					<form action="" method="get">
+						<input type="hidden" name="area" value="<?php echo $area;?>" id="therapist_page_area" />
+						<input type="hidden" name="year" value="<?php echo $year;?>" id="therapist_page_year" />
+						<input type="hidden" name="month" value="<?php echo $month;?>" id="therapist_page_month" />
+						<input type="hidden" name="day" value="<?php echo $day;?>" id="therapist_page_day" />
+						<input type="hidden" name="rinpa" value="<?php echo $rinpa;?>" id="therapist_page_rinpa" />
+						<input type="hidden" name="tai" value="<?php echo $tai;?>" id="therapist_page_tai" />
+						<input type="hidden" name="stretch" value="<?php echo $stretch;?>" id="therapist_page_stretch" />
+						<input type="hidden" name="strong" value="<?php echo $strong;?>" id="therapist_page_strong" />
+						<select name="order_type" id="therapist_page_order_type">
+<?php
+if( $order_type == "1" ){
+	echo '<option value="0">優先度順</option>';
+	echo '<option value="1" selected>リピート率</option>';
+	echo '<option value="2">指名率</option>';
+}else if( $order_type == "2" ){
+	echo '<option value="0">優先度順</option>';
+	echo '<option value="1">リピート率</option>';
+	echo '<option value="2" selected>指名率</option>';
+}else{
+	echo '<option value="0">優先度順</option>';
+	echo '<option value="1">リピート率</option>';
+	echo '<option value="2">指名率</option>';
+}
+?>
+						</select>
+					</form>
+				</div>
+				
+				<div style="float:left;">
+					<form action="" method="post">
+						<input type="hidden" name="area" value="<?php echo $area;?>" />
+						<input type="hidden" name="year" value="<?php echo $year;?>" />
+						<input type="hidden" name="month" value="<?php echo $month;?>" />
+						<input type="hidden" name="day" value="<?php echo $day;?>" />
+						<input type="hidden" name="order_type" value="<?php echo $order_type;?>" />
+						
+						<div style="float:left;width:83px;text-align:center;padding-top:20px;">
+<?php
+if( $rinpa == "1" ){
+	echo '<input type="checkbox" name="rinpa" value="1" checked>';
+}else{
+	echo '<input type="checkbox" name="rinpa" value="1">';
+}
+?>
+						</div>
+						<div style="float:left;width:83px;text-align:center;padding-top:20px;">
+<?php
+if( $tai == "1" ){
+	echo '<input type="checkbox" name="tai" value="1" checked>';
+}else{
+	echo '<input type="checkbox" name="tai" value="1">';
+}
+?>
+						</div>
+						<div style="float:left;width:83px;text-align:center;padding-top:20px;">
+<?php
+if( $stretch == "1" ){
+	echo '<input type="checkbox" name="stretch" value="1" checked>';
+}else{
+	echo '<input type="checkbox" name="stretch" value="1">';
+}
+?>
+						</div>
+						<div style="float:left;width:83px;text-align:center;padding-top:20px;">
+<?php
+if( $strong == "1" ){
+	echo '<input type="checkbox" name="strong" value="1" checked>';
+}else{
+	echo '<input type="checkbox" name="strong" value="1">';
+}
+?>
+						</div>
+						<div style="float:left;width:60px;text-align:center;margin:10px 0px 0px 10px;">
+						<input type="submit" name="send_select" value="抽出" style="padding:5px;" />
+						</div>
+						<br class="clear" />
+					</form>
+				</div>
+				
+				<br class="clear" />
+			
+			</div>
+			
+			<table BORDER="1" CELLSPACING="0" CELLPADDING="0" bordercolor="#ccc">
+				<tr>
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:60px;">
+							&nbsp;
+						</div>
+					</th>
+					
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:140px;">
+							表示優先度
+						</div>
+					</th>
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:100px;">
+							セラピスト名
+						</div>
+					</th>
+					
+					
+					
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:60px;">
+							リピート率
+						</div>
+					</th>
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:60px;">
+							指名率
+						</div>
+					</th>
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:60px;">
+							リンパ
+						</div>
+					</th>
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:60px;">
+							タイ古式
+						</div>
+					</th>
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:60px;">
+							ストレッチ
+						</div>
+					</th>
+					<th class="therapist_page_tbl_th">
+						<div class="therapist_page_tbl_div" style="width:60px;">
+							強もみ
+						</div>
+					</th>
+					
+					
+					
+				</tr>
+				<?php
+					for($i=0;$i<$therapist_page_num;$i++){
+						
+						$therapist_id = $therapist_page[$i]["therapist_id"];
+						
+						$therapist_area = $therapist_page[$i]["area"];
+						
+						$therapist_name = get_therapist_name_by_therapist_id($therapist_id, $therapist_area);
+						
+						echo '<form action="" method="post" id="therapist_page_frm_'.$therapist_page[$i]["id"].'">';
+						echo '<input type="hidden" name="therapist_page_id" value="'.$therapist_page[$i]["id"].'" />';
+						echo '<input type="hidden" name="area" value="'.$area.'" />';
+						echo '<input type="hidden" name="year" value="'.$year.'" />';
+						echo '<input type="hidden" name="month" value="'.$month.'" />';
+						echo '<input type="hidden" name="day" value="'.$day.'" />';
+						
+						echo '<input type="hidden" name="rinpa" value="'.$rinpa.'" />';
+						echo '<input type="hidden" name="tai" value="'.$tai.'" />';
+						echo '<input type="hidden" name="stretch" value="'.$stretch.'" />';
+						echo '<input type="hidden" name="strong" value="'.$strong.'" />';
+						echo '<input type="hidden" name="order_type" value="'.$order_type.'" />';
+						
+						echo '<tr>';
+							echo '<td>';
+								echo '<div class="therapist_page_tbl_div">';
+									echo '<input type="submit" name="send_edit" value="編集" style="padding:5px 10px 5px 10px;" />';
+								echo '</div>';
+							echo '</td>';
+							
+							echo '<td>';
+								echo '<div class="therapist_page_tbl_div">';
+									echo '<input type="text" name="order_value" value="'.$therapist_page[$i]["order_value"].'" style="width:60px;" />　<input type="submit" name="send_order" value="更新" style="padding:5px 10px 5px 10px;" />';
+								echo '</div>';
+							echo '</td>';
+							echo '<td>';
+								echo '<div class="therapist_page_tbl_div">';
+									echo '<a href="therapist_page_detail.php?id='.$therapist_page[$i]["id"].'">'.$therapist_name.'</a>';
+								echo '</div>';
+							echo '</td>';
+							
+							
+							
+							echo '<td>';
+							echo '<div class="therapist_page_tbl_div">';
+							echo $therapist_page[$i]["repeater_rate"];
+							echo '</div>';
+							echo '</td>';
+							
+							echo '<td>';
+							echo '<div class="therapist_page_tbl_div">';
+							echo $therapist_page[$i]["shimei_rate"];
+							echo '</div>';
+							echo '</td>';
+							
+							echo '<td>';
+							echo '<div class="therapist_page_tbl_div" style="text-align:center;">';
+							if( $therapist_page[$i]["rinpa"] == "1" ){
+								echo '○';
+							}else{
+								echo '';
+							}
+							echo '</div>';
+							echo '</td>';
+							
+							echo '<td>';
+							echo '<div class="therapist_page_tbl_div" style="text-align:center;">';
+							if( $therapist_page[$i]["tai"] == "1" ){
+								echo '○';
+							}else{
+								echo '';
+							}
+							echo '</div>';
+							echo '</td>';
+							
+							echo '<td>';
+							echo '<div class="therapist_page_tbl_div" style="text-align:center;">';
+							if( $therapist_page[$i]["stretch"] == "1" ){
+								echo '○';
+							}else{
+								echo '';
+							}
+							echo '</div>';
+							echo '</td>';
+							
+							echo '<td>';
+							echo '<div class="therapist_page_tbl_div" style="text-align:center;">';
+							if( $therapist_page[$i]["strong"] == "1" ){
+								echo '○';
+							}else{
+								echo '';
+							}
+							echo '</div>';
+							echo '</td>';
+							
+							
+							
+						echo '</tr>';
+						
+						echo '</form>';
+						
+					}
+				
+				?>
+			</table>
+			
+		</div>
+	</div>
+
+</body>
+</html>

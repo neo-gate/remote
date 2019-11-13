@@ -1,0 +1,88 @@
+<?php
+
+$document_root = $_SERVER['DOCUMENT_ROOT'];
+define("ROOT_PATH", $document_root."/");
+define("MAN_ROOT_PATH", ROOT_PATH."man/");
+define("MAN_INC", MAN_ROOT_PATH."include/");
+include(MAN_INC."define.php");
+
+
+
+$type = $_POST["type"];
+$area = $_POST["area"];
+$shop_id = $_POST["shop_id"];
+$frm_val = $_POST["frm_val"];
+$year = $_POST["year"];
+$month = $_POST["month"];
+$day = $_POST["day"];
+$pre_tokyo_refle_loss = $_POST["pre_tokyo_refle_loss"];
+$pre_tokyo_refle_loss_fusoku = $_POST["pre_tokyo_refle_loss_fusoku"];
+$pre_tokyo_refle_loss_fuzai = $_POST["pre_tokyo_refle_loss_fuzai"];
+$pre_tokyo_refle_loss_mae = $_POST["pre_tokyo_refle_loss_mae"];
+$pre_tokyo_aroma_loss = $_POST["pre_tokyo_aroma_loss"];
+$pre_lymph_tokyo_loss = $_POST["pre_lymph_tokyo_loss"];
+$pre_sapporo_refle_loss = $_POST["pre_sapporo_refle_loss"];
+$pre_yokohama_refle_loss = $_POST["pre_yokohama_refle_loss"];
+$pre_sendai_refle_loss = $_POST["pre_sendai_refle_loss"];
+$pre_osaka_refle_loss = 0;
+$pre_osaka_aroma_loss = 0;
+$pre_tokyo_reraku_loss = $_POST["pre_tokyo_reraku_loss"];
+$pre_tokyo_bigao_loss = $_POST["pre_tokyo_bigao_loss"];
+
+//データベースを更新
+update_shop_report_loss($type,$area,$shop_id,$frm_val,$year,$month,$day);
+
+//合計の取得
+$sum_value = get_sum_value_from_shop_report_loss($type,$area,$shop_id,$year,$month);
+
+//稼働日数を取得
+$work_num = get_work_num_for_shop_report($year,$month);
+
+//1日平均値
+$average_value = kirisute($sum_value,$work_num);
+
+//前月値
+$pre_value = get_pre_value_for_update_shop_report_loss(
+$type,$area,$shop_id,
+$pre_tokyo_refle_loss,$pre_tokyo_refle_loss_fusoku,$pre_tokyo_refle_loss_fuzai,$pre_tokyo_refle_loss_mae,
+$pre_tokyo_aroma_loss,$pre_lymph_tokyo_loss,
+$pre_sapporo_refle_loss,$pre_yokohama_refle_loss,$pre_sendai_refle_loss,$pre_osaka_refle_loss,$pre_osaka_aroma_loss,$pre_tokyo_reraku_loss,$pre_tokyo_bigao_loss);
+
+//前月比
+$pre_rate = get_int_per_common($average_value,$pre_value);
+$pre_rate = $pre_rate."％";
+
+
+
+if( $type == "loss" ){
+	
+	$data = get_pre_month_common($year,$month,$day);
+	
+	$year_pre = $data["year"];
+	$month_pre = $data["month"];
+	
+	//受電数
+	$call_num = get_call_num_day_2($shop_id,$year,$month,$day);
+	
+	//施術数
+	$operation_num = get_operation_num_day($shop_id,$year,$month,$day);
+	
+	//施術平均
+	$operation_num_average = get_operation_num_average($shop_id,$year,$month);
+	
+	//受電の平均(過去)
+	$call_num_average_pre = get_call_num_average($shop_id,$year_pre,$month_pre);
+	
+	//施術平均(過去)
+	$operation_num_average_pre = get_operation_num_average($shop_id,$year_pre,$month_pre);
+
+}
+
+
+
+$data = $sum_value."_".$average_value."_".$pre_rate."_".$call_num."_".$operation_num."_".$operation_num_average."_".$call_num_average_pre."_".$operation_num_average_pre;
+
+echo $data;
+exit();
+
+?>

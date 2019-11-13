@@ -1,0 +1,671 @@
+
+<?php
+
+include("include/common.php");
+include("include/auth.php");
+
+
+
+$kenmu_num = 0;
+$furikomi_commission = 0;
+
+$transfer_commission = 2;
+
+if(isset($_GET["area"])==true){
+
+	$area = $_GET["area"];
+
+}else{
+
+	echo "エリアが指定されていません。";
+	exit();
+
+}
+
+//$area_name = get_area_name_by_area($area);
+$area_name = $obj_Shop->getShopGroupName($area);	//店舗グループ名取得
+
+//if(($area_name!="東京リラク")&&($area_name!="BIGAO")){
+//	$area_name = $area_name."リフレ";
+//}
+
+if(isset($_POST["send"])==true){
+	
+	/*
+	echo "<pre>";
+	print_r($_POST);
+	echo "</pre>";
+	exit();
+	*/
+	
+	$name_real = $_POST["name_real"];
+	$name_site = $_POST["name_site"];
+	$name_aroma = $_POST["name_aroma"];
+	$name_tgr = $name_site;
+	$name_lymph = $name_site;
+	$mail = $_POST["mail"];
+	$kenmu = $_POST["kenmu"];
+	$rank = $_POST["rank"];
+	$jitaku_taiki_flg = $_POST["jitaku_taiki_flg"];
+	$kensyuu_flg = $_POST["kensyuu_flg"];
+	$for_kobetsu_url = $_POST["for_kobetsu_url"];
+	
+	$jisou_flg = $_POST["jisou_flg"];
+	
+	$point_ref = $_POST["point_ref"];
+	$guarantee_rule = $_POST["guarantee_rule"];
+	
+	$address = $_POST["address"];
+	$tel = $_POST["tel"];
+	$bank_info = $_POST["bank_info"];
+	
+	$name_furi = $_POST["name_furi"];
+	$furikomi_type = $_POST["furikomi_type"];
+	$share_rate = $_POST["share_rate"];
+	
+	$transfer_commission = $_POST["transfer_commission"];
+	
+	$payment_span = $_POST["payment_span"];
+	$tax_flg = $_POST["tax_flg"];
+	
+	$error = "";
+	
+	if($name_real==""){
+		$error .= "<li>"."名前(本名)が未入力です"."</li>";
+	}
+	
+	if($name_site==""){
+		$error .= "<li>"."名前(".$area_name.")が未入力です"."</li>";
+	}
+	
+	if($area=="tokyo"){
+		
+		if($name_aroma==""){
+			$error .= "<li>"."名前(東京アロマ)が未入力です"."</li>";
+		}
+		
+		if($name_tgr==""){
+			$error .= "<li>"."名前(東京ガールズリフレ)が未入力です"."</li>";
+		}
+		
+		if($name_lymph==""){
+			$error .= "<li>"."名前(リンパマッサージ東京)が未入力です"."</li>";
+		}
+		
+	}
+	
+	if($rank==""){
+		$error .= "<li>"."ランクが未選択です"."</li>";
+	}
+	
+	$for_kobetsu_url_len = strlen($for_kobetsu_url);
+	
+	if( $for_kobetsu_url_len > 32 ){
+	
+		$error .= "<li>"."個別URL用文字は32文字までです"."</li>";
+	
+	}
+	
+	if($error != ""){
+		$error = "<ul style='color:red;'>".$error."</ul>";
+	}else{
+	
+		$_SESSION["name_real"] = $name_real;
+		$_SESSION["name_site"] = $name_site;
+		$_SESSION["name_aroma"] = $name_aroma;
+		$_SESSION["name_tgr"] = $name_tgr;
+		$_SESSION["name_lymph"] = $name_lymph;
+		$_SESSION["therapist_regist_mail"] = $mail;
+		$_SESSION["therapist_regist_kenmu"] = $kenmu;
+		$_SESSION["therapist_regist_rank"] = $rank;
+		$_SESSION["therapist_regist_jitaku_taiki_flg"] = $jitaku_taiki_flg;
+		$_SESSION["therapist_regist_kensyuu_flg"] = $kensyuu_flg;
+		$_SESSION["therapist_regist_for_kobetsu_url"] = $for_kobetsu_url;
+		
+		$_SESSION["therapist_regist_jisou_flg"] = $jisou_flg;
+		
+		$_SESSION["therapist_regist_point_ref"] = $point_ref;
+		$_SESSION["therapist_regist_guarantee_rule"] = $guarantee_rule;
+		
+		$_SESSION["therapist_regist_address"] = $address;
+		$_SESSION["therapist_regist_tel"] = $tel;
+		$_SESSION["therapist_regist_bank_info"] = $bank_info;
+		
+		$_SESSION["therapist_regist_name_furi"] = $name_furi;
+		$_SESSION["therapist_regist_furikomi_type"] = $furikomi_type;
+		$_SESSION["therapist_regist_share_rate"] = $share_rate;
+		
+		$_SESSION["therapist_regist_transfer_commission"] = $transfer_commission;
+		
+		$_SESSION["payment_span"] = $payment_span;
+		$_SESSION["tax_flg"] = $tax_flg;
+	
+		header('Location: therapist_regist_confirm_new.php?area='.$area);
+		exit();
+	
+	}
+	
+}else if(isset($_POST["back"])==true){
+	
+	header("Location: therapist_list_new.php?area=".$area);
+	exit();
+	
+}else if(isset($_GET["back"])==true){
+	
+	$name_real = $_SESSION["name_real"];
+	$name_site = $_SESSION["name_site"];
+	$name_aroma = $_SESSION["name_aroma"];
+	$name_tgr = $_SESSION["name_tgr"];
+	$name_lymph = $_SESSION["name_lymph"];
+	$mail = $_SESSION["therapist_regist_mail"];
+	$kenmu = $_SESSION["therapist_regist_kenmu"];
+	$rank = $_SESSION["therapist_regist_rank"];
+	$jitaku_taiki_flg = $_SESSION["therapist_regist_jitaku_taiki_flg"];
+	$kensyuu_flg = $_SESSION["therapist_regist_kensyuu_flg"];
+	$for_kobetsu_url = $_SESSION["therapist_regist_for_kobetsu_url"];
+	
+	$jisou_flg = $_SESSION["therapist_regist_jisou_flg"];
+	
+	$point_ref = $_SESSION["therapist_regist_point_ref"];
+	$guarantee_rule = $_SESSION["therapist_regist_guarantee_rule"];
+	
+	$address = $_SESSION["therapist_regist_address"];
+	$tel = $_SESSION["therapist_regist_tel"];
+	$bank_info = $_SESSION["therapist_regist_bank_info"];
+	
+	$name_furi = $_SESSION["therapist_regist_name_furi"];
+	$furikomi_type = $_SESSION["therapist_regist_furikomi_type"];
+	$share_rate = $_SESSION["therapist_regist_share_rate"];
+	
+	$transfer_commission = $_SESSION["therapist_regist_transfer_commission"];
+	
+	$payment_span = $_SESSION["payment_span"];
+	$tax_flg = $_SESSION["tax_flg"];
+	
+}
+
+$point_ref_select = get_point_ref_select($point_ref,$area);
+$guarantee_rule_select = get_guarantee_rule_select($guarantee_rule,$area);
+
+$select_transfer_commission = get_select_transfer_commission($transfer_commission);
+
+//横浜の兼務チェックボックス
+if( $area == "yokohama" ){
+	$check_area = "tokyo";
+	$result_kenmu = therapist_regist_input_kenmu_check($kenmu,$check_area);
+	if( $result_kenmu == "true" ){
+		$yokohama_kenmu_disp = '<input type="checkbox" name="kenmu[]" value="tokyo" checked id="kenmu_tokyo_check">東京　';
+	}else{
+		$yokohama_kenmu_disp = '<input type="checkbox" name="kenmu[]" value="tokyo" id="kenmu_tokyo_check">東京　';
+	}
+}
+
+//echo "<pre>";
+//print_r($_POST);
+//echo "</pre>";
+
+?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>管理ページ・セラピスト新規登録入力(<?php echo $area_name;?>)</title>
+<script type="text/javascript" src="../js/jquery-1.7.2.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<link href="style.css" rel="stylesheet" type="text/css" />
+
+<style>
+
+table tr td{
+	padding:5px 0px 5px 5px;
+}
+
+li {
+	list-style-type: none;
+}
+
+#tr_aroma{
+
+	<?php if( $result_kenmu != "true" ){ ?>
+	
+	display:none;
+	
+	<?php } ?>
+	
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div style="width:800px;margin:0px auto 100px auto;">
+	<div>
+		<a href="index.php">トップ</a> &gt; <a href="therapist_list_new.php?area=<?php echo $area;?>">セラピスト一覧(<?php echo $area_name;?>)</a> &gt; セラピスト新規登録入力
+	</div>
+	<div style="padding:60px 0px 0px 0px;">
+		<div><?php echo $error;?></div>
+		<form action="" method="post">
+			<table border="1">
+				<tr>
+					<td width="150">
+						名前<br />
+						(本名)
+					</td>
+					<td width="500">
+						<input type="text" name="name_real" value="<?php echo $name_real;?>" style="width:450px;" />
+					</td>
+				</tr>
+				<tr>
+					<td width="150">
+						名前<br />
+						(フリガナ)
+					</td>
+					<td width="500">
+						<input type="text" name="name_furi" value="<?php echo $name_furi;?>" style="width:450px;" />
+					</td>
+				</tr>
+				
+<tr>
+<td>
+電話番号
+</td>
+<td>
+<input type="text" name="tel" value="<?php echo $tel;?>" style="width:450px;" />
+</td>
+</tr>
+
+				<tr>
+					<td width="150">
+						メールアドレス
+					</td>
+					<td width="500">
+						<input type="text" name="mail" value="<?php echo $mail;?>" style="width:450px;" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						名前<br />
+						(<?php echo $area_name;?>)
+					</td>
+					<td>
+						<input type="text" name="name_site" value="<?php echo $name_site;?>" style="width:450px;" />
+					</td>
+				</tr>
+				
+<?php if( $area == "tokyo" ){ ?>
+		
+<tr>
+<td>
+名前<br />
+(東京アロマ)
+</td>
+<td>
+<input type="text" name="name_aroma" value="<?php echo $name_aroma;?>" style="width:450px;" />
+</td>
+</tr>
+
+<?php }else if( $area == "yokohama" ){ ?>
+
+<tr id="tr_aroma">
+<td>
+名前<br />
+(東京アロマ)
+</td>
+<td>
+<input type="text" name="name_aroma" value="<?php echo $name_aroma;?>" style="width:450px;" />
+</td>
+</tr>
+
+<?php }else if( $area == "osaka" ){ ?>
+
+<tr>
+<td>
+名前<br />
+(アロマスタイル)
+</td>
+<td>
+<input type="text" name="name_aroma" value="<?php echo $name_aroma;?>" style="width:450px;" />
+</td>
+</tr>
+
+<?php } ?>
+
+<?php if( $area == "tokyo" ){ ?>
+<tr>
+<td>
+兼務
+</td>
+<td>
+<?php
+	$check_area = "yokohama";
+	$result = therapist_regist_input_kenmu_check($kenmu,$check_area);
+	if( $result == "true" ){
+		echo '<input type="checkbox" name="kenmu[]" value="yokohama" checked>横浜　';
+	}else{
+		echo '<input type="checkbox" name="kenmu[]" value="yokohama">横浜　';
+	}
+?>
+</td>
+</tr>
+<?php }else if( $area == "yokohama" ){ ?>
+<tr>
+<td>
+兼務
+</td>
+<td>
+<?php
+echo $yokohama_kenmu_disp;
+?>
+</td>
+</tr>
+<?php } ?>
+
+<tr>
+<td>
+自宅待機
+</td>
+<td>
+<?php
+if( $jitaku_taiki_flg == "1" ){
+	echo '<input type="checkbox" name="jitaku_taiki_flg" value="1" checked>';
+}else{
+	echo '<input type="checkbox" name="jitaku_taiki_flg" value="1">';
+}
+?>
+</td>
+</tr>
+
+<?php if( ( $area == "tokyo" ) || ( $area == "yokohama" ) || ( $area == "tokyo_bigao" ) ){ ?>
+
+<tr>
+<td>
+研修生
+</td>
+<td>
+<?php
+if( $kensyuu_flg == "1" ){
+	echo '<input type="checkbox" name="kensyuu_flg" value="1" checked />';
+}else{
+	echo '<input type="checkbox" name="kensyuu_flg" value="1" />';
+}
+?>
+</td>
+</tr>
+
+<?php } ?>
+
+<tr>
+<td>
+自走
+</td>
+<td>
+<?php
+if( $jisou_flg == "1" ){
+	echo '<input type="checkbox" name="jisou_flg" value="1" checked />';
+}else{
+	echo '<input type="checkbox" name="jisou_flg" value="1" />';
+}
+?>
+</td>
+</tr>
+
+
+				<tr>
+					<td>
+						ランク
+					</td>
+					<td>
+<?php
+if( $rank == "1" ){
+	echo '<input type="radio" name="rank" value="">未選択　';
+	echo '<input type="radio" name="rank" value="1" checked>Ａ　';
+	echo '<input type="radio" name="rank" value="2">Ｂ　';
+	echo '<input type="radio" name="rank" value="3">Ｃ　';
+	echo '<input type="radio" name="rank" value="5">Ｄ　';
+	echo '<input type="radio" name="rank" value="4">新人';
+	echo '<input type="radio" name="rank" value="19">対象外';
+}else if( $rank == "2" ){
+	echo '<input type="radio" name="rank" value="">未選択　';
+	echo '<input type="radio" name="rank" value="1">Ａ　';
+	echo '<input type="radio" name="rank" value="2" checked>Ｂ　';
+	echo '<input type="radio" name="rank" value="3">Ｃ　';
+	echo '<input type="radio" name="rank" value="5">Ｄ　';
+	echo '<input type="radio" name="rank" value="4">新人';
+	echo '<input type="radio" name="rank" value="19">対象外';
+}else if( $rank == "3" ){
+	echo '<input type="radio" name="rank" value="">未選択　';
+	echo '<input type="radio" name="rank" value="1">Ａ　';
+	echo '<input type="radio" name="rank" value="2">Ｂ　';
+	echo '<input type="radio" name="rank" value="3" checked>Ｃ　';
+	echo '<input type="radio" name="rank" value="5">Ｄ　';
+	echo '<input type="radio" name="rank" value="4">新人';
+	echo '<input type="radio" name="rank" value="19">対象外';
+}else if( $rank == "5" ){
+	echo '<input type="radio" name="rank" value="">未選択　';
+	echo '<input type="radio" name="rank" value="1">Ａ　';
+	echo '<input type="radio" name="rank" value="2">Ｂ　';
+	echo '<input type="radio" name="rank" value="3">Ｃ　';
+	echo '<input type="radio" name="rank" value="5" checked>Ｄ　';
+	echo '<input type="radio" name="rank" value="4">新人';
+	echo '<input type="radio" name="rank" value="19">対象外';
+}else if( $rank == "4" ){
+	echo '<input type="radio" name="rank" value="">未選択　';
+	echo '<input type="radio" name="rank" value="1">Ａ　';
+	echo '<input type="radio" name="rank" value="2">Ｂ　';
+	echo '<input type="radio" name="rank" value="3">Ｃ　';
+	echo '<input type="radio" name="rank" value="5">Ｄ　';
+	echo '<input type="radio" name="rank" value="4" checked>新人';
+	echo '<input type="radio" name="rank" value="19">対象外';
+}else if( $rank == "19" ){
+	echo '<input type="radio" name="rank" value="">未選択　';
+	echo '<input type="radio" name="rank" value="1">Ａ　';
+	echo '<input type="radio" name="rank" value="2">Ｂ　';
+	echo '<input type="radio" name="rank" value="3">Ｃ　';
+	echo '<input type="radio" name="rank" value="5">Ｄ　';
+	echo '<input type="radio" name="rank" value="4">新人';
+	echo '<input type="radio" name="rank" value="19" checked>対象外';
+}else{
+	echo '<input type="radio" name="rank" value="" checked>未選択　';
+	echo '<input type="radio" name="rank" value="1">Ａ　';
+	echo '<input type="radio" name="rank" value="2">Ｂ　';
+	echo '<input type="radio" name="rank" value="3">Ｃ　';
+	echo '<input type="radio" name="rank" value="5">Ｄ　';
+	echo '<input type="radio" name="rank" value="4">新人';
+	echo '<input type="radio" name="rank" value="19">対象外';
+}
+?>
+					</td>
+				</tr>
+				
+<?php if($area=="tokyo_reraku"){ ?>
+
+<tr>
+<td>
+シェア配分
+</td>
+<td>
+<select name="share_rate">
+<option value="0.4"<?php if( $share_rate == "0.4"){echo ' selected';}?>>40%</option>
+<option value="0.35"<?php if( $share_rate == "0.35"){echo ' selected';}?>>35%</option>
+<option value="0"<?php if( $share_rate == "0"){echo ' selected';}?>>0%</option>
+</select>
+</td>
+</tr>
+
+<?php }else if($area=="tokyo_bigao"){ ?>
+
+<tr>
+<td>
+シェア配分
+</td>
+<td>
+<select name="share_rate">
+<option value="0.4"<?php if( $share_rate == "0.4"){echo ' selected';}?>>40%</option>
+<option value="0.45"<?php if( $share_rate == "0.45"){echo ' selected';}?>>45%</option>
+<option value="0.5"<?php if( $share_rate == "0.5"){echo ' selected';}?>>50%</option>
+<option value="0"<?php if( $share_rate == "0"){echo ' selected';}?>>0%</option>
+</select>
+</td>
+</tr>
+
+<?php }else{ ?>
+
+<tr>
+<td>
+ポイント参照
+</td>
+<td>
+<?php
+echo $point_ref_select;
+?>
+</td>
+</tr>
+
+<?php } ?>
+
+<tr>
+<td>
+最低保証ルール
+</td>
+<td>
+<?php
+echo $guarantee_rule_select;
+?>
+</td>
+</tr>
+
+<tr>
+<td>
+個別URL用文字
+</td>
+<td>
+<input type="text" name="for_kobetsu_url" value="<?php echo $for_kobetsu_url;?>" style="width:450px;" /><br />
+<span style="font-size:12px;">※セラピストのシフト管理用個別ページのURLに使われます。</span>
+</td>
+</tr>
+
+<tr>
+<td>
+住所
+</td>
+<td>
+<input type="text" name="address" value="<?php echo $address;?>" style="width:450px;" />
+</td>
+</tr>
+
+<tr>
+<td>
+振込口座
+</td>
+<td>
+<textarea name="bank_info" style="width:450px;height:60px;"><?php echo $bank_info;?></textarea>
+</td>
+</tr>
+
+<tr>
+<td>
+振込手数料タイプ
+</td>
+<td>
+<?php
+
+echo '<select name="furikomi_type">';
+echo '<option value="-1">未選択</option>';
+if( $furikomi_type == "1" ){
+	
+	echo '<option value="1" selected>JP→JP</option>';
+	echo '<option value="2">JP→他行</option>';
+	echo '<option value="3">ゆうちょ→ゆうちょ</option>';
+	echo '<option value="4">ゆうちょ→他行</option>';
+	
+}else if( $furikomi_type == "2" ){
+	
+	echo '<option value="1">JP→JP</option>';
+	echo '<option value="2" selected>JP→他行</option>';
+	echo '<option value="3">ゆうちょ→ゆうちょ</option>';
+	echo '<option value="4">ゆうちょ→他行</option>';
+	
+}else if( $furikomi_type == "3" ){
+	
+	echo '<option value="1">JP→JP</option>';
+	echo '<option value="2">JP→他行</option>';
+	echo '<option value="3" selected>ゆうちょ→ゆうちょ</option>';
+	echo '<option value="4">ゆうちょ→他行</option>';
+	
+}else if( $furikomi_type == "4" ){
+	
+	echo '<option value="1">JP→JP</option>';
+	echo '<option value="2">JP→他行</option>';
+	echo '<option value="3">ゆうちょ→ゆうちょ</option>';
+	echo '<option value="4" selected>ゆうちょ→他行</option>';
+	
+}else{
+	
+	echo '<option value="1">JP→JP</option>';
+	echo '<option value="2">JP→他行</option>';
+	echo '<option value="3">ゆうちょ→ゆうちょ</option>';
+	echo '<option value="4">ゆうちょ→他行</option>';
+	
+}
+echo '</select>';
+
+?>
+</td>
+</tr>
+
+<tr>
+<td>
+振込手数料
+</td>
+<td>
+<?php
+echo $select_transfer_commission;
+?>
+</td>
+</tr>
+
+<tr>
+<td>
+支払スパン
+</td>
+<td>
+<select name="payment_span">
+<option value=""<?php if( $payment_span == ""){echo ' selected';}?>>-</option>
+<option value="0"<?php if( $payment_span == "0"){echo ' selected';}?>>週払い</option>
+<option value="1"<?php if( $payment_span == "1"){echo ' selected';}?>>月払い</option>
+</select>
+</td>
+</tr>
+
+<tr>
+<td>
+消費税
+</td>
+<td>
+<select name="tax_flg">
+<option value=""<?php if( $tax_flg== ""){echo ' selected';}?>>-</option>
+<option value="0"<?php if( $tax_flg == "0"){echo ' selected';}?>>税込</option>
+<option value="1"<?php if( $tax_flg == "1"){echo ' selected';}?>>税抜き</option>
+</select>
+</td>
+</tr>
+
+				<tr>
+					<td colspan="2">
+						<div style="padding:10px 0px 10px 0px;text-align:center;">
+							<input type="submit" value="戻る" name="back" />&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="submit" value="内容確認" name="send" />
+						</div>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+
+</body>
+</html>
+
