@@ -114,24 +114,24 @@ global $ARRAY_age;
 
 	$mail_content = $content;
 
-	$name = mysql_real_escape_string($name);
-	$age = mysql_real_escape_string($age);
-	$gender = mysql_real_escape_string($gender);
-	$satisfaction = mysql_real_escape_string($satisfaction);
-	$content = mysql_real_escape_string($content);
+	$name = mysqli_real_escape_string($name);
+	$age = mysqli_real_escape_string($age);
+	$gender = mysqli_real_escape_string($gender);
+	$satisfaction = mysqli_real_escape_string($satisfaction);
+	$content = mysqli_real_escape_string($content);
 
 	if( $name == "" ) $name = "匿名";
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	$sql = sprintf("insert into voice(created,updated,shop_type,name,age,gender,satisfaction,content) values('%s','%s','%s','%s','%s','%s','%s','%s')",$now,$now,$shop_type,$name,$age,$gender,$satisfaction,$content);
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false){
 		mysql_query( "rollback", DbCon );	//ロールバック
 
@@ -261,7 +261,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( $con );
@@ -466,20 +466,20 @@ $week,$mail_hour,$minute,$course,$therapist_name,$customer_tel,$free,$shop_area)
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	// 会員情報を更新するSQL文(メールアドレスのみ)
 	$sql = sprintf("update customer set mail='%s' where customer_id='%s'",$mail,$customer_id);
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		return false;
 		exit();
@@ -504,7 +504,7 @@ $week,$mail_hour,$minute,$course,$therapist_name,$customer_tel,$free,$shop_area)
 	if(!$shop_name) {
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		return false;
 		exit();
@@ -544,7 +544,7 @@ EOT;
 	if( $result == false ){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		return false;
 		exit();
@@ -552,7 +552,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( DbCon );
@@ -640,16 +640,16 @@ $week,$mail_hour,$minute,$course,$therapist_name,$customer_tel,$free,$shop_area)
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	// 会員情報を更新するSQL文(メールアドレスのみ)
 	if($customer_id > 0 && $mail) {
 		$sql = sprintf("update customer set mail='%s' where customer_id='%s'",$mail,$customer_id);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false){
 			//ロールバック
 			mysql_query( "rollback", DbCon );
@@ -725,7 +725,7 @@ EOT;
 	if( $result == false ){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 		echo "vip_page_confirm_action_2_common line:" . __LINE__ . "<br />";
 
 		return false;
@@ -734,7 +734,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( $con );
@@ -805,23 +805,23 @@ $course_var){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	if( ($course_change_flg == true) || ($extension_change_flg == true) ){
 
 		//金額変更処理
 		$sql = sprintf("update sale_history set price='%s' where reservation_no='%s'",$price,$reservation_no);
 
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:0)";
 			header("Location: ".WWW_URL."error.php");
@@ -835,11 +835,11 @@ $course_var){
 
 	$sql = sprintf("delete from reservation_new where reservation_for_board_id='%s'",$reservation_for_board_id);
 
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:1)";
 		header("Location: ".WWW_URL."error.php");
@@ -861,11 +861,11 @@ $course_var){
 				$sql = sprintf("insert into reservation_new(attendance_id,time,reservation_for_board_id,area) values('%s','%s','%s','%s')",$attendance_id,$i,$reservation_for_board_id,$shop_area);
 			}
 
-			$res = mysql_query($sql, DbCon);
+			$res = mysqli_query(DbCon, $sql);
 			if($res == false){
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, DbCon );
+				mysqli_query(DbCon, $sql);
 
 				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:2)";
 				header("Location: ".WWW_URL."error.php");
@@ -883,11 +883,11 @@ $course_var){
 
 				$sql = sprintf("insert into reservation_new(attendance_id,time,reservation_for_board_id,auto_flg,area) values('%s','%s','%s','%s','%s')",$attendance_id,$x,$reservation_for_board_id,1,$shop_area);
 
-				$res = mysql_query($sql, DbCon);
+				$res = mysqli_query(DbCon, $sql);
 				if($res == false){
 					//ロールバック
 					$sql = "rollback";
-					mysql_query( $sql, DbCon );
+					mysqli_query(DbCon, $sql);
 
 					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:3)";
 					header("Location: ".WWW_URL."error.php");
@@ -903,11 +903,11 @@ $course_var){
 
 					$sql = sprintf("insert into reservation_new(attendance_id,time,reservation_for_board_id,auto_flg,area)values('%s','%s','%s','%s','%s')",$attendance_id,$x,$reservation_for_board_id,1,$shop_area);
 
-					$res = mysql_query($sql, DbCon);
+					$res = mysqli_query(DbCon, $sql);
 					if($res == false){
 						//ロールバック
 						$sql = "rollback";
-						mysql_query( $sql, DbCon );
+						mysqli_query(DbCon, $sql);
 
 						$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:4)";
 						header("Location: ".WWW_URL."error.php");
@@ -945,12 +945,12 @@ $start_hour,$start_minute,$end_hour,$end_minute,$time_len,$place_name,$attendanc
 $course,$course_var,$extension,$card_flg,$card_confirm_flg,$complete_flg,$start_flg,$discount_new,$reservation_for_board_id);
 	}
 
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:5)";
 		header("Location: ".WWW_URL."error.php");
@@ -964,12 +964,12 @@ card_commission_free='%s',
 card_commission_type='%s'
 where id='%s'",$card_price_free,$card_commission_free,$card_commission_type,$reservation_for_board_id);
 
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:5_2)";
 		header("Location: ".WWW_URL."error.php");
@@ -982,12 +982,12 @@ where id='%s'",$card_price_free,$card_commission_free,$card_commission_type,$res
 
 		$sql = sprintf("update reservation_for_board set start_real_time='%s' where id='%s'",$start_real_time,$reservation_for_board_id);
 
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:6)";
 			header("Location: ".WWW_URL."error.php");
@@ -1006,12 +1006,12 @@ where id='%s'",$card_price_free,$card_commission_free,$card_commission_type,$res
 
 			$sql = sprintf("update reservation_for_board set start_real_time='%s',start_push_user='honbu' where id='%s'",$start_real_time,$reservation_for_board_id);
 
-			$res = mysql_query($sql, DbCon);
+			$res = mysqli_query(DbCon, $sql);
 
 			if($res == false){
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, DbCon );
+				mysqli_query(DbCon, $sql);
 
 				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:6_2)";
 				header("Location: ".WWW_URL."error.php");
@@ -1098,11 +1098,11 @@ EOT;
 		$staff_type = "2";
 
 		$sql = sprintf("insert into shift_message(created,therapist_id,type,message_type,content,area) values('%s','%s','%s','%s','%s','%s')",$now,$therapist_id,$staff_type,$message_type,$message_content,$shift_message_area);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_common:7)";
 			header("Location: ".WWW_URL."error.php");
@@ -1168,11 +1168,11 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//戻す
 	$sql = "set autocommit = 1";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( $con );
@@ -1248,11 +1248,11 @@ $course_var,$other_data,$shimei_flg,$shimei_change_flg){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
     //売り上げ情報変更
 	if($shimei_change_flg == true){
@@ -1264,11 +1264,11 @@ $course_var,$other_data,$shimei_flg,$shimei_change_flg){
     }
 
 	$sql = sprintf("update sale_history set price='%s',therapist_id='%s' where reservation_no='%s'",$price,$therapist_id,$reservation_no);
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:0)";
 		header("Location: ".WWW_URL."error.php");
@@ -1280,11 +1280,11 @@ $course_var,$other_data,$shimei_flg,$shimei_change_flg){
 	$update_end_time = $reservation_time_data["end_time"];
 
 	$sql = sprintf("delete from reservation_new where reservation_for_board_id='%s'",$reservation_for_board_id);
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:1)";
 		header("Location: ".WWW_URL."error.php");
@@ -1317,11 +1317,11 @@ $attendance_id,$i,$reservation_for_board_id,$shop_area);
 
 			}
 
-			$res = mysql_query($sql, DbCon);
+			$res = mysqli_query(DbCon, $sql);
 			if($res == false){
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, DbCon );
+				mysqli_query(DbCon, $sql);
 
 				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:2)";
 				header("Location: ".WWW_URL."error.php");
@@ -1342,11 +1342,11 @@ insert into reservation_new(attendance_id,time,reservation_for_board_id,auto_flg
 values('%s','%s','%s','%s','%s')",
 $attendance_id,$x,$reservation_for_board_id,1,$shop_area);
 
-				$res = mysql_query($sql, DbCon);
+				$res = mysqli_query(DbCon, $sql);
 				if($res == false){
 					//ロールバック
 					$sql = "rollback";
-					mysql_query( $sql, DbCon );
+					mysqli_query(DbCon, $sql);
 
 					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:3)";
 					header("Location: ".WWW_URL."error.php");
@@ -1365,11 +1365,11 @@ insert into reservation_new(attendance_id,time,reservation_for_board_id,auto_flg
 values('%s','%s','%s','%s','%s')",
 $attendance_id,$x,$reservation_for_board_id,1,$shop_area);
 
-					$res = mysql_query($sql, DbCon);
+					$res = mysqli_query(DbCon, $sql);
 					if($res == false){
 						//ロールバック
 						$sql = "rollback";
-						mysql_query( $sql, DbCon );
+						mysqli_query(DbCon, $sql);
 
 						$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:4)";
 						header("Location: ".WWW_URL."error.php");
@@ -1416,12 +1416,12 @@ $reservation_for_board_id);
 
 	}
 
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:5)";
 		header("Location: ".WWW_URL."error.php");
@@ -1433,12 +1433,12 @@ $reservation_for_board_id);
 		$start_real_time = time();
 
 		$sql = sprintf("update reservation_for_board set start_real_time='%s' where id='%s'",$start_real_time,$reservation_for_board_id);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:6)";
 			header("Location: ".WWW_URL."error.php");
@@ -1458,12 +1458,12 @@ $reservation_for_board_id);
 			$start_real_time = mktime($hour, $minute, $second, $month, $day, $year);
 
 			$sql = sprintf("update reservation_for_board set start_real_time='%s',start_push_user='honbu' where id='%s'",$start_real_time,$reservation_for_board_id);
-			$res = mysql_query($sql, DbCon);
+			$res = mysqli_query(DbCon, $sql);
 			if($res == false){
 
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, DbCon );
+				mysqli_query(DbCon, $sql);
 
 				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:6_2)";
 				header("Location: ".WWW_URL."error.php");
@@ -1570,13 +1570,13 @@ EOT;
 insert into shift_message(created,therapist_id,type,message_type,content,area) values('%s','%s','%s','%s','%s','%s')",
 $now,$therapist_id,$staff_type,$message_type,$message_content,$shift_message_area);
 
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 
 		if($res == false){
 
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_reservation_data_transaction_2_common:7)";
 			header("Location: ".WWW_URL."error.php");
@@ -1647,11 +1647,11 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//戻す
 	$sql = "set autocommit = 1";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( $con );
@@ -2065,11 +2065,11 @@ function update_man_driver_syounin_check_common($area,$staff_id,$syounin,$fusyou
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	$first_flg = false;
 	$mail_month = "";
@@ -2094,11 +2094,11 @@ function update_man_driver_syounin_check_common($area,$staff_id,$syounin,$fusyou
 		$syounin_state = 1;
 
 		$sql = sprintf("update attendance_staff_new set syounin_state='%s' where staff_id='%s' and year='%s' and month='%s' and day='%s'",$syounin_state,$staff_id,$year,$month,$day);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_common)";
 			header("Location: ".WWW_URL."error.php");
 			exit();
@@ -2124,11 +2124,11 @@ function update_man_driver_syounin_check_common($area,$staff_id,$syounin,$fusyou
 		$syounin_state = 2;
 
 		$sql = sprintf("update attendance_staff_new set syounin_state='%s' where staff_id='%s' and year='%s' and month='%s' and day='%s'",$syounin_state,$staff_id,$year,$month,$day);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_common)";
 			header("Location: ".WWW_URL."error.php");
 			exit();
@@ -2154,11 +2154,11 @@ function update_man_driver_syounin_check_common($area,$staff_id,$syounin,$fusyou
 		$syounin_state = 3;
 
 		$sql = sprintf("update attendance_staff_new set syounin_state='%s' where staff_id='%s' and year='%s' and month='%s' and day='%s'",$syounin_state,$staff_id,$year,$month,$day);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_common)";
 			header("Location: ".WWW_URL."error.php");
 			exit();
@@ -2191,7 +2191,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_common)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -2200,7 +2200,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( $con );
@@ -2222,11 +2222,11 @@ function update_man_driver_syounin_check_edit_common($area,$staff_id,$syounin){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	$first_year = 0;
 	$first_month = 0;
@@ -2255,11 +2255,11 @@ function update_man_driver_syounin_check_edit_common($area,$staff_id,$syounin){
 
 			$sql = sprintf("update attendance_staff_new set syounin_state='%s',shift_change_flg='0' where staff_id='%s' and year='%s' and month='%s' and day='%s'",$syounin_state,$staff_id,$year,$month,$day);
 
-			$res = mysql_query($sql, DbCon);
+			$res = mysqli_query(DbCon, $sql);
 			if($res == false){
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, DbCon );
+				mysqli_query(DbCon, $sql);
 				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_edit_common)";
 				header("Location: ".WWW_URL."error.php");
 				exit();
@@ -2272,11 +2272,11 @@ function update_man_driver_syounin_check_edit_common($area,$staff_id,$syounin){
 
 			$sql = sprintf("update attendance_staff_new set syounin_state='%s',kekkin_flg='%s',shift_change_flg='0' where staff_id='%s' and year='%s' and month='%s' and day='%s'",$syounin_state,$kekkin_flg,$staff_id,$year,$month,$day);
 
-			$res = mysql_query($sql, DbCon);
+			$res = mysqli_query(DbCon, $sql);
 			if($res == false){
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, DbCon );
+				mysqli_query(DbCon, $sql);
 				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_edit_common)";
 				header("Location: ".WWW_URL."error.php");
 				exit();
@@ -2284,7 +2284,7 @@ function update_man_driver_syounin_check_edit_common($area,$staff_id,$syounin){
 		}else{
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_edit_common)";
 			header("Location: ".WWW_URL."error.php");
 			exit();
@@ -2316,7 +2316,7 @@ EOT;
 	if($result==false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_man_driver_syounin_check_edit_common)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -2324,7 +2324,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( $con );
@@ -2346,11 +2346,11 @@ function update_driver_syounin_check_add_common($area,$staff_id,$syounin){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	for($i=0;$i<$syounin_num;$i++){
 
@@ -2363,11 +2363,11 @@ function update_driver_syounin_check_add_common($area,$staff_id,$syounin){
 		$syounin_state = 1;
 
 		$sql = sprintf("update attendance_staff_new set syounin_state='%s' where staff_id='%s' and year='%s' and month='%s' and day='%s'",$syounin_state,$staff_id,$year,$month,$day);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false){
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, DbCon );
+			mysqli_query(DbCon, $sql);
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_driver_syounin_check_add_common)";
 			header("Location: ".WWW_URL."error.php");
 			exit();
@@ -2399,7 +2399,7 @@ EOT;
 	if($result==false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, DbCon );
+		mysqli_query(DbCon, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_driver_syounin_check_add_common)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -2407,7 +2407,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, DbCon );
+	mysqli_query(DbCon, $sql);
 
 	//MySQL切断
 	//mysql_close( $con );
@@ -2430,7 +2430,7 @@ function update_staff_tmp_common($staff_id,$car_type,$car_color,$car_number,$tel
 	}else{
 		$sql = sprintf("insert into staff_tmp(car_type,car_color,car_number,tel,car_image_url,staff_id) values('%s','%s','%s','%s','%s','%s')",$car_type,$car_color,$car_number,$tel,$car_image_url,$staff_id);
 	}
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 
 	if($res == false){
 		echo "error!(update_staff_tmp_common)";

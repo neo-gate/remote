@@ -67,29 +67,29 @@ function Xupdate_work_meter_end($attendance_staff_new_id,$work_meter_start,$work
 	
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 	
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$sql = sprintf("update attendance_staff_2 set work_meter_end='%s' where delete_flg='0' and attendance_staff_new_id='%s'",$work_meter_end,$attendance_staff_new_id);
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 			
 		echo "error!(update_work_meter_end)";
 		exit();
 	}
 	
 	$sql = sprintf("update attendance_staff_new set car_distance='%s',end_hour='%s',end_minute='%s' where id='%s'",$car_distance,$now_hour,$now_minute,$attendance_staff_new_id);
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		
 		echo "error!(update_work_meter_end)";
 		exit();
@@ -97,10 +97,10 @@ function Xupdate_work_meter_end($attendance_staff_new_id,$work_meter_start,$work
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 	
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close($con);
 	
 	return true;
 	exit();

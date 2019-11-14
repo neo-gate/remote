@@ -23,14 +23,14 @@ if(isset($_GET["id"])==true){
 //$random_file = get_random_title_block();
 
 //無害化
-$page_id = mysql_real_escape_string($page_id);
+$page_id = mysqli_real_escape_string($page_id, $page_i);
 
 $sql = "select *,hotel.name as hotel_name from hotel left join ku on ku.id=hotel.ku_id where hotel.delete_flg=0 and hotel.id=".$page_id;
-$res = mysql_query($sql, $con);
+$res = mysqli_query($con, $sql);
 if($res == false){
 }
 $i=0;
-$row = mysql_fetch_assoc($res);
+$row = mysqli_fetch_assoc($res);
 
 $hotel_name = $row["hotel_name"];
 $idou_time = $row["idou_time"];

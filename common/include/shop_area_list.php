@@ -52,14 +52,14 @@ class Shop {
 		} else {
 			$sql = "select * from shop where delete_flg=0 order by dsordr,id";
 		}
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false) {
 			return;
 		}
 		$ws_strHistb = "";
 		$n = 0;
 
-		while($ws_Row = mysql_fetch_assoc($res)) {
+		while($ws_Row = mysqli_fetch_assoc($res)) {
 			$this->ArRec[$n] = $ws_Row;
 			$this->ArIds[$n] = $ws_Row["id"];
 			if($shop_name == "lymph_tokyo") {
@@ -95,11 +95,11 @@ class Shop {
 			$sql = "select A.* from shop_rait A";
 			$sql .= " left outer join (select shop_id,max(raitym) as YM from shop_rait where shop_id in(" . $ws_strHistb . ") and raitym<=" . $u_ym . " group by shop_id) B on A.shop_id=B.shop_id and A.raitym=B.YM";
 			$sql .= " where A.shop_id in(" . $ws_strHistb . ") order by A.shop_id";
-			$res = mysql_query($sql, DbCon);
+			$res = mysqli_query(DbCon, $sql);
 			if($res == false) {
 				return;
 			}
-			while($ws_Row = mysql_fetch_assoc($res)) {
+			while($ws_Row = mysqli_fetch_assoc($res)) {
 				$n = array_search($ws_Row["shop_id"], $this->ArIds);
 				if($n === false) continue;
 				$this->ArRec[$n]["ptstb1"] = $ws_Row["ptstb1"];
@@ -763,7 +763,7 @@ global $shop_list;
 	}
 
 	$sql = sprintf("select * from reservation_for_board where delete_flg='0' and complete_flg='1' and (%s) and year='%s' and month='%s' and day='%s'",$sql_where,$year,$month,$day);
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false){
 		echo "error!(get_reservation_for_board_for_dashboard_support)";
 		exit();
@@ -772,7 +772,7 @@ global $shop_list;
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i] = $row;
 		$i++;
 	}
@@ -903,7 +903,7 @@ function get_attendance_data_for_dashboard_support($selected_time,$shop_type){
 	}
 
 	$sql = sprintf("select * from attendance_new where today_absence='0' and kekkin_flg='0' and syounin_state='1' and (%s) and year='%s' and month='%s' and day='%s'",$sql_where,$year,$month,$day);
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false){
 		echo "error!(get_attendance_data_for_dashboard_support)" . $sql;
 		exit();
@@ -912,7 +912,7 @@ function get_attendance_data_for_dashboard_support($selected_time,$shop_type){
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i] = $row;
 		$i++;
 	}
@@ -2410,13 +2410,13 @@ global $ARRAY_ArShop;
 
 	$sql = sprintf("select * from shop_fee where delete_flg=0 order by shop_id,corstm");
 
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false) {
 		return;
 	}
 	$ws_qShopId = -1;
 	$t = 0;
-	while($ws_Row = mysql_fetch_assoc($res)) {
+	while($ws_Row = mysqli_fetch_assoc($res)) {
 		if($ws_Row["shop_id"] != $ws_qShopId) {
 			$ws_qShopId = $ws_Row["shop_id"];
 			$ws_area = "";
@@ -2456,12 +2456,12 @@ global $ARRAY_ArShop;
 
 	if($ws_id > 0) {
 		$sql = sprintf("select * from shop_fee where shop_id=%s order by corstm", $ws_id);
-		$res = mysql_query($sql, DbCon);
+		$res = mysqli_query(DbCon, $sql);
 		if($res == false) {
 			return;
 		}
 		$n = 0;
-		while($ws_Row = mysql_fetch_assoc($res)) {
+		while($ws_Row = mysqli_fetch_assoc($res)) {
 			$ws_ArRec[$n] = $ws_Row;
 			$n++;
 		}

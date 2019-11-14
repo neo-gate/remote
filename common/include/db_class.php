@@ -14,14 +14,14 @@ class DbSql {
 	var $msg;
 
 	function Connect() {
-		$this->Db_con = mysql_connect(DB_HOST, DB_USER, DB_PASS);
-		mysql_select_db(DB_NAME, $this->Db_con);
-		mysql_query("SET NAMES utf8");
+		$this->Db_con = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+		mysqli_select_db($this->Db_con, DB_NAME);
+		mysqli_query($this->Db_con, "SET NAMES utf8");
 		return $this->Db_con;
 	}
 
 	function Query($u_sql, $u_line, $u_src = "") {
-		$cls_Ret = mysql_query($u_sql, $this->Db_con);
+		$cls_Ret = mysqli_query($this->Db_con, $u_sql);
 		if($cls_Ret) {
 			$this->msg = "";
 		} else {
@@ -37,16 +37,16 @@ class DbSql {
 	}
 
 	function fetch($u_obj) {
-		return mysql_fetch_assoc($u_obj);
+		return mysqli_fetch_assoc($u_obj);
 	}
 
 	function getNums($u_obj) {
-		return mysql_num_rows($u_obj);
+		return mysqli_num_rows($u_obj);
 	}
 
 	function getArray($u_obj) {
 		$R = 0;
-		while($cls_Rec = mysql_fetch_assoc($u_obj)) {
+		while($cls_Rec = mysqli_fetch_assoc($u_obj)) {
 			$ws_rec[$R] = $cls_Rec;
 			$R++;
 		}
@@ -60,13 +60,13 @@ function PHP_simpleQuery($u_tblname, $u_keyword, $u_keyval, $u_delflg) {
 	$ws_SQL = "select * from " . $u_tblname . " where %s='%s'";
 	if($u_delflg) $ws_SQL .= " and delete_flg=0";
 	$sql = sprintf($ws_SQL, $u_keyword, $u_keyval);
-	$res = mysql_query($sql, DbCon);
+	$res = mysqli_query(DbCon, $sql);
 	if($res == false) {
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(PHP_simpleQuery)";
 		header("Location: " . WWW_URL . "error.php");
 		exit();
 	}
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 	return $row;
 }
 

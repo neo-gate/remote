@@ -21,14 +21,14 @@ if(isset($_POST["send"])==true){
 		
 		//電話番号重複チェック
 		$sql = "select tel from customer where delete_flag=0 and shop_id=".$shop_id;
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 		if($res == false){
 			echo "クエリ実行に失敗しました。";
 			exit();
 		}
 		$match_num = 0;
 		$tel_not_haifun = str_replace("-","",$tel);
-		while($row = mysql_fetch_assoc($res)){
+		while($row = mysqli_fetch_assoc($res)){
 			$db_tel = str_replace("-","",$row["tel"]);
 			if($tel_not_haifun == $db_tel){
 				$match_num++;
@@ -56,13 +56,13 @@ if(isset($_POST["send"])==true){
 		
 		//メールアドレス重複チェック
 		$sql = "select mail from customer where delete_flag=0 and shop_id=".$shop_id;
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 		if($res == false){
 			echo "クエリ実行に失敗しました。";
 			exit();
 		}
 		$match_num = 0;
-		while($row = mysql_fetch_assoc($res)){
+		while($row = mysqli_fetch_assoc($res)){
 			if($mail == $row["mail"]){
 				$match_num++;
 			}
@@ -108,7 +108,7 @@ if(isset($_POST["send"])==true){
 
 // 店情報を取得するためのSQL文
 $sql = "select * from shop where delete_flg=0";
-$res = mysql_query($sql, $con);
+$res = mysqli_query($con, $sql);
 if($res == false){
 	echo "クエリ実行に失敗しました";
 	exit();
@@ -118,7 +118,7 @@ $shop_data = array();
 
 // 一覧に表示される顧客データを変数に格納する処理
 $i=0;
-while($row = mysql_fetch_assoc($res)){
+while($row = mysqli_fetch_assoc($res)){
 	$shop_data[$i++] = $row;
 }
 

@@ -32,7 +32,7 @@ function get_attendance_data(){
 left join therapist on attendance.therapist_id=therapist.id
 where therapist.delete_flag=0 and year='%s' and month='%s' and day='%s'",
 $year,$month,$day);
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 		echo "クエリ実行に失敗しました(get_attendance_data)";
 		exit();
@@ -42,7 +42,7 @@ $year,$month,$day);
 
 	// 一覧に表示される顧客データを変数に格納する処理
 	$i=0;
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$attendance_data[$i] = $row;
 		$i++;
@@ -71,7 +71,7 @@ function regist_staff_data($name,$mail,$tel,$type){
 	$sql = sprintf("insert into staff(shop_id,type,name,mail,tel) values('%s','%s','%s','%s','%s')",
 					$shop_id,$type,$name,$mail,$tel);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -94,7 +94,7 @@ function get_staff_data($type){
 	include(INC_PATH."/db_connect.php");
 
 	$sql = "select * from staff where delete_flg=0 and type=".$type;
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_staff_data)";
@@ -104,7 +104,7 @@ function get_staff_data($type){
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i++] = $row;
 	}
 
@@ -120,7 +120,7 @@ function get_staff_data_hanyou($type){
 
 	$sql = sprintf("select * from staff where delete_flg=0 and type='%s' and area='%s'",$type,SHOP_AREA);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -131,7 +131,7 @@ function get_staff_data_hanyou($type){
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i++] = $row;
 	}
 
@@ -146,7 +146,7 @@ function get_staff_data_one($id){
 	include(INC_PATH."/db_connect.php");
 
 	$sql = "select * from staff where id=".$id;
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_staff_data_one)";
@@ -154,7 +154,7 @@ function get_staff_data_one($id){
 		exit();
 
 	}
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row;
 	exit();
@@ -169,7 +169,7 @@ function update_staff_data($name,$mail,$tel,$staff_id){
 	$sql = sprintf("update staff set name='%s',mail='%s',tel='%s' where id='%s'",
 					$name,$mail,$tel,$staff_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -191,7 +191,7 @@ function delete_staff_data($staff_id){
 
 	$sql = sprintf("update staff set delete_flg='1' where id='%s'",$staff_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -213,7 +213,7 @@ function login_action($tel){
 
 	$sql = sprintf("select * from staff where tel='%s'",$tel);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -223,7 +223,7 @@ function login_action($tel){
 
 	}
 
-	$num_rows = mysql_num_rows($res);
+	$num_rows = mysqli_num_rows($res);
 
 	if($num_rows == 0){
 
@@ -232,7 +232,7 @@ function login_action($tel){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$_SESSION["name"] = $row["name"];
 	$_SESSION["ticket"] = md5(TICKET_WORD.$row["name"]);
@@ -244,7 +244,7 @@ function login_action($tel){
 	//クッキーの値を保存
 	$sql = sprintf("update staff set login_cookie='%s' where id='%s'",$cookie_value,$row["id"]);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -271,7 +271,7 @@ function login_action_refle($tel){
 
 	$sql = sprintf("select * from staff where tel='%s'",$tel);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -281,7 +281,7 @@ function login_action_refle($tel){
 
 	}
 
-	$num_rows = mysql_num_rows($res);
+	$num_rows = mysqli_num_rows($res);
 
 	if($num_rows == 0){
 
@@ -290,7 +290,7 @@ function login_action_refle($tel){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$_SESSION["name"] = $row["name"];
 	$_SESSION["ticket_refle"] = md5(TICKET_WORD.$row["name"]);
@@ -304,7 +304,7 @@ function login_action_refle($tel){
 	//クッキーの値を保存
 	$sql = sprintf("update staff set login_cookie_refle='%s' where id='%s'",$cookie_value,$row["id"]);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -331,7 +331,7 @@ function login_action_hanyou($tel){
 
 	$sql = sprintf("select * from staff where tel='%s' and (area='%s' or type='3')",$tel,SHOP_AREA);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -341,7 +341,7 @@ function login_action_hanyou($tel){
 
 	}
 
-	$num_rows = mysql_num_rows($res);
+	$num_rows = mysqli_num_rows($res);
 
 	if($num_rows == 0){
 
@@ -350,7 +350,7 @@ function login_action_hanyou($tel){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$_SESSION["name"] = $row["name"];
 	$_SESSION[SESSION_TICKET] = md5(TICKET_WORD.$row["name"]);
@@ -364,7 +364,7 @@ function login_action_hanyou($tel){
 	//クッキーの値を保存
 	$sql = sprintf("update staff set %s='%s' where id='%s'",TBL_COOKIE_COLUMN,$cookie_value,$row["id"]);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -391,7 +391,7 @@ function login_action_man($tel){
 
 	$sql = sprintf("select * from staff where type='3' and tel='%s'",$tel);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -401,7 +401,7 @@ function login_action_man($tel){
 
 	}
 
-	$num_rows = mysql_num_rows($res);
+	$num_rows = mysqli_num_rows($res);
 
 	if($num_rows == 0){
 
@@ -410,7 +410,7 @@ function login_action_man($tel){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$_SESSION["man_name"] = $row["name"];
 	$_SESSION["man_ticket"] = md5(TICKET_WORD.$row["name"]);
@@ -421,7 +421,7 @@ function login_action_man($tel){
 	//クッキーの値を保存
 	$sql = sprintf("update staff set login_cookie_man='%s' where id='%s'",$cookie_value,$row["id"]);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -452,7 +452,7 @@ function check_auto_login(){
 
 		$sql = "select * from staff where delete_flg=0 and login_cookie='".$auto_login_key."'";
 
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 
 		if($res == false){
 
@@ -462,11 +462,11 @@ function check_auto_login(){
 
 		}
 
-		$data_num = mysql_num_rows($res);
+		$data_num = mysqli_num_rows($res);
 
 		if($data_num==1){
 
-			$row = mysql_fetch_array($res);
+			$row = mysqli_fetch_array($res);
 
 			$_SESSION["name"] = $row["name"];
 			$_SESSION["ticket"] = md5(TICKET_WORD.$row["name"]);
@@ -506,7 +506,7 @@ function check_auto_login_refle(){
 
 		$sql = "select * from staff where delete_flg=0 and login_cookie_refle='".$auto_login_key."'";
 
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 
 		if($res == false){
 
@@ -516,11 +516,11 @@ function check_auto_login_refle(){
 
 		}
 
-		$data_num = mysql_num_rows($res);
+		$data_num = mysqli_num_rows($res);
 
 		if($data_num==1){
 
-			$row = mysql_fetch_array($res);
+			$row = mysqli_fetch_array($res);
 
 			$_SESSION["name"] = $row["name"];
 			$_SESSION["ticket_refle"] = md5(TICKET_WORD.$row["name"]);
@@ -564,7 +564,7 @@ $sql = sprintf("
 select * from staff where delete_flg=0 and %s='%s' and (area='%s' or type='3')",
 TBL_COOKIE_COLUMN,$auto_login_key,SHOP_AREA);
 
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 
 		if($res == false){
 
@@ -574,11 +574,11 @@ TBL_COOKIE_COLUMN,$auto_login_key,SHOP_AREA);
 
 		}
 
-		$data_num = mysql_num_rows($res);
+		$data_num = mysqli_num_rows($res);
 
 		if($data_num==1){
 
-			$row = mysql_fetch_array($res);
+			$row = mysqli_fetch_array($res);
 
 			$_SESSION["name"] = $row["name"];
 			$_SESSION[SESSION_TICKET] = md5(TICKET_WORD.$row["name"]);
@@ -620,7 +620,7 @@ function check_auto_login_man(){
 
 		$sql = "select * from staff where delete_flg=0 and login_cookie_man='".$auto_login_key."'";
 
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 
 		if($res == false){
 
@@ -630,11 +630,11 @@ function check_auto_login_man(){
 
 		}
 
-		$data_num = mysql_num_rows($res);
+		$data_num = mysqli_num_rows($res);
 
 		if($data_num==1){
 
-			$row = mysql_fetch_array($res);
+			$row = mysqli_fetch_array($res);
 
 			$_SESSION["man_name"] = $row["name"];
 			$_SESSION["man_ticket"] = md5(TICKET_WORD_MAN.$row["name"]);
@@ -792,7 +792,7 @@ function regist_today_work_data($therapist,$driver){
 					where delete_flg=0 and year='%s' and month='%s' and day='%s'",
 					$insert_therapist,$insert_driver,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -815,7 +815,7 @@ function check_today_work_data($year,$month,$day){
 	$sql = sprintf("select id from work_today where delete_flg=0 and year='%s' and month='%s' and day='%s'",
 					$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -825,7 +825,7 @@ function check_today_work_data($year,$month,$day){
 
 	}
 
-	$data_num = mysql_num_rows($res);
+	$data_num = mysqli_num_rows($res);
 
 	if( $data_num == 0 ){
 
@@ -833,7 +833,7 @@ function check_today_work_data($year,$month,$day){
 		$sql = sprintf("insert into work_today(year,month,day) values('%s','%s','%s')",
 						$year,$month,$day);
 
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 
 		if($res == false){
 
@@ -862,9 +862,9 @@ function get_today_work_data(){
 	$sql = sprintf("select * from work_today where delete_flg=0 and year='%s' and month='%s' and day='%s'",
 					$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
-	$data_num = mysql_num_rows($res);
+	$data_num = mysqli_num_rows($res);
 
 	if($res == false){
 
@@ -874,7 +874,7 @@ function get_today_work_data(){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$data = array();
 
@@ -937,7 +937,7 @@ function get_staff_name($id){
 
 	$sql = "select name from staff where id=".$id;
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -947,7 +947,7 @@ function get_staff_name($id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["name"];
 	exit();
@@ -1073,7 +1073,7 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 	$sql = sprintf("insert into thread(created,updated,from_staff_id,to_staff_id) values('%s','%s','%s','%s')",
 					$now,$now,$from_staff_id,$to_staff_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -1088,13 +1088,13 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 	}
 
 	// インサートしたデータのIDを取得
-	$thread_id = mysql_insert_id();
+	$thread_id = mysqli_insert_id();
 
 	//thread_commentに登録
 	$sql = sprintf("insert into thread_comment(created,thread_id,staff_id,staff_type,content) values('%s','%s','%s','%s','%s')",
 					$now,$thread_id,$from_staff_id,$from_staff_type,$naiyou);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -1143,7 +1143,7 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -1213,7 +1213,7 @@ function get_staff_mail($id){
 
 	$sql = "select mail from staff where id=".$id;
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -1223,7 +1223,7 @@ function get_staff_mail($id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["mail"];
 	exit();
@@ -1245,7 +1245,7 @@ function get_thread_data($data_id,$data_type){
 
 	}
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_thread_data)";
@@ -1255,7 +1255,7 @@ function get_thread_data($data_id,$data_type){
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$id = $row["th_id"];
 
@@ -1301,7 +1301,7 @@ $data_type,$data_id,SHOP_AREA);
 
 	}
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -1312,7 +1312,7 @@ $data_type,$data_id,SHOP_AREA);
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$id = $row["th_id"];
 
@@ -1340,7 +1340,7 @@ function get_thread_comment_data($id){
 
 	$sql = sprintf("select * from thread_comment where delete_flg=0 and thread_id='%s' order by created desc",$id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_thread_comment_data)";
@@ -1350,7 +1350,7 @@ function get_thread_comment_data($id){
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$list_data[$i++] = $row;
 
@@ -1419,7 +1419,7 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 	//threadのupdatedを更新する
 	$sql = sprintf("update thread set updated='%s' where id='%s'",$now,$thread_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -1437,7 +1437,7 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 	$sql = sprintf("insert into thread_comment(created,thread_id,staff_id,staff_type,content) values('%s','%s','%s','%s','%s')",
 					$now,$thread_id,$staff_id,$staff_type,$naiyou);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -1488,7 +1488,7 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -1502,7 +1502,7 @@ function get_to_staff_id($id){
 
 	$sql = "select to_staff_id from thread where id=".$id;
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -1512,7 +1512,7 @@ function get_to_staff_id($id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["to_staff_id"];
 	exit();
@@ -1564,7 +1564,7 @@ function get_therapist_name_by_therapist_id($therapist_id,$area){
 		$sql = sprintf("select name_site from therapist_new where id='%s'",$therapist_id);
 
 	}
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		header("Location: ".WWW_URL."error.php");
@@ -1572,7 +1572,7 @@ function get_therapist_name_by_therapist_id($therapist_id,$area){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $area=="tokyo" ){
 
@@ -1600,7 +1600,7 @@ function get_staff_name_by_staff_id($staff_id){
 
 	$sql = sprintf("select name from staff_new_new where id='%s'",$staff_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		header("Location: ".WWW_URL."error.php");
@@ -1608,7 +1608,7 @@ function get_staff_name_by_staff_id($staff_id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$name = $row["name"];
 
@@ -1625,7 +1625,7 @@ function get_therapist_name_by_therapist_id_honmyou_new($therapist_id){
 
 	$sql = sprintf("select name from therapist_new where id='%s'",$therapist_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		header("Location: ".WWW_URL."error.php");
@@ -1633,7 +1633,7 @@ function get_therapist_name_by_therapist_id_honmyou_new($therapist_id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$name = $row["name"];
 
@@ -1650,7 +1650,7 @@ function get_therapist_mail_by_therapist_id($therapist_id){
 
 	$sql = sprintf("select mail from therapist_new where id='%s'",$therapist_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		header("Location: ".WWW_URL."error.php");
@@ -1658,7 +1658,7 @@ function get_therapist_mail_by_therapist_id($therapist_id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["mail"];
 	exit();
@@ -1673,7 +1673,7 @@ function get_staff_month_attendance_data($staff_id, $year, $month){
 select * from attendance_staff_new where staff_id='%s' and year='%s' and month='%s' order by day asc",
 $staff_id, $year, $month);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_staff_month_attendance_data)";
@@ -1683,7 +1683,7 @@ $staff_id, $year, $month);
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i++] = $row;
 	}
 
@@ -1700,7 +1700,7 @@ function get_therapist_month_attendance_data_kensyuu($therapist_id, $year, $mont
 select * from attendance_kensyuu where therapist_id='%s' and year='%s' and month='%s' order by day asc",
 $therapist_id, $year, $month);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_therapist_month_attendance_data_kensyuu)";
@@ -1710,7 +1710,7 @@ $therapist_id, $year, $month);
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i++] = $row;
 	}
 
@@ -2066,7 +2066,7 @@ shift_history.therapist_id='%s' and
 shift_history.area='%s'
 order by shift_history.created desc limit 0,5",
 $therapist_id,$area);
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_shift_history)";
@@ -2076,7 +2076,7 @@ $therapist_id,$area);
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i++] = $row;
 	}
 
@@ -2095,7 +2095,7 @@ $area,$year,$month,$day);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_shift_common_comment_data)";
@@ -2104,7 +2104,7 @@ $area,$year,$month,$day);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["content"];
 	exit();
@@ -2185,7 +2185,7 @@ $therapist_id,$year,$month,$day);
 
 	}
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(check_attendance_data_exist):2";
@@ -2194,7 +2194,7 @@ $therapist_id,$year,$month,$day);
 
 	}
 
-	$num = mysql_num_rows($res);
+	$num = mysqli_num_rows($res);
 
 	if($num > 0){
 
@@ -2899,7 +2899,7 @@ therapist_id,year,month,day,week,start_time,end_time,area,jitaku_taiki_flg,creat
 values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_taiki_flg,$now,$now,$syori_basyo);
 
-				$res = mysql_query($sql, $con);
+				$res = mysqli_query($con, $sql);
 
 				if($res == false){
 
@@ -2918,7 +2918,7 @@ therapist_id,year,month,day,week,start_time,end_time,area,jitaku_taiki_flg,creat
 values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_taiki_flg,$now,$now,$syori_basyo);
 
-				$res = mysql_query($sql, $con);
+				$res = mysqli_query($con, $sql);
 
 				if($res == false){
 
@@ -2979,7 +2979,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 				//echo $sql;echo "<br />";
 
-				$res = mysql_query($sql, $con);
+				$res = mysqli_query($con, $sql);
 
 				if($res == false){
 
@@ -2999,7 +2999,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 				//echo $sql;echo "<br />";
 
-				$res = mysql_query($sql, $con);
+				$res = mysqli_query($con, $sql);
 
 				if($res == false){
 
@@ -3036,7 +3036,7 @@ insert into shift_history(created,area,therapist_id,staff_type,message)
 values('%s','%s','%s','%s','%s')",
 $now,$area,$therapist_id,$staff_type,$message);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3085,7 +3085,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -3197,7 +3197,7 @@ where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
 $kekkin_flg,$shift_change_flg,$syounin_state,
 $today_absence,$now,$now,$therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		//ロールバック
@@ -3222,7 +3222,7 @@ where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
 $kekkin_flg,$shift_change_flg,$syounin_state,
 $today_absence,$now,$now,$therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		//ロールバック
@@ -3244,7 +3244,7 @@ insert into shift_history(created,area,therapist_id,staff_type,message)
 values('%s','%s','%s','%s','%s')",
 $now,$area,$therapist_id,$staff_type,$message);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3293,7 +3293,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -3381,7 +3381,7 @@ where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
 $shift_change_flg,$syounin_state,$start_time,$end_time,$att_area,
 $today_absence,$kekkin_flg,$jitaku_taiki_flg,$now,$therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3410,7 +3410,7 @@ where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
 $shift_change_flg,$syounin_state,$start_time,$end_time,$att_area,
 $today_absence,$kekkin_flg,$jitaku_taiki_flg,$now,$therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3440,7 +3440,7 @@ $start_start_time,$start_end_time,$start_time,$end_time,$therapist_id,$area,$yea
 
 	}
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3467,7 +3467,7 @@ insert into shift_history(created,area,therapist_id,staff_type,message)
 values('%s','%s','%s','%s','%s')",
 $now,$area,$therapist_id,$staff_type,$message);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3549,7 +3549,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -3622,7 +3622,7 @@ therapist_id,year,month,day,week,start_time,end_time,area,jitaku_taiki_flg,creat
 values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_taiki_flg,$now,$now,$syori_basyo);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3642,7 +3642,7 @@ therapist_id,year,month,day,week,start_time,end_time,area,jitaku_taiki_flg,creat
 values('%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_taiki_flg,$now,$now,$syori_basyo);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3665,7 +3665,7 @@ insert into shift_history(created,area,therapist_id,staff_type,message)
 values('%s','%s','%s','%s','%s')",
 $now,$area,$therapist_id,$staff_type,$message);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3715,7 +3715,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -3727,7 +3727,7 @@ function data_exist_check_hanyou($sql){
 
 	include(INC_PATH."/db_connect.php");
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3737,7 +3737,7 @@ function data_exist_check_hanyou($sql){
 
 	}
 
-	$num = mysql_num_rows($res);
+	$num = mysqli_num_rows($res);
 
 	if( $num > 0 ){
 
@@ -3778,7 +3778,7 @@ function get_jitaku_taiki_flg_by_therapist_id($therapist_id){
 
 	$sql = sprintf("select jitaku_taiki_flg from therapist_new where id='%s'",$therapist_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3787,7 +3787,7 @@ function get_jitaku_taiki_flg_by_therapist_id($therapist_id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["jitaku_taiki_flg"];
 	exit();
@@ -3864,7 +3864,7 @@ function staff_shift_page_access_check($staff_id,$for_kobetsu_url){
 select id from staff_new_new where delete_flg=0 and id='%s' and for_kobetsu_url='%s'",
 $staff_id,$for_kobetsu_url);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3873,7 +3873,7 @@ $staff_id,$for_kobetsu_url);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$id = $row["id"];
 
@@ -3906,7 +3906,7 @@ day='%s' and
 area='%s'",
 $year,$month,$day,$area);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3915,7 +3915,7 @@ $year,$month,$day,$area);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$id = $row["id"];
 
@@ -3943,7 +3943,7 @@ function get_kensyuu_flg_by_therapist_id($therapist_id){
 select kensyuu_flg from therapist_new where id='%s'",
 $therapist_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3952,7 +3952,7 @@ $therapist_id);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["kensyuu_flg"];
 	exit();
@@ -3969,7 +3969,7 @@ select id from attendance_kensyuu where
 therapist_id='%s' and year='%s' and month='%s' and day='%s'",
 $therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -3978,7 +3978,7 @@ $therapist_id,$year,$month,$day);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $row["id"] == "" ){
 
@@ -4208,7 +4208,7 @@ $year,$month,$day);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -4217,7 +4217,7 @@ $year,$month,$day);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row;
 	exit();
@@ -4388,7 +4388,7 @@ $now,$syori_basyo,$therapist_id,$year,$month,$day);
 
 		}
 
-		$res = mysql_query($sql, $con);
+		$res = mysqli_query($con, $sql);
 
 		if($res == false){
 
@@ -4418,7 +4418,7 @@ therapist_id,year,month,day,start_time,end_time,area,work_flg)
 values('%s','%s','%s','%s','%s','%s','%s','%s')",
 $therapist_id,$year,$month,$day,$start_time,$end_time,$area,$work_flg);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -4471,7 +4471,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -4499,7 +4499,7 @@ function shift_kekkin_action_kensyuu($therapist_id,$area,$year,$month,$day,$week
 delete from attendance_kensyuu where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
 $therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		//ロールバック
@@ -4549,7 +4549,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -4604,7 +4604,7 @@ $syounin_state,
 $now,$now,
 $syori_basyo);
 
-			$res = mysql_query($sql, $con);
+			$res = mysqli_query($con, $sql);
 
 			if($res == false){
 
@@ -4645,7 +4645,7 @@ day='%s'",
 $start_time_work,$end_time_work,$area,$syounin_state,
 $now,$syori_basyo,$therapist_id,$year,$month,$day);
 
-				$res = mysql_query($sql, $con);
+				$res = mysqli_query($con, $sql);
 				if($res == false){
 					//ロールバック
 					$sql = "rollback";
@@ -4676,7 +4676,7 @@ work_flg='%s'
 where therapist_id='%s' and year='%s' and month='%s' and day='%s'",
 $start_time,$end_time,$work_flg,$therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -4730,7 +4730,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -4785,7 +4785,7 @@ $year,$month,$day,$area,$type);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -4797,7 +4797,7 @@ $year,$month,$day,$area,$type);
 	$data = array();
 
 	$i=0;
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$data[$i] = $row;
 		$i++;
@@ -4871,7 +4871,7 @@ function regist_shift_message($therapist_id,$message_content,$staff_type,$area){
 insert into shift_message(created,therapist_id,type,content,area) values('%s','%s','%s','%s','%s')",
 $now,$therapist_id,$staff_type,$message_content,$shift_message_area);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -4955,7 +4955,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -4971,7 +4971,7 @@ select * from shift_message where delete_flg=0 and therapist_id='%s' order by cr
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_shift_message_by_order_num)";
@@ -4981,7 +4981,7 @@ select * from shift_message where delete_flg=0 and therapist_id='%s' order by cr
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$list_data[$i] = $row;
 
@@ -5035,7 +5035,7 @@ reservation_for_board.day='%s' and
 attendance_new.therapist_id='%s' order by reservation_for_board.id desc",
 $year,$month,$day,$therapist_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5046,7 +5046,7 @@ $year,$month,$day,$therapist_id);
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$list_data[$i] = $row;
 
@@ -5124,7 +5124,7 @@ function get_staff_name_new($id){
 
 	$sql = sprintf("select name from staff_new_new where delete_flg=0 and id='%s'",$id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5134,7 +5134,7 @@ function get_staff_name_new($id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["name"];
 	exit();
@@ -5147,7 +5147,7 @@ function get_price_by_reservation_no($reservation_no){
 
 	$sql = sprintf("select price from sale_history where delete_flg=0 and reservation_no='%s'",$reservation_no);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5157,7 +5157,7 @@ function get_price_by_reservation_no($reservation_no){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["price"];
 	exit();
@@ -5349,7 +5349,7 @@ function reservation_end($id,$therapist_id,$area){
 
 	$sql = sprintf("update reservation_for_board set end_real_time='%s',complete_flg='1' where id='%s'",$end_real_time,$id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5397,7 +5397,7 @@ function reservation_end($id,$therapist_id,$area){
 insert into shift_message(created,therapist_id,type,message_type,content,area) values('%s','%s','%s','%s','%s','%s')",
 $now,$therapist_id,$staff_type,$message_type,$message_content,$shift_message_area);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5518,7 +5518,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -5605,7 +5605,7 @@ month='%s' and
 day='%s'",
 $therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5615,7 +5615,7 @@ $therapist_id,$year,$month,$day);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$id = $row["id"];
 
@@ -5646,7 +5646,7 @@ month='%s' and
 day='%s'",
 $therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -5656,7 +5656,7 @@ $therapist_id,$year,$month,$day);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row;
 	exit();
@@ -5693,7 +5693,7 @@ function get_help_page(){
 	include(INC_PATH."/db_connect.php");
 
 	$sql = "select * from help_page where delete_flg=0 order by order_value desc";
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_help_page)";
@@ -5703,7 +5703,7 @@ function get_help_page(){
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 		$list_data[$i++] = $row;
 	}
 
@@ -5717,7 +5717,7 @@ function get_message_board($limit_num){
 	include(INC_PATH."/db_connect.php");
 
 	$sql = sprintf("select * from message_board where delete_flg=0 order by created desc limit 0,%s",$limit_num);
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_message_board)";
@@ -5727,7 +5727,7 @@ function get_message_board($limit_num){
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$created = $row["created"];
 
@@ -5767,7 +5767,7 @@ delete_flg=0 and %s
 order by created desc limit 0,%s",
 $where_area,$limit_num);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(get_message_board_driver_2)";
@@ -5777,7 +5777,7 @@ $where_area,$limit_num);
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$created = $row["created"];
 
@@ -5812,7 +5812,7 @@ function get_att_area_select_disp_flg($therapist_id){
 
 	$sql = sprintf("select * from therapist_new where id='%s'",$therapist_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5822,7 +5822,7 @@ function get_att_area_select_disp_flg($therapist_id){
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$area = $row["area"];
 	$kenmu = $row["kenmu"];
@@ -5927,7 +5927,7 @@ $therapist_id,$year,$month);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -5940,7 +5940,7 @@ $therapist_id,$year,$month);
 	$i=0;
 	$remuneration_all = 0;
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$reservation_no = $row["reservation_no"];
 		$price = $row["price"];
@@ -6000,7 +6000,7 @@ $therapist_id,$year,$month);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6013,7 +6013,7 @@ $therapist_id,$year,$month);
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$month_disp = add_zero_when_under_ten_common($row["eigyou_month"]);
 		$day_disp = add_zero_when_under_ten_common($row["eigyou_day"]);
@@ -6051,7 +6051,7 @@ $therapist_id,$year,$month,$day);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6063,7 +6063,7 @@ $therapist_id,$year,$month,$day);
 
 	$price_all = 0;
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$price = $row["price"];
 
@@ -6224,7 +6224,7 @@ $min_year,$staff_id);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6233,7 +6233,7 @@ $min_year,$staff_id);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$year = $row["year"];
 
@@ -6248,7 +6248,7 @@ syounin_state='1'
 order by month asc",
 $staff_id,$year);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6257,7 +6257,7 @@ $staff_id,$year);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	$month = $row["month"];
 
@@ -6285,7 +6285,7 @@ kekkin_flg='0' and
 syounin_state='1'",
 $therapist_id,$year,$month);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6294,7 +6294,7 @@ $therapist_id,$year,$month);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $row["id"] == "" ){
 
@@ -6329,7 +6329,7 @@ $therapist_id,$year,$month,$day);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6359,7 +6359,7 @@ $therapist_id,$year,$month,$day);
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$reservation_no = $row["reservation_no"];
 		$price = $row["price"];
@@ -6575,7 +6575,7 @@ $therapist_id,$year,$month,$day);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6588,7 +6588,7 @@ $therapist_id,$year,$month,$day);
 	$point_shijutsu = 0;
 	$point_shimei = 0;
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$shimei_flg = $row["shimei_flg"];
 
@@ -6838,7 +6838,7 @@ kekkin_flg='0' and
 syounin_state='1'",
 $staff_id,$year,$month);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -6847,7 +6847,7 @@ $staff_id,$year,$month);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $row["id"] == "" ){
 
@@ -7154,7 +7154,7 @@ left join shop on shop.id=repeater.shop_id
 where repeater.delete_flg=0 and repeater.attendance_id='%s' order by repeater.created desc",
 $attendance_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -7166,7 +7166,7 @@ $attendance_id);
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$list_data[$i++] = $row;
 
@@ -7204,7 +7204,7 @@ $therapist_id,$year,$month);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -7216,7 +7216,7 @@ $therapist_id,$year,$month);
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$list_data[$i++] = $row;
 
@@ -7380,7 +7380,7 @@ function check_start_real_time_not_zero_by_reservation_for_board_id($reservation
 
 	$sql = sprintf("select start_real_time from reservation_for_board where id='%s'",$reservation_for_board_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -7389,7 +7389,7 @@ function check_start_real_time_not_zero_by_reservation_for_board_id($reservation
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $row["start_real_time"] == "0" ){
 
@@ -7420,7 +7420,7 @@ $therapist_id,$year,$month,$day);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -7429,7 +7429,7 @@ $therapist_id,$year,$month,$day);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $row["id"] == "" ){
 
@@ -7458,7 +7458,7 @@ $staff_id);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -7467,7 +7467,7 @@ $staff_id);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $row["id"] == "" ){
 
@@ -7582,7 +7582,7 @@ $cost_value,$movement_method,$area_name,$other,$movement_cost_id);
 
 	//echo $sql;exit();
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -7612,7 +7612,7 @@ function get_movement_cost_id_by_reservation_for_board_id($reservation_for_board
 	$sql = sprintf("
 select id from movement_cost where reservation_for_board_id='%s' and delete_flg='0'",$reservation_for_board_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -7621,7 +7621,7 @@ select id from movement_cost where reservation_for_board_id='%s' and delete_flg=
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["id"];
 	exit();
@@ -7648,7 +7648,7 @@ day='%s' and
 therapist_id='%s'",
 $year,$month,$day,$therapist_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -7661,7 +7661,7 @@ $year,$month,$day,$therapist_id);
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$list_data[$i] = $row;
 		$i++;
@@ -7679,7 +7679,7 @@ function delete_movement_cost($movement_cost_id){
 
 	$sql = sprintf("update movement_cost set delete_flg='1' where id='%s'",$movement_cost_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -7793,7 +7793,7 @@ delete_flg=0 and
 attendance_id='%s'",
 $attendance_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -7806,7 +7806,7 @@ $attendance_id);
 	$i=0;
 	$list_data = array();
 
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$list_data[$i] = $row;
 		$i++;
@@ -7826,7 +7826,7 @@ function update_reservation_for_board_data_kekkin($attendance_id){
 update reservation_for_board set attendance_id='-1' where attendance_id='%s'",
 $attendance_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -7853,7 +7853,7 @@ month='%s' and
 day='%s'",
 $therapist_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -7863,7 +7863,7 @@ $therapist_id,$year,$month,$day);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row["syounin_state"];
 	exit();
@@ -8298,7 +8298,7 @@ insert into attendance_staff_new(staff_id,type,year,month,day,start_time,end_tim
 values('%s','%s','%s','%s','%s','%s','%s','%s','%s')",
 $staff_id,$type,$year,$month,$day,$start_time,$end_time,$area,$syounin_state);
 
-			$res = mysql_query($sql, $con);
+			$res = mysqli_query($con, $sql);
 
 			if($res == false){
 
@@ -8350,7 +8350,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -8894,7 +8894,7 @@ where staff_id='%s' and year='%s' and month='%s' and day='%s'",
 $shift_change_flg,$syounin_state,$start_time,$end_time,$start_time_hour,$start_time_minute,$end_time_hour,$end_time_minute,$area,
 $today_absence,$kekkin_flg,$staff_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -8955,7 +8955,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -9007,7 +9007,7 @@ today_absence='%s'
 where staff_id='%s' and year='%s' and month='%s' and day='%s'",
 $shift_change_flg,$kekkin_flg,$syounin_state,$today_absence,$staff_id,$year,$month,$day);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 	if($res == false){
 
 		//ロールバック
@@ -9058,7 +9058,7 @@ EOT;
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
@@ -9125,7 +9125,7 @@ day='%s' and
 order by id desc",
 $year,$month,$day,$staff_id,$staff_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -9136,7 +9136,7 @@ $year,$month,$day,$staff_id,$staff_id);
 	}
 	$i=0;
 	$list_data = array();
-	while($row = mysql_fetch_assoc($res)){
+	while($row = mysqli_fetch_assoc($res)){
 
 		$attendance_id = $row["attendance_id"];
 
@@ -9244,7 +9244,7 @@ function get_attendance_staff_2_by_attendance_staff_new_id($attendance_staff_new
 
 	$sql = sprintf("select * from attendance_staff_2 where delete_flg=0 and attendance_staff_new_id='%s'",$attendance_staff_new_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -9252,7 +9252,7 @@ function get_attendance_staff_2_by_attendance_staff_new_id($attendance_staff_new
 		exit();
 
 	}
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	return $row;
 	exit();
@@ -9392,7 +9392,7 @@ $attendance_staff_new_id,$back_plans_state,$back_plans_hour,$back_plans_minute);
 
 	}
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -9415,7 +9415,7 @@ select id from attendance_staff_2 where
 delete_flg=0 and attendance_staff_new_id='%s'",
 $attendance_staff_new_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if( $res == false ){
 
@@ -9424,7 +9424,7 @@ $attendance_staff_new_id);
 
 	}
 
-	$row = mysql_fetch_assoc($res);
+	$row = mysqli_fetch_assoc($res);
 
 	if( $row["id"] == "" ){
 
@@ -9562,7 +9562,7 @@ $attendance_staff_new_id);
 
 	}
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -9659,7 +9659,7 @@ $meter,$attendance_staff_new_id);
 
 	}
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -9697,7 +9697,7 @@ work_meter_end='%s'
 where delete_flg='0' and attendance_staff_new_id='%s'",
 $work_meter_end,$attendance_staff_new_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -9716,7 +9716,7 @@ car_distance='%s',end_hour='%s',end_minute='%s'
 where id='%s'",
 $car_distance,$now_hour,$now_minute,$attendance_staff_new_id);
 
-	$res = mysql_query($sql, $con);
+	$res = mysqli_query($con, $sql);
 
 	if($res == false){
 
@@ -9734,7 +9734,7 @@ $car_distance,$now_hour,$now_minute,$attendance_staff_new_id);
 	mysql_query( $sql, $con );
 
 	//MySQL切断
-	mysql_close( $con );
+	mysqli_close( $con );
 
 	return true;
 	exit();
