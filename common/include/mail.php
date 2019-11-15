@@ -133,7 +133,7 @@ global $ARRAY_age;
 	$sql = sprintf("insert into voice(created,updated,shop_type,name,age,gender,satisfaction,content) values('%s','%s','%s','%s','%s','%s','%s','%s')",$now,$now,$shop_type,$name,$age,$gender,$satisfaction,$content);
 	$res = mysqli_query(DbCon, $sql);
 	if($res == false){
-		mysql_query( "rollback", DbCon );	//ロールバック
+		mysqli_query(DbCon, 'rollback');	//ロールバック
 
 		return false;
 		echo "mail.php regist_voice_common line:" . __LINE__ . "<br />"; exit();
@@ -254,7 +254,7 @@ EOT;
 	//echo $mailto . ", " . $title . ", " . $header . ", " . $parameter . "<br />" . $content . "<br />";
 
 	if($res == false){
-		mysql_query( "rollback", DbCon );	//ロールバック
+		mysqli_query(DbCon, 'rollback');	//ロールバック
 		return false;
 		//echo "mail.php regist_voice_common line:" . __LINE__ . "<br />"; exit();
 	}
@@ -585,7 +585,7 @@ $week,$mail_hour,$minute,$course,$therapist_name,$customer_tel,$free,$shop_area,
 
 	if(!$shop_name) {
 		//ロールバック
-		mysql_query( "rollback", DbCon );
+		mysqli_query(DbCon, 'rollback');
 		echo "vip_page_confirm_action_2_common line:" . __LINE__ . "<br />";
 
 		return false;
@@ -652,7 +652,7 @@ $week,$mail_hour,$minute,$course,$therapist_name,$customer_tel,$free,$shop_area)
 		$res = mysqli_query(DbCon, $sql);
 		if($res == false){
 			//ロールバック
-			mysql_query( "rollback", DbCon );
+			mysqli_query(DbCon, 'rollback');
 			echo "vip_page_confirm_action_2_common line:" . __LINE__ . "<br />";
 
 			return false;
@@ -678,7 +678,7 @@ $week,$mail_hour,$minute,$course,$therapist_name,$customer_tel,$free,$shop_area)
 
 	if(!$shop_name) {
 		//ロールバック
-		mysql_query( "rollback", DbCon );
+		mysqli_query(DbCon, 'rollback');
 		echo "vip_page_confirm_action_2_common line:" . __LINE__ . "<br />";
 
 		return false;

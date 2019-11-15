@@ -1049,11 +1049,11 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -1079,7 +1079,7 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_contribute)";
 		header("Location: ".WWW_URL."error.php");
@@ -1100,7 +1100,7 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_contribute)";
 		header("Location: ".WWW_URL."error.php");
@@ -1130,7 +1130,7 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_contribute)";
 		header("Location: ".WWW_URL."error.php");
@@ -1140,7 +1140,7 @@ function regist_contribute($naiyou,$from_staff_id,$from_staff_name,$from_staff_t
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -1408,11 +1408,11 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -1425,7 +1425,7 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_contribute)";
 		header("Location: ".WWW_URL."error.php");
@@ -1443,7 +1443,7 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_contribute)";
 		header("Location: ".WWW_URL."error.php");
@@ -1475,7 +1475,7 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(update_contribute)";
 		header("Location: ".WWW_URL."error.php");
@@ -1485,7 +1485,7 @@ function update_contribute($thread_id,$naiyou,$staff_id,$staff_type,$staff_name,
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -2029,7 +2029,7 @@ function escape_for_db($data){
 
 	include(INC_PATH."/db_connect.php");
 
-	$data = mysql_real_escape_string($data);
+	$data = mysqli_real_escape_string($data);
 
 	return $data;
 	exit();
@@ -2840,11 +2840,11 @@ function regist_shift_data_by_therapist($therapist_id,$area,$year,$month,$kikan,
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	/*
 	echo "<pre>";
@@ -2905,7 +2905,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 					//ロールバック
 					$sql = "rollback";
-					mysql_query( $sql, $con );
+					mysqli_query($con, $sql);
 					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 					header("Location: ".WWW_URL."error.php");
 					exit();
@@ -2924,7 +2924,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 					//ロールバック
 					$sql = "rollback";
-					mysql_query( $sql, $con );
+					mysqli_query($con, $sql);
 					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 					header("Location: ".WWW_URL."error.php");
 					exit();
@@ -2985,7 +2985,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 					//ロールバック
 					$sql = "rollback";
-					mysql_query( $sql, $con );
+					mysqli_query($con, $sql);
 					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 					header("Location: ".WWW_URL."error.php");
 					exit();
@@ -3005,7 +3005,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 					//ロールバック
 					$sql = "rollback";
-					mysql_query( $sql, $con );
+					mysqli_query($con, $sql);
 					$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 					header("Location: ".WWW_URL."error.php");
 					exit();
@@ -3020,7 +3020,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -3042,7 +3042,7 @@ $now,$area,$therapist_id,$staff_type,$message);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -3073,7 +3073,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -3082,7 +3082,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -3159,11 +3159,11 @@ function shift_kekkin_action($therapist_id,$area,$year,$month,$day,$week_name){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -3202,7 +3202,7 @@ $today_absence,$now,$now,$therapist_id,$year,$month,$day);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3227,7 +3227,7 @@ $today_absence,$now,$now,$therapist_id,$year,$month,$day);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3250,7 +3250,7 @@ $now,$area,$therapist_id,$staff_type,$message);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_therapist)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -3280,7 +3280,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3290,7 +3290,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -3348,11 +3348,11 @@ $therapist_id,$area,$year,$month,$day);
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -3387,7 +3387,7 @@ $today_absence,$kekkin_flg,$jitaku_taiki_flg,$now,$therapist_id,$year,$month,$da
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3416,7 +3416,7 @@ $today_absence,$kekkin_flg,$jitaku_taiki_flg,$now,$therapist_id,$year,$month,$da
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3446,7 +3446,7 @@ $start_start_time,$start_end_time,$start_time,$end_time,$therapist_id,$area,$yea
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3473,7 +3473,7 @@ $now,$area,$therapist_id,$staff_type,$message);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -3536,7 +3536,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3546,7 +3546,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -3606,11 +3606,11 @@ function shift_add_action($therapist_id,$area,$att_area,$att_area_flg,$year,$mon
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -3628,7 +3628,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3648,7 +3648,7 @@ $therapist_id,$year,$month,$day,$week,$start_time,$end_time,$att_area,$jitaku_ta
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3671,7 +3671,7 @@ $now,$area,$therapist_id,$staff_type,$message);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -3702,7 +3702,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action)";
 		header("Location: ".WWW_URL."error.php");
@@ -3712,7 +3712,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -4331,11 +4331,11 @@ $therapist_id,$area,$year,$month,$day,$start_time,$end_time,$week_name,$work_flg
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -4394,7 +4394,7 @@ $now,$syori_basyo,$therapist_id,$year,$month,$day);
 
 			//ロールバック
 			$sql = "rollback";
-			mysql_query( $sql, $con );
+			mysqli_query($con, $sql);
 
 			$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action_kensyuu:1)";
 			header("Location: ".WWW_URL."error.php");
@@ -4424,7 +4424,7 @@ $therapist_id,$year,$month,$day,$start_time,$end_time,$area,$work_flg);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action_kensyuu:2)";
 		header("Location: ".WWW_URL."error.php");
@@ -4458,7 +4458,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_add_action_kensyuu)";
 		header("Location: ".WWW_URL."error.php");
@@ -4468,7 +4468,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -4487,11 +4487,11 @@ function shift_kekkin_action_kensyuu($therapist_id,$area,$year,$month,$day,$week
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -4504,7 +4504,7 @@ $therapist_id,$year,$month,$day);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action_kensyuu)";
 		header("Location: ".WWW_URL."error.php");
@@ -4536,7 +4536,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action_kensyuu)";
 		header("Location: ".WWW_URL."error.php");
@@ -4546,7 +4546,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -4569,11 +4569,11 @@ $work_time_change_flg,$start_time_work,$end_time_work){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -4610,7 +4610,7 @@ $syori_basyo);
 
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, $con );
+				mysqli_query($con, $sql);
 
 				echo "error!(shift_edit_action_kensyuu:1)";
 				exit();
@@ -4649,7 +4649,7 @@ $now,$syori_basyo,$therapist_id,$year,$month,$day);
 				if($res == false){
 					//ロールバック
 					$sql = "rollback";
-					mysql_query( $sql, $con );
+					mysqli_query($con, $sql);
 
 					echo "error!(shift_edit_action_kensyuu:2)";
 					exit();
@@ -4682,7 +4682,7 @@ $start_time,$end_time,$work_flg,$therapist_id,$year,$month,$day);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action_kensyuu:3)";
 		header("Location: ".WWW_URL."error.php");
@@ -4717,7 +4717,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action_kensyuu:4)";
 		header("Location: ".WWW_URL."error.php");
@@ -4727,7 +4727,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -4859,11 +4859,11 @@ function regist_shift_message($therapist_id,$message_content,$staff_type,$area){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -4877,7 +4877,7 @@ $now,$therapist_id,$staff_type,$message_content,$shift_message_area);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_message:1)";
 		header("Location: ".WWW_URL."error.php");
@@ -4952,7 +4952,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -5339,11 +5339,11 @@ function reservation_end($id,$therapist_id,$area){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$end_real_time = $now;
 
@@ -5355,7 +5355,7 @@ function reservation_end($id,$therapist_id,$area){
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(reservation_end:1)";
 		header("Location: ".WWW_URL."error.php");
@@ -5403,7 +5403,7 @@ $now,$therapist_id,$staff_type,$message_type,$message_content,$shift_message_are
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(reservation_end:2)";
 		header("Location: ".WWW_URL."error.php");
@@ -5515,7 +5515,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -8233,11 +8233,11 @@ $staff_id,$area,$year,$month,$shift_time_data,$start_time_check_all,$end_time_ch
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$max_day = get_max_day($year,$month);
 
@@ -8304,7 +8304,7 @@ $staff_id,$type,$year,$month,$day,$start_time,$end_time,$area,$syounin_state);
 
 				//ロールバック
 				$sql = "rollback";
-				mysql_query( $sql, $con );
+				mysqli_query($con, $sql);
 				$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_staff)";
 				header("Location: ".WWW_URL."error.php");
 				exit();
@@ -8338,7 +8338,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(regist_shift_data_by_staff)";
 		header("Location: ".WWW_URL."error.php");
 		exit();
@@ -8347,7 +8347,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -8863,11 +8863,11 @@ $staff_id,$area,$year,$month,$day,$start_time,$end_time,$start_start_time,$start
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -8900,7 +8900,7 @@ $today_absence,$kekkin_flg,$staff_id,$year,$month,$day);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action_2:1)";
 		header("Location: ".WWW_URL."error.php");
@@ -8942,7 +8942,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_edit_action_2:2)";
 		header("Location: ".WWW_URL."error.php");
@@ -8952,7 +8952,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -8972,11 +8972,11 @@ function shift_kekkin_action_2($staff_id,$area,$year,$month,$day,$week_name){
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$now = time();
 
@@ -9012,7 +9012,7 @@ $shift_change_flg,$kekkin_flg,$syounin_state,$today_absence,$staff_id,$year,$mon
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action_2)";
 		header("Location: ".WWW_URL."error.php");
@@ -9045,7 +9045,7 @@ EOT;
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		$_SESSION["error_page_message"] = "クエリ実行に失敗しました(shift_kekkin_action_2)";
 		header("Location: ".WWW_URL."error.php");
@@ -9055,7 +9055,7 @@ EOT;
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
@@ -9685,11 +9685,11 @@ function update_work_meter_end($attendance_staff_new_id,$work_meter_start,$work_
 
 	//トランザクションをはじめる準備
 	$sql = "set autocommit = 0";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//トランザクション開始
 	$sql = "begin";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	$sql = sprintf("
 update attendance_staff_2 set
@@ -9703,7 +9703,7 @@ $work_meter_end,$attendance_staff_new_id);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		echo "error!(update_work_meter_end)";
 		exit();
@@ -9722,7 +9722,7 @@ $car_distance,$now_hour,$now_minute,$attendance_staff_new_id);
 
 		//ロールバック
 		$sql = "rollback";
-		mysql_query( $sql, $con );
+		mysqli_query($con, $sql);
 
 		echo "error!(update_work_meter_end)";
 		exit();
@@ -9731,7 +9731,7 @@ $car_distance,$now_hour,$now_minute,$attendance_staff_new_id);
 
 	//コミット
 	$sql = "commit";
-	mysql_query( $sql, $con );
+	mysqli_query($con, $sql);
 
 	//MySQL切断
 	mysqli_close( $con );
